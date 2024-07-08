@@ -1,6 +1,47 @@
-= An Example Quick Course
+= About This Course
 :navtitle: Home
 
-== Introduction
+== Writing Targeted Policies for SELinux on Red Hat Enterprise Linux
 
-This is an example quick course demonstrating the usage of Antora for authoring and publishing quick courses.
+This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) *targeted* policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the *audit2allow* command.
+
+== Audience
+
+System Administrators, Site Reliability Engineers, Application Developers, and other IT professionals responsible for securing applications running on Linux servers.
+
+== Prerequisites
+
+Learners are expected to have have some familiarity with managing SELinux on RHEL. If you need a refresher on these tasks, please review the following Red Hat Training Courses:
+
+* Chapters https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch06[06] and https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch11s03[11] of https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii[RH134: Red Hat System Administration II]
+* Chapter https://role.rhu.redhat.com/rol-rhu/app/courses/rh415-9.2/pages/ch08[08] of https://www.redhat.com/en/services/training/rh415-red-hat-security-linux-physical-virtual-and-cloud[RH415: Red Hat Security: Linux in Physical, Virtual, and Cloud]
+* Chapter https://role.rhu.redhat.com/rol-rhu/app/courses/rh342-8.4/pages/ch09[09] of https://www.redhat.com/en/services/training/rh342-red-hat-enterprise-linux-diagnostics-and-troubleshooting[RH342: Red Hat Enterprise Linux Diagnostics and Troubleshooting]
+
+The direct links to course chapters above are valid only for Red Hat employees. Red Hat customers with a https://www.redhat.com/en/services/training/learning-subscription[Red Hat Learning Subscription] should use:
+
+* https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch06[RH134 Chapter 6]
+* https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch11s03[RH134 Chapter 11]
+* https://rol.redhat.com/rol/app/courses/rh415-9.2/pages/ch08[RH415 Chapter 8]
+* https://rol.redhat.com/rol/app/courses/rh342-8.4/pages/ch09[RH342 Chapter 9]
+
+If you need an overview of SELinux, please review the following conceptual introduction:
+
+* https://opensource.com/business/13/11/selinux-policy-guide[Your visual how-to guide for SELinux policy enforcement] by Daniel J Walsh
+* https://developers.redhat.com/e-books/selinux-coloring-book[The SELinux Coloring Book] eBook by Red Hat Developers
+
+== Classroom Environment
+
+For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and which can download RPM packages from Red Hat repositories or a Yum mirror.
+
+As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as a ready-to-use environment for hands-on activities.
+
+Do not try any activity directly on your day-to-day machine because SELinux mistakes can render a system unusable and recovering procedures, such as relabeling the root partition at boot, could take a few minutes.
+
+== Other Sources of Information About SELinux
+
+Of course, the ultimate sources of information about SELinux are the Red Hat Enterprise Linux product documentation and the upstream from the Fedora Project and the SELinux project.
+
+* https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index[Using SELinux]
+* https://fedoraproject.org/wiki/SELinux[SELinux - Fedora Project Wiki]
+* https://github.com/SELinuxProject/selinux-notebook[The SELinux Notebook]
+
