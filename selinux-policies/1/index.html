@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About This Course :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="next" href="chapter1/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="chapter1/index.html">Chapter 1</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter1/section1.html">Section 1</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter1/section2.html">Section 2</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter1/section3.html">Section 3</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="chapter2/index.html">Chapter 2</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter2/section1.html">Section 1</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="chapter3/index.html">Chapter 3</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter3/section1.html">Section 1</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="chapter3/section2.html">Section 2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="appendix/appendix.html">Appendix A</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link is-current"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Home</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">About This Course</h1>
+<div class="sect1">
+<h2 id="_writing_targeted_policies_for_selinux_on_red_hat_enterprise_linux"><a class="anchor" href="#_writing_targeted_policies_for_selinux_on_red_hat_enterprise_linux"></a>Writing Targeted Policies for SELinux on Red Hat Enterprise Linux</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) <strong>targeted</strong> policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the <strong>audit2allow</strong> command.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_audience"><a class="anchor" href="#_audience"></a>Audience</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>System Administrators, Site Reliability Engineers, Application Developers, and other IT professionals responsible for securing applications running on Linux servers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Learners are expected to have have some familiarity with managing SELinux on RHEL. If you need a refresher on these tasks, please review the following Red Hat Training Courses:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Chapters <a href="https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch06">06</a> and <a href="https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch11s03">11</a> of <a href="https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii">RH134: Red Hat System Administration II</a></p>
+</li>
+<li>
+<p>Chapter <a href="https://role.rhu.redhat.com/rol-rhu/app/courses/rh415-9.2/pages/ch08">08</a> of <a href="https://www.redhat.com/en/services/training/rh415-red-hat-security-linux-physical-virtual-and-cloud">RH415: Red Hat Security: Linux in Physical, Virtual, and Cloud</a></p>
+</li>
+<li>
+<p>Chapter <a href="https://role.rhu.redhat.com/rol-rhu/app/courses/rh342-8.4/pages/ch09">09</a> of <a href="https://www.redhat.com/en/services/training/rh342-red-hat-enterprise-linux-diagnostics-and-troubleshooting">RH342: Red Hat Enterprise Linux Diagnostics and Troubleshooting</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The direct links to course chapters above are valid only for Red Hat employees. Red Hat customers with a <a href="https://www.redhat.com/en/services/training/learning-subscription">Red Hat Learning Subscription</a> should use:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch06">RH134 Chapter 6</a></p>
+</li>
+<li>
+<p><a href="https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch11s03">RH134 Chapter 11</a></p>
+</li>
+<li>
+<p><a href="https://rol.redhat.com/rol/app/courses/rh415-9.2/pages/ch08">RH415 Chapter 8</a></p>
+</li>
+<li>
+<p><a href="https://rol.redhat.com/rol/app/courses/rh342-8.4/pages/ch09">RH342 Chapter 9</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you need an overview of SELinux, please review the following conceptual introduction:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://opensource.com/business/13/11/selinux-policy-guide">Your visual how-to guide for SELinux policy enforcement</a> by Daniel J Walsh</p>
+</li>
+<li>
+<p><a href="https://developers.redhat.com/e-books/selinux-coloring-book">The SELinux Coloring Book</a> eBook by Red Hat Developers</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_classroom_environment"><a class="anchor" href="#_classroom_environment"></a>Classroom Environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and which can download RPM packages from Red Hat repositories or a Yum mirror.</p>
+</div>
+<div class="paragraph">
+<p>As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as a ready-to-use environment for hands-on activities.</p>
+</div>
+<div class="paragraph">
+<p>Do not try any activity directly on your day-to-day machine because SELinux mistakes can render a system unusable and recovering procedures, such as relabeling the root partition at boot, could take a few minutes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_sources_of_information_about_selinux"><a class="anchor" href="#_other_sources_of_information_about_selinux"></a>Other Sources of Information About SELinux</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Of course, the ultimate sources of information about SELinux are the Red Hat Enterprise Linux product documentation and the upstream from the Fedora Project and the SELinux project.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index">Using SELinux</a></p>
+</li>
+<li>
+<p><a href="https://fedoraproject.org/wiki/SELinux">SELinux - Fedora Project Wiki</a></p>
+</li>
+<li>
+<p><a href="https://github.com/SELinuxProject/selinux-notebook">The SELinux Notebook</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="next"><a href="chapter1/index.html">Chapter 1</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
