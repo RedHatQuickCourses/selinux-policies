@@ -35,7 +35,18 @@ For now, there is no virtual labs for performing hands-on activities. You just n
 
 As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as a ready-to-use environment for hands-on activities.
 
-Do not try any activity directly on your day-to-day machine because SELinux mistakes can render a system unusable and recovering procedures, such as relabeling the root partition at boot, could take a few minutes.
+You could even try these activities directly on your day-to-day machine because the worst consequence of trivial mistales would be waiting a few minutes to relabel the root partition at boot.
+
+//TODO try these demos. The Definitive RHEL 9 Hands-On Lab v9.1 - there's a 9.3 update in the works https://demo.redhat.com/catalog?item=babylon-catalog-event/sandboxes-gpte.rhel-9-lab-ce.event&utm_source=webapp&utm_medium=share-link
+
+//TODO RHEL Troubleshooting One https://demo.redhat.com/catalog?item=babylon-catalog-prod/sandboxes-gpte.lb1389-rhel-sec.prod&utm_source=webapp&utm_medium=share-link
+
+//TODO LB1389 - Discovering Critical Security Features in Red Hat Enterprise Linux https://demo.redhat.com/catalog?item=babylon-catalog-prod/sandboxes-gpte.lb1389-rhel-sec.prod&utm_source=webapp&utm_medium=share-link
+
+//TODO RHEL9 base (Microshift?): https://demo.redhat.com/catalog?item=babylon-catalog-prod/sandboxes-gpte.rhel9-base.prod&utm_source=webapp&utm_medium=share-link
+
+//TODO https://demo.redhat.com/catalog?item=babylon-catalog-dev/zt-rhel.zt-selinux-policy.dev&utm_source=webapp&utm_medium=share-link
+
 
 == Other Sources of Information About SELinux
 

@@ -6,11 +6,11 @@ The course design docs are available to Red Hat employees only:
 
 * [Initial course design] TBD
 
-Figures on this course were designed using Google Slides, and are also avialble  to Red Hat employees only. Individual slides are exported to PNG files and those files are in the git repository.
+Figures on this course will be designed using Google Slides, and the deck will be available  to Red Hat employees only. Individual slides are exported to PNG files and those files are in the git repository.
 
 * TBD
 
-The contents here are mostly based on the
-[SELinux Workshop](https://docs.google.com/presentation/d11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#slide=id.g4f7e818af8_0_0) by Lukas Vrabec.
+The contents here are based on the
+[SELinux Workshop](https://docs.google.com/presentation/d11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/) by Lukas Vrabec.
 
 Refer to the [Red Hat Quick Courses Contributor Guide](https://redhatquickcourses.github.io/welcome/1/guide/overview.html) for instructions about collaborating in this repository.
