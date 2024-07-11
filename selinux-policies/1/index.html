@@ -52,6 +52,46 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ch1-need/s1-intro.html">What is SELinux</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch1-need/s3-labels.html">SELinux Labels and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch1-need/s5-containers.html">How RHEL secures containers with SELinux</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch2-configure/s1-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch2-configure/s3-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -99,7 +139,7 @@
 <h2 id="_writing_targeted_policies_for_selinux_on_red_hat_enterprise_linux"><a class="anchor" href="#_writing_targeted_policies_for_selinux_on_red_hat_enterprise_linux"></a>Writing Targeted Policies for SELinux on Red Hat Enterprise Linux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) <strong>targeted</strong> policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the <strong>audit2allow</strong> command.</p>
+<p>This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) <strong>targeted</strong> policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the <strong>sepolicy generate</strong> and <strong>audit2allow</strong> commands.</p>
 </div>
 </div>
 </div>
@@ -168,13 +208,13 @@
 <h2 id="_classroom_environment"><a class="anchor" href="#_classroom_environment"></a>Classroom Environment</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and which can download RPM packages from Red Hat repositories or a Yum mirror.</p>
+<p>For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and from which can download RPM packages from Red Hat repositories or a Yum mirror.</p>
 </div>
 <div class="paragraph">
-<p>As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as a ready-to-use environment for hands-on activities.</p>
+<p>As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as ready-to-use environments for hands-on activities.</p>
 </div>
 <div class="paragraph">
-<p>You could even try these activities directly on your day-to-day machine because the worst consequence of trivial mistales would be waiting a few minutes to relabel the root partition at boot.</p>
+<p>You could even try these activities directly on your day-to-day machine if you&#8217;re feeling brave ;-) because the worst consequence of trivial mistales would be waiting a few minutes to relabel the root partition at boot.</p>
 </div>
 </div>
 </div>
@@ -196,6 +236,19 @@
 <p><a href="https://github.com/SELinuxProject/selinux-notebook">The SELinux Notebook</a></p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author"><a class="anchor" href="#_author"></a>Author</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Fernando Lozano</strong><br>
+Training Content Architect<br>
+Red Hat - Product Portfoluio Marketing &amp; Learning</p>
+</div>
+<div class="paragraph">
+<p>Based on previous work by Lukas Vrabec and Paul Armstrong.</p>
 </div>
 </div>
 </div>

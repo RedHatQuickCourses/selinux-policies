@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Chapter 3 :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Supporting SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-troubleshoot-lab.html">
+    <link rel="next" href="s4-support-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -74,22 +76,22 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+    <a class="nav-link" href="index.html">SELinux Management</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-configure/s1-avc.html">Interpreting AVC messages</a>
+    <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-configure/s3-support.html">Supporting SELinux</a>
+    <a class="nav-link" href="s4-support-lab.html">Lab: Supporting SElinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
   </li>
 </ul>
   </li>
@@ -124,7 +126,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
-    <li><a href="index.html">Chapter 3</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s3-support.html">Supporting SELinux</a></li>
   </ul>
 </nav>
 </div>
@@ -133,10 +136,111 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Chapter 3</h1>
+<h1 class="page">Supporting SELinux</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>This is the home page of <em>Chapter 3</em> in the <strong>hello</strong> quick course&#8230;&#8203;.</p>
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Adopt a structured workflow for resolving SELinux issues</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lorem Ipsum</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
+</div>
+<div class="sect2">
+<h3 id="_selinux_policy_devel_policycoreutils_python_utils_slides_136_144"><a class="anchor" href="#_selinux_policy_devel_policycoreutils_python_utils_slides_136_144"></a>selinux-policy-devel policycoreutils-python-utils: slides #136-144</h3>
+<div class="paragraph">
+<p>SUPPORT SELINUX CASES</p>
+</div>
+<div class="paragraph">
+<p>Very busy and confusing diagram of a workflow for troubleshooting SELinux issues. Keep it? Redraw for legibility?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># dnf install selinux-policy-devel policycoreutils-python-utils</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Is audit daemon running?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># systemctl status auditd.service</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Is SELinux enabled?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># getenforce</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Put SELinux to permissive</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># setenforce 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reproduce the scenario</p>
+</div>
+<div class="paragraph">
+<p>What does ausearch say?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -m USER_AVC -ts today</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Maybe needed</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># semodule -DB</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a></span>
+  <span class="next"><a href="s4-support-lab.html">Lab: Supporting SElinux</a></span>
+</nav>
 </article>
   </div>
 </main>

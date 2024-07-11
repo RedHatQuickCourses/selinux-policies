@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Troubleshooting SElinux policies :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s1-avc.html">
+    <link rel="next" href="s3-support.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">What is SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Labels and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-containers.html">How RHEL secures containers with SELinux</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Troubleshooting SElinux policies</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Run a customized Apache Web Server with the targeted policy from RHEL.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lorem Ipsum</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
+</div>
+<div class="sect2">
+<h3 id="_custom_httpd_config_slides_105_122"><a class="anchor" href="#_custom_httpd_config_slides_105_122"></a>Custom httpd config: slides #105-122</h3>
+<div class="paragraph">
+<p>TROUBLESHOOTING EXISTING POLICY</p>
+</div>
+<div class="paragraph">
+<p>MISLABELED SYSTEM I.E LABELS ON OBJECTS ARE WRONG</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># restorecon -Rv /</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># fixfiles onboot
+# reboot</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>SELINUX MODIFICATIONS OF THE DISTRO POLICY VIA SELINUX USERSPACE TOOLING</p>
+</div>
+<div class="paragraph">
+<p>SOMETIMES IT’S NOT NECESSARY TO CREATE CUSTOM SELINUX POLICY, LOCAL MODIFICATION CAN FIX IT.</p>
+</div>
+<div class="paragraph">
+<p>APACHE HTTP SERVER WITH CHANGES IN THE DEFAULT CONFIGURATION</p>
+</div>
+<div class="paragraph">
+<p>httpd service configured to listen on tcp port 3131 instead of port 80
+document root will be /var/test_www/ instead of /var/www/</p>
+</div>
+<div class="paragraph">
+<p>Change in /etc/httpd/conf/httpd.conf</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># sed -i 's_Listen 80_Listen 3131_' /etc/httpd/conf/httpd.conf
+# sed -i 's_DocumentRoot "/var/www/html"<em>DocumentRoot "/var/test\_www/html"</em>' /etc/httpd/conf/httpd.conf
+# sed -i 's_&lt;Directory "/var/www/html"&gt;_&lt;Directory "/var/test_www/html"&gt;_' /etc/httpd/conf/httpd.conf</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">APPLY CHANGES IN THE CONFIGURATION AND SEARCH FOR AVC DENIALS
+
+# systemctl restart httpd
+# ausearch -m AVC -ts recent</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>httpd service trying to bind on port 3131 instead of 80, this should be changed in SELinux policy</p>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># semanage port -l | grep 80
+http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
+
+# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
+Found 1 semantic av rules:
+  allow httpd_t http_port_t : tcp_socket name_bind ;
+
+# semanage port -a -t http_port_t -p tcp 3131
+# semanage port -l | grep http_port_t
+http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># systemctl restart httpd
+# wget localhost:3131/index.html</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>httpd service DocumentRoot is in /var/test_www/html and this directory has wrong label</p>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># matchpathcon /var/test_www/html/index.html
+/var/test_www/html/index.html    system_u:object_r:var_t:s0
+
+# matchpathcon /var/www/html/index.html
+/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
+
+# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
+# restorecon -Rv /var/</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># semanage fcontext -l | grep httpd_sys_content_t | grep www
+var/www(/.<strong>)?            all files
+system_u:object_r:httpd_sys_content_t:s0
+/var/test_www(/.</strong>)?    all files
+system_u:object_r:httpd_sys_content_t:s0
+....
+....</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>HTTPD SERVICE SELINUX DENIALS ARE FIXED WITHOUT WRITING CUSTOM POLICY!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_skip_local_policies_using_cil"><a class="anchor" href="#_skip_local_policies_using_cil"></a>Skip: Local policies using CIL</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_packaging_policies_as_rpms"><a class="anchor" href="#_skip_packaging_policies_as_rpms"></a>Skip: Packaging policies as RPMs</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_ansible_collections"><a class="anchor" href="#_skip_ansible_collections"></a>Skip: Ansible collections</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_selinux_news"><a class="anchor" href="#_skip_selinux_news"></a>Skip: SELinux News</h3>
+
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-avc.html">Interpreting AVC messages</a></span>
+  <span class="next"><a href="s3-support.html">Supporting SELinux</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

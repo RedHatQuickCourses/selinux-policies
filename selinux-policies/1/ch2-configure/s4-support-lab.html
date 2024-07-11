@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Supporting SElinux :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s3-support.html">
+    <link rel="next" href="s5-multihost.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">What is SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Labels and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-containers.html">How RHEL secures containers with SELinux</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s4-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s4-support-lab.html">Lab: Supporting SElinux</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Supporting SElinux</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Troubleshoot SELinux errors from an Apache Web Server and configure SELinux to fix those errors.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lorem Ipsum</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
+</div>
+<div class="sect2">
+<h3 id="_http_with_nfs_slides_145_158"><a class="anchor" href="#_http_with_nfs_slides_145_158"></a>Http with NFS: slides #145-158</h3>
+<div class="paragraph">
+<p>What does ausearch say?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -m USER_AVC -ts today</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1395177286.929:1638): avc:  denied  { read } for  pid=6591 comm="httpd" name="webpages" dev="0:37" ino=2112 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:nfs_t:s0 tclass=dir</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -m USER_AVC -ts today | audit2allow
+...
+# sealert -a avc
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">#============= httpd_t ==============
+#!!!! This avc can be allowed using one of the these booleans:
+# 	httpd_use_nfs, git_system_use_nfs
+allow httpd_t nfs_t:dir read;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># semanage boolean -l | grep httpd_use_nfs
+# semanage boolean -m --on httpd_use_nfs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># semanage port -l | grep 80
+http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
+
+# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
+Found 1 semantic av rules:
+  allow httpd_t http_port_t : tcp_socket name_bind ;
+
+# semanage port -a -t http_port_t -p tcp 3131
+# semanage port -l | grep http_port_t
+http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># matchpathcon /var/test_www/html/index.html
+/var/test_www/html/index.html    system_u:object_r:var_t:s0
+
+# matchpathcon /var/www/html/index.html
+/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
+
+# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
+# restorecon -Rv /var/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:unlabeled_t:s0 tclass=file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># restorecon -Rv /
+# fixfiles onboot &amp;&amp; reboot</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="db" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:mysql_log_t:s0 tclass=file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># audit2allow -i avc
+#============= httpd_t ==============
+allow httpd_t mysqld_log_t:file read;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># audit2allow -i avc -M local_httpd
+<strong><strong></strong><strong></strong></strong><strong><strong></strong><strong></strong></strong> IMPORTANT <strong><strong></strong><strong></strong></strong><strong><strong></strong><strong></strong></strong><strong>*</strong>
+To make this policy package active, execute:
+semodule -i local_httpd.pp
+# semodule -i local_httpd.pp</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s3-support.html">Supporting SELinux</a></span>
+  <span class="next"><a href="s5-multihost.html">Consistent SElinux settings</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

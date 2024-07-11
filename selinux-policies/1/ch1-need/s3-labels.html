@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Review of SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
-    <link rel="prev" href="../index.html">
-    <link rel="next" href="s1-intro.html">
+    <title>SELinux Labels and Contexts :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-intro-quiz-answers.html">
+    <link rel="next" href="s5-containers.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -46,7 +46,7 @@
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
@@ -62,7 +62,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s3-labels.html">SELinux Labels and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -127,6 +127,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s3-labels.html">SELinux Labels and Contexts</a></li>
   </ul>
 </nav>
 </div>
@@ -135,14 +136,17 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Review of SELinux</h1>
+<h1 class="page">SELinux Labels and Contexts</h1>
 <div id="preamble">
 <div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Goal</dt>
+<dt class="hdlist1">Objective</dt>
 <dd>
-<p>Understand the need for custom SELinux targeted policies.</p>
+<p>Review the fundamental concepts of SELinux policies and rules.</p>
 </dd>
 </dl>
 </div>
@@ -153,7 +157,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in Progress
+Pending Review
 </td>
 </tr>
 </table>
@@ -161,16 +165,108 @@ Work in Progress
 </div>
 </div>
 <div class="sect1">
-<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
+<h2 id="_selinux_labels_and_contexts"><a class="anchor" href="#_selinux_labels_and_contexts"></a>SElinux Labels and Contexts</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This chapter reviews the purpose of SELinux and relatd day-to-day administration tasks with Red Hat Enterprise Linux (RHEL) to help IT professional assess if they should just use the policies provided by Red Hat and other vendors, as they are, or if they need to develop custom policies to protect their applications and users.</p>
+<p>SELinux works by assigning labels to processes and to objects. Those labels define the SELinux context of a process (or domain) and of an object.</p>
+</div>
+<div class="paragraph">
+<p>SELinux policy rules allow process with a given label to access objects with a matching label. Process labels may grant different access levels to multiple object labels, for example read-only with some labels and read-write with others.</p>
+</div>
+<div class="paragraph">
+<p>SELinux policies control not only which process labels gets access to which resource labels, but also which labels processes and resources can get. These are called context transition rules. A context transition rules specifies the new label for a child process after a fork and exec, and the context on files created by process with a given context.</p>
+</div>
+<div class="paragraph">
+<p>You can configure your RHEL system in such a way that a system administrator can peform day-to-day tasks such as installing packages and creating users but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not on processes.</p>
+</div>
+<div class="paragraph">
+<p>[ LABELS AND CONTEXTS NEED WORK ]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
+</div>
+<div class="sect2">
+<h3 id="_targeted_policies_and_types_slides_53_57"><a class="anchor" href="#_targeted_policies_and_types_slides_53_57"></a>Targeted policies and types: slides #53-57</h3>
+<div class="paragraph">
+<p>IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT</p>
+</div>
+<div class="paragraph">
+<p>WE MOSTLY CARE ONLY ABOUT TYPES</p>
+</div>
+<div class="paragraph">
+<p>SELINUX ALLOW RULE SYNTAX WITH TYPES</p>
+</div>
+<div class="paragraph">
+<p>ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;</p>
+</div>
+<div class="paragraph">
+<p>ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_type_transitions_for_domainsprocesses_and_resources_slides_58_66"><a class="anchor" href="#_type_transitions_for_domainsprocesses_and_resources_slides_58_66"></a>Type transitions for domains/processes and resources (slides #58-66)</h3>
+<div class="paragraph">
+<p>DOMAIN TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;</p>
+</div>
+<div class="paragraph">
+<p>FILE TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;</p>
+</div>
+<div class="paragraph">
+<p>FILE NAME TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_skip_selinux_modes"><a class="anchor" href="#_skip_selinux_modes"></a>Skip: SELinux modes</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_selinux_with_podman_containers_mcs"><a class="anchor" href="#_skip_selinux_with_podman_containers_mcs"></a>Skip: SELinux with podman containers: MCS</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_udica"><a class="anchor" href="#_skip_udica"></a>Skip: Udica</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_multi_level_security_mls_slides_92_93"><a class="anchor" href="#_multi_level_security_mls_slides_92_93"></a>Multi Level Security MLS: slides #92-93</h3>
+<div class="paragraph">
+<p>Multi level security(MLS)</p>
+</div>
+<div class="paragraph">
+<p>Figure of read down and no write up</p>
+</div>
+<div class="paragraph">
+<p>Type enforcement allow rule must be present before SELinux considers sensitivity level</p>
+</div>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="../index.html">Home</a></span>
-  <span class="next"><a href="s1-intro.html">What is SELinux</a></span>
+  <span class="prev"><a href="s2-intro-quiz-answers.html">Answers to the Quiz</a></span>
+  <span class="next"><a href="s5-containers.html">How RHEL secures containers with SELinux</a></span>
 </nav>
 </article>
   </div>
