@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>SELinux Labels and Contexts :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>SELinux Policies, Labels, and Contexts :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s2-intro-quiz-answers.html">
-    <link rel="next" href="s5-containers.html">
+    <link rel="next" href="s5-rhel.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">What is SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -63,10 +63,13 @@
 </ul>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s3-labels.html">SELinux Labels and Contexts</a>
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-containers.html">How RHEL secures containers with SELinux</a>
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
   </li>
 </ul>
   </li>
@@ -127,7 +130,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Review of SELinux</a></li>
-    <li><a href="s3-labels.html">SELinux Labels and Contexts</a></li>
+    <li><a href="s3-labels.html">SELinux Policies, Labels, and Contexts</a></li>
   </ul>
 </nav>
 </div>
@@ -136,7 +139,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">SELinux Labels and Contexts</h1>
+<h1 class="page">SELinux Policies, Labels, and Contexts</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -146,7 +149,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Review the fundamental concepts of SELinux policies and rules.</p>
+<p>Review the fundamental concepts required to read and interpret SELinux policies.</p>
 </dd>
 </dl>
 </div>
@@ -191,82 +194,147 @@ Pending Review
 <p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
 </div>
 <div class="sect2">
-<h3 id="_targeted_policies_and_types_slides_53_57"><a class="anchor" href="#_targeted_policies_and_types_slides_53_57"></a>Targeted policies and types: slides #53-57</h3>
+<h3 id="_selinux_policies_and_labels_slides_19_52"><a class="anchor" href="#_selinux_policies_and_labels_slides_19_52"></a>SELinux policies and labels: slides #19-52</h3>
 <div class="paragraph">
-<p>IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT</p>
+<p>SELINUX SECURITY POLICY</p>
 </div>
 <div class="paragraph">
-<p>WE MOSTLY CARE ONLY ABOUT TYPES</p>
+<p>CORE COMPONENT OF SELINUX
+COLLECTION OF SELINUX POLICY RULES
+LOADED INTO THE KERNEL BY SELINUX USERSPACE TOOLS</p>
 </div>
 <div class="paragraph">
-<p>SELINUX ALLOW RULE SYNTAX WITH TYPES</p>
+<p>Figure of policy -&#8594; tooling -&#8594; kernel</p>
 </div>
 <div class="paragraph">
-<p>ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;</p>
+<p>ENFORCED BY THE KERNEL
+USED TO AUTHORIZE ACCESS REQUESTS ON THE SYSTEM</p>
 </div>
 <div class="paragraph">
-<p>ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;</p>
+<p>BY DEFAULT EVERYTHING IS DENIED AND YOU DEFINE POLICY RULES TO ALLOW CERTAIN REQUESTS</p>
+</div>
+<div class="paragraph">
+<p>SELINUX POLICY RULES</p>
+</div>
+<div class="paragraph">
+<p>DESCRIBE AN INTERACTION BETWEEN PROCESSES AND SYSTEM RESOURCES</p>
+</div>
+<div class="paragraph">
+<p>SELINUX POLICY RULE IN HUMAN LANGUAGE</p>
+</div>
+<div class="paragraph">
+<p>"APACHE process can READ its LOGGING FILE"</p>
+</div>
+<div class="paragraph">
+<p>SELINUX VIEW OF THAT INTERACTION</p>
+</div>
+<div class="paragraph">
+<p>ALLOW apache_process apache_log:FILE READ;</p>
+</div>
+<div class="paragraph">
+<p>apache_process apache_log ARE LABELS</p>
+</div>
+<div class="paragraph">
+<p>LABELS</p>
+</div>
+<div class="paragraph">
+<p>ASSIGNED TO PROCESSES
+ASSIGNED TO SYSTEM RESOURCES
+BY SELINUX SECURITY POLICY
+MAP REAL SYSTEM ENTITIES INTO THE SELINUX WORLD</p>
+</div>
+<div class="paragraph">
+<p>LABELS IN REALITY</p>
+</div>
+<div class="paragraph">
+<p>STORED IN EXTENDED ATTRIBUTES OF FILE SYSTEMS - EXT2,EXT3, EXT4 &#8230;&#8203;</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># getfattr -n security.selinux /etc/passwd
+getfattr: Removing leading '/' from absolute path names
+# file: etc/passwd
+security.selinux="system_u:object_r:passwd_file_t:s0"
+
+# ls -Z /etc/passwd
+system_u:object_r:passwd_file_t:s0 /etc/passwd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>SELINUX LABELS CONSIST OF FOUR PARTS</p>
+</div>
+<div class="paragraph">
+<p>&lt;user&gt;:&lt;role&gt;:&lt;type&gt;:&lt;MLS/MCS&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;user&gt;
+Not the same as Linux users
+Several Linux users can be mapped to a single SELinux user
+object_u is a placeholder for Linux system resources
+system_u is a placeholder for Linux processes
+Can be limited to a set of SELinux roles</p>
+</div>
+<div class="paragraph">
+<p>&lt;role&gt;
+SELinux users can have multiple roles but only one can be active
+object_r is a placeholder for Linux system resources
+system_r is a placeholder for system processes
+Can be limited to a set of SELinux types</p>
+</div>
+<div class="paragraph">
+<p>&lt;type&gt;
+Security model known as TYPE ENFORCEMENT
+In 99% you care only about TYPES
+policy rules and interactions between types</p>
+</div>
+<div class="paragraph">
+<p>&lt;MLS/MCS&gt;
+Multi Level Security
+Only the MCS part is used in Targeted Policy with the default s0 level
+Allow users to mark resources with compartment tags (MCS1, MCS2)
+Used for RHEL virtualization and for container security
+s0:c1 can not access s0:c2</p>
+</div>
+<div class="paragraph">
+<p>Figure of users, roles, and screenshots of user contexts</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># useradd -Z staff_u -G wheel staff
+# passwd staff
+# ssh staff@localhost
+$ id -Z</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_type_transitions_for_domainsprocesses_and_resources_slides_58_66"><a class="anchor" href="#_type_transitions_for_domainsprocesses_and_resources_slides_58_66"></a>Type transitions for domains/processes and resources (slides #58-66)</h3>
-<div class="paragraph">
-<p>DOMAIN TRANSITION RULES</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;</p>
-</div>
-<div class="paragraph">
-<p>FILE TRANSITION RULES</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;</p>
-</div>
-<div class="paragraph">
-<p>FILE NAME TRANSITION RULES</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;</p>
-</div>
-<div class="paragraph">
-<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_skip_selinux_modes"><a class="anchor" href="#_skip_selinux_modes"></a>Skip: SELinux modes</h3>
+<h3 id="_skip_targeted_policies_and_types"><a class="anchor" href="#_skip_targeted_policies_and_types"></a>Skip: targeted policies and types</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_skip_selinux_with_podman_containers_mcs"><a class="anchor" href="#_skip_selinux_with_podman_containers_mcs"></a>Skip: SELinux with podman containers: MCS</h3>
+<h3 id="_skip_type_transitions_for_domainsprocesses_and_resources"><a class="anchor" href="#_skip_type_transitions_for_domainsprocesses_and_resources"></a>Skip: Type transitions for domains/processes and resources</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_skip_udica"><a class="anchor" href="#_skip_udica"></a>Skip: Udica</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_multi_level_security_mls_slides_92_93"><a class="anchor" href="#_multi_level_security_mls_slides_92_93"></a>Multi Level Security MLS: slides #92-93</h3>
+<h3 id="_selinux_modes_slides_67_72"><a class="anchor" href="#_selinux_modes_slides_67_72"></a>SELinux modes: slides #67-72</h3>
 <div class="paragraph">
-<p>Multi level security(MLS)</p>
+<p>SELINUX MODES</p>
 </div>
 <div class="paragraph">
-<p>Figure of read down and no write up</p>
+<p>ENFORCING
+SELINUX SECURITY POLICY IS ENFORCED BY KERNEL</p>
 </div>
 <div class="paragraph">
-<p>Type enforcement allow rule must be present before SELinux considers sensitivity level</p>
+<p>PERMISSIVE
+SELINUX SECURITY POLICY IS NOT ENFORCED BY KERNEL
+ACCESSES ARE LOGGED</p>
 </div>
 </div>
 </div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="s2-intro-quiz-answers.html">Answers to the Quiz</a></span>
-  <span class="next"><a href="s5-containers.html">How RHEL secures containers with SELinux</a></span>
+  <span class="next"><a href="s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a></span>
 </nav>
 </article>
   </div>

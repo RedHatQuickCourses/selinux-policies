@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>What is SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Why You Should Care About SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="index.html">
     <link rel="next" href="s2-intro-quiz.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">What is SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -63,10 +63,13 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-labels.html">SELinux Labels and Contexts</a>
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-containers.html">How RHEL secures containers with SELinux</a>
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
   </li>
 </ul>
   </li>
@@ -127,7 +130,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Review of SELinux</a></li>
-    <li><a href="s1-intro.html">What is SELinux</a></li>
+    <li><a href="s1-intro.html">Why You Should Care About SELinux</a></li>
   </ul>
 </nav>
 </div>
@@ -136,7 +139,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">What is SELinux</h1>
+<h1 class="page">Why You Should Care About SELinux</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -168,16 +171,17 @@ Pending Review
 <h2 id="_do_not_disable_selinux"><a class="anchor" href="#_do_not_disable_selinux"></a>Do Not Disable SELinux!</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux has come a long way since the days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn&#8217;t good advice!</p>
+<p>SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn&#8217;t good advice!</p>
 </div>
 <div class="paragraph">
-<p>Nowadays (actually since the early days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL evolved to solve most complains, real or perceived. There&#8217;s very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this courses with SELinux enabled and in enforcing mode!</p>
+<p>Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There&#8217;s very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this courses with SELinux enabled and in enforcing mode!</p>
 </div>
 <div class="paragraph">
-<p>IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of everyone, not just the administrators of mission-critical production servers. Opting out such a powerful and mature security technology as SELinux is not a good practice.</p>
+<p>IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of everyone, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.</p>
 </div>
 <div class="paragraph">
-<p>So you are strongy advised to run all your RHEL machines and VMs, and also all you CentOS and Fedora machines and VMs, with SELinux enabled and in enforcing mode.</p>
+<p>IMPORTANT:
+All organizations are strongy advised to run all their RHEL machines and VMs, and also all their CentOS and Fedora machines and VMs, with SELinux enabled and in <strong>enforcing mode</strong>.</p>
 </div>
 </div>
 </div>
@@ -185,16 +189,35 @@ Pending Review
 <h2 id="_what_is_selinux"><a class="anchor" href="#_what_is_selinux"></a>What is SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Skipping the history lesson, as we expect that this course isn&#8217;t your first exposure to SELinux, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, when they access any object managed by the Linux Kernel, such as a file or a TCP port. Processes can access objects only if allowed by the current SELinux policy in the kernel.</p>
+<p>Skipping the history lesson, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the proccess.</p>
+</div>
+<div class="paragraph">
+<p>SELinux <strong>policies</strong> control access to any object managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy do not allow access, them access is denied.</p>
 </div>
 <div class="paragraph">
 <p>Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is acessible to other users, like they could do with fle system permissions. SELinux policies are mandatory. They are not optional (or discretionary).</p>
 </div>
 <div class="paragraph">
-<p>The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the SELinux policy would not allow it to perform. For example, you cannot trick a web server to access files other than its web pages.</p>
+<p>SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and POSIX file permissions. These mecanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access.</p>
 </div>
 <div class="paragraph">
-<p>SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example, see [CVE-123] and [CVE-456]. To be effectie, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.</p>
+<p>The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the SELinux policy would not allow it to perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.</p>
+</div>
+<div class="paragraph">
+<p>SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>[CVE-123]</p>
+</li>
+<li>
+<p>[CVE-456]</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To be effectie, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.</p>
 </div>
 </div>
 </div>
@@ -222,21 +245,32 @@ Pending Review
 <div class="paragraph">
 <p>If your organization has an internal software development group, ideally that group provides SELinux policies alongisde their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, filesystem permissions, and other requirements for deploying their application. If they don&#8217;t then the system administrator resposible fo securing the deployment must work with them to create such a policy.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_you_need_to_create_custom_selinux_policies"><a class="anchor" href="#_what_you_need_to_create_custom_selinux_policies"></a>What You Need to Create Custom SELinux Policies</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Creating an SELinux policy requires knowledge about the architecture and implementation of an application. By "intimate knowledge" it doesn&#8217;t mean access to the application&#8217;s source code and understanding of its coding architecture. It means understanding of what an aplication does, do the level you are able to aswer questions such as:</p>
+<p>All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming not scripting knowledge to create and validate SELinux policies.</p>
+</div>
+<div class="paragraph">
+<p>Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn&#8217;t mean access to the application&#8217;s source code and understanding of its internal implementation details. It means understanding of what an aplication does, to the level you are able to answer questions such as:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Does it make sense for that application to write or read file XYZ?</p>
+<p>Does it make sense for that application to write or read file /directory/file?</p>
 </li>
 <li>
 <p>Does it make sense for that application to listen on TCP Port N?</p>
 </li>
+<li>
+<p>Does it make sense for that application to open network connections to api.example.com?</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
-<p>In fact, there&#8217;s tooling to generate policies automatically from executable files, but you cannot verify if the resulting policy is too permissive (or not pemissive enough) without some deep knowledge about the target application.</p>
+<p>In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.</p>
 </div>
 </div>
 </div>
@@ -255,18 +289,18 @@ Pending Review
 <div class="ulist">
 <ul>
 <li>
-<p>Object labels: you chan change the labels on files and other objects to tell SELinux they should be allowed by the policy.</p>
+<p><strong>Object labels</strong>: you chan change the labels on files and other objects to tell SELinux they should be allowed by the policy.</p>
 </li>
 <li>
-<p>Booleans: You can selectively enable or disable some rules inside a policy.</p>
+<p><strong>Booleans</strong>: You can selectively enable or disable some groups of rules inside a policy.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>By setting labels and booleans, a system administrator can address configuration changes and still run applications under a strict SELinux policy.</p>
+<p>By setting labels and booleans, a system administrator can address configuration changes and still run applications under a strict SELinux policy provided by a software vendor such as Red Hat.</p>
 </div>
 <div class="paragraph">
-<p>In the worst case scenario, system administrators can configure an application to run in permissive mode, so SELinux will bot block access to anything, without putting the entire system in permissive mode. That application will be unprotected and vulnerable ot exploits, but the remaining of the system will be protected.</p>
+<p>In the worst case scenario, system administrators can configure an application to run in <strong>permissive mode</strong>, so SELinux will not block access to anything, and without leaving the entire system in permissive mode. That application will be unprotected and vulnerable ot exploits, but the remaining of the system will be protected.</p>
 </div>
 <div class="paragraph">
 <p>In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.</p>
@@ -274,16 +308,16 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_unconfined_processes_and_objects"><a class="anchor" href="#_unconfined_processes_and_objects"></a>Unconfined processes and objects</h2>
+<h2 id="_unconfined_processes_and_objects"><a class="anchor" href="#_unconfined_processes_and_objects"></a>Unconfined Processes and Objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You could cheat and create a policy which basically states that a process can do aything. SELinux makes it very hard to create such a policy, but it enables creating what Red Hat calls unconfined processes: applications with unrestricted access to a set of objects that are also considered unconfined.</p>
+<p>You could cheat and create a policy which basically states that a process can do aything. SELinux makes it very hard to create such a policy, but it enables creating what Red Hat calls <strong>unconfined</strong> processes: applications with unrestricted access to a set of objects that are also considered unconfined.</p>
 </div>
 <div class="paragraph">
 <p>For example, all processes that a user starts from an interactive login are unconfined, and files on the user&#8217;s home directory are also unconfined. This way a user can run any application to access their own files, without requiring custom policies, but still protecting system services and their files from interactive users.</p>
 </div>
 <div class="paragraph">
-<p>Unconfined processes may not be acceptable for some high-security organzations, such as those involved with national defense. For these organizaitons, SElinux enables you to configure policies with distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course do not teaches how to handle such scenarios.</p>
+<p>Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SElinux enables you to configure policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.</p>
 </div>
 </div>
 </div>
@@ -341,143 +375,6 @@ CVE-2024-21626
 <p>PROBLEMS
 ROOT BYPASSING THIS SECURITY
 SETUID BIT</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_selinux_policies_and_labels_slides_19_52"><a class="anchor" href="#_selinux_policies_and_labels_slides_19_52"></a>SELinux policies and labels: slides #19-52</h3>
-<div class="paragraph">
-<p>SELINUX SECURITY POLICY</p>
-</div>
-<div class="paragraph">
-<p>CORE COMPONENT OF SELINUX
-COLLECTION OF SELINUX POLICY RULES
-LOADED INTO THE KERNEL BY SELINUX USERSPACE TOOLS</p>
-</div>
-<div class="paragraph">
-<p>Figure of policy -&#8594; tooling -&#8594; kernel</p>
-</div>
-<div class="paragraph">
-<p>ENFORCED BY THE KERNEL
-USED TO AUTHORIZE ACCESS REQUESTS ON THE SYSTEM</p>
-</div>
-<div class="paragraph">
-<p>BY DEFAULT EVERYTHING IS DENIED AND YOU DEFINE POLICY RULES TO ALLOW CERTAIN REQUESTS</p>
-</div>
-<div class="paragraph">
-<p>SELINUX POLICY RULES</p>
-</div>
-<div class="paragraph">
-<p>DESCRIBE AN INTERACTION BETWEEN PROCESSES AND SYSTEM RESOURCES</p>
-</div>
-<div class="paragraph">
-<p>SELINUX POLICY RULE IN HUMAN LANGUAGE</p>
-</div>
-<div class="paragraph">
-<p>"APACHE process can READ its LOGGING FILE"</p>
-</div>
-<div class="paragraph">
-<p>SELINUX VIEW OF THAT INTERACTION</p>
-</div>
-<div class="paragraph">
-<p>ALLOW apache_process apache_log:FILE READ;</p>
-</div>
-<div class="paragraph">
-<p>apache_process apache_log ARE LABELS</p>
-</div>
-<div class="paragraph">
-<p>LABELS</p>
-</div>
-<div class="paragraph">
-<p>ASSIGNED TO PROCESSES
-ASSIGNED TO SYSTEM RESOURCES
-BY SELINUX SECURITY POLICY
-MAP REAL SYSTEM ENTITIES INTO THE SELINUX WORLD</p>
-</div>
-<div class="paragraph">
-<p>LABELS IN REALITY</p>
-</div>
-<div class="paragraph">
-<p>STORED IN EXTENDED ATTRIBUTES OF FILE SYSTEMS - EXT2,EXT3, EXT4 &#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># getfattr -n security.selinux /etc/passwd
-getfattr: Removing leading '/' from absolute path names
-# file: etc/passwd
-security.selinux="system_u:object_r:passwd_file_t:s0"
-
-# ls -Z /etc/passwd
-system_u:object_r:passwd_file_t:s0 /etc/passwd</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>SELINUX LABELS CONSIST OF FOUR PARTS</p>
-</div>
-<div class="paragraph">
-<p>&lt;user&gt;:&lt;role&gt;:&lt;type&gt;:&lt;MLS/MCS&gt;</p>
-</div>
-<div class="paragraph">
-<p>&lt;user&gt;
-Not the same as Linux users
-Several Linux users can be mapped to a single SELinux user
-object_u is a placeholder for Linux system resources
-system_u is a placeholder for Linux processes
-Can be limited to a set of SELinux roles</p>
-</div>
-<div class="paragraph">
-<p>&lt;role&gt;
-SELinux users can have multiple roles but only one can be active
-object_r is a placeholder for Linux system resources
-system_r is a placeholder for system processes
-Can be limited to a set of SELinux types</p>
-</div>
-<div class="paragraph">
-<p>&lt;type&gt;
-Security model known as TYPE ENFORCEMENT
-In 99% you care only about TYPES
-policy rules and interactions between types</p>
-</div>
-<div class="paragraph">
-<p>&lt;MLS/MCS&gt;
-Multi Level Security
-Only the MCS part is used in Targeted Policy with the default s0 level
-Allow users to mark resources with compartment tags (MCS1, MCS2)
-Used for RHEL virtualization and for container security
-s0:c1 can not access s0:c2</p>
-</div>
-<div class="paragraph">
-<p>Figure of users, roles, and screenshots of user contexts</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># useradd -Z staff_u -G wheel staff
-# passwd staff
-# ssh staff@localhost
-$ id -Z</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_skip_targeted_policies_and_types"><a class="anchor" href="#_skip_targeted_policies_and_types"></a>Skip: targeted policies and types</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_skip_type_transitions_for_domainsprocesses_and_resources"><a class="anchor" href="#_skip_type_transitions_for_domainsprocesses_and_resources"></a>Skip: Type transitions for domains/processes and resources</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_selinux_modes_slides_67_72"><a class="anchor" href="#_selinux_modes_slides_67_72"></a>SELinux modes: slides #67-72</h3>
-<div class="paragraph">
-<p>SELINUX MODES</p>
-</div>
-<div class="paragraph">
-<p>ENFORCING
-SELINUX SECURITY POLICY IS ENFORCED BY KERNEL</p>
-</div>
-<div class="paragraph">
-<p>PERMISSIVE
-SELINUX SECURITY POLICY IS NOT ENFORCED BY KERNEL
-ACCESSES ARE LOGGED</p>
 </div>
 </div>
 </div>

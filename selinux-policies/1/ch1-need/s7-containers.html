@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Consistent SElinux settings :: Writing Targeted Policies for SELinux on RHEL</title>
-    <link rel="prev" href="s4-support-lab.html">
+    <title>How Red Hat Protects Containers With SELinux on RHEL :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s5-rhel.html">
+    <link rel="next" href="../ch2-configure/index.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -47,28 +48,28 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s7-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s7-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
   </li>
 </ul>
   </li>
@@ -78,22 +79,22 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">SELinux Management</a>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
+    <a class="nav-link" href="../ch2-configure/s1-avc.html">Interpreting AVC messages</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+    <a class="nav-link" href="../ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
+    <a class="nav-link" href="../ch2-configure/s3-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s4-support-lab.html">Lab: Supporting SElinux</a>
+    <a class="nav-link" href="../ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
   </li>
 </ul>
   </li>
@@ -128,8 +129,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
-    <li><a href="index.html">SELinux Management</a></li>
-    <li><a href="s5-multihost.html">Consistent SElinux settings</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s7-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a></li>
   </ul>
 </nav>
 </div>
@@ -138,7 +139,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Consistent SElinux settings</h1>
+<h1 class="page">How Red Hat Protects Containers With SELinux on RHEL</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -148,7 +149,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Ensure consistent SELinux settings on multiple servers using Ansible collections.</p>
+<p>Undestand how RHEL uses category labels to confine local containers.</p>
 </dd>
 </dl>
 </div>
@@ -170,7 +171,7 @@ Pending Review
 <h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>Lorem ipsum</p>
 </div>
 </div>
 </div>
@@ -181,36 +182,88 @@ Pending Review
 <p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
 </div>
 <div class="sect2">
-<h3 id="_ansible_collections_slides_129_133"><a class="anchor" href="#_ansible_collections_slides_129_133"></a>Ansible collections: slides #129-133</h3>
+<h3 id="_skip_selinux_with_podman_containers_mcs_slides_73_88"><a class="anchor" href="#_skip_selinux_with_podman_containers_mcs_slides_73_88"></a>Skip: SELinux with podman containers: MCS (slides #73-88)</h3>
 <div class="paragraph">
-<p>We have properly configured SELinux on one system, what about others?</p>
+<p>SELINUX VS. CONTAINERS</p>
 </div>
 <div class="paragraph">
-<p>Let’s use ansible to deploy the same configuration to the rest of the servers!</p>
+<p>APPLIES MAC TO IMPROVE SECURITY WHEN USING VIRTUAL MACHINES</p>
 </div>
 <div class="paragraph">
-<p>use the following Ansible role:
-<a href="https://github.com/linux-system-roles/selinux" class="bare">https://github.com/linux-system-roles/selinux</a></p>
+<p>Figure of container MCS labels vs files MCS labels</p>
 </div>
 <div class="paragraph">
-<p>Expected Functionality:</p>
+<p>Granted access:</p>
 </div>
 <div class="paragraph">
-<p>Set enforcing/permissive
-restorecon portions of filesystem tree
-Set/Get Booleans
-Set/Get file contexts
-Manage logins
-Manage ports</p>
+<p>container_t:s0:c1,c2
+container_file_t:s0
+container_file_t:s0:c1
+container_file_t:s0:c2
+container_file_t:s0:c1,c2
+container_t:s0:c2,c3
+container_file_t:s0
+container_file_t:s0:c2
+container_file_t:s0:c3
+container_file_t:s0:c2,c3</p>
 </div>
 <div class="paragraph">
-<p>Screenshot of a code listing [of which file?]</p>
+<p>Figure of container sandbox, kernel, and volumes with MCS labels and granted/denied</p>
+</div>
+<div class="paragraph">
+<p>SELinux user:SELinux role:SELinux type:SELinux category
+system_u:object_r:svirt_t:c306,c536
+system_u:object_r:svirt_t:c206,c636</p>
+</div>
+<div class="paragraph">
+<p>SELINUX KEEPS YOUR CONTAINER IN ITS OWN SPACE</p>
+</div>
+<div class="paragraph">
+<p>Figure of containers with MCS labels, "management" and kernel</p>
+</div>
+<div class="paragraph">
+<p>SELinux user:SELinux role:SELinux type:SELinux category
+system_u:object_r:container_t:c306,c536
+system_u:object_r:container_t:c206,c636
+system_u:object_r:container_t:c406,c736</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ git clone https://github.com/wrabcak/SELinuxMCSdemo.git; cd SELinuxMCSdemo
+# chmod +x ./demo.sh
+# ./demo.sh</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_udica_slides_89_91"><a class="anchor" href="#_udica_slides_89_91"></a>Udica: slides #89-91</h3>
+<div class="paragraph">
+<p>Generate SELinux policies for containers</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it ubi9 bash
+[root@37a3635afb8f /]# ls /home/
+ls: cannot open directory '.': Permission denied
+
+# ps -efZ | grep container_t
+system_u:system_r:container_t:s0:c447,c628 root 15361 15350  0 15:15 pts/0 00:00:00 bash
+
+# podman inspect 37a3635afb8f | udica my_container
+# semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
+
+# podman run --security-opt label=type:my_container.process -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it ubi9 bash
+[root@814ec56079e5 /]# cd /home
+[root@814ec56079e5 home]# ls
+ec2-user</code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="s4-support-lab.html">Lab: Supporting SElinux</a></span>
+  <span class="prev"><a href="s5-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a></span>
+  <span class="next"><a href="../ch2-configure/index.html">SELinux Management</a></span>
 </nav>
 </article>
   </div>
