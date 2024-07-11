@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= What is SELinux
+= Why You Should Care About SELinux
 
 _Estimated reading time: *{time_estimate} minutes*._
 
@@ -14,25 +14,35 @@ WARNING: Pending Review
 
 == Do Not Disable SELinux!
 
-SELinux has come a long way since the days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn't good advice!
+SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn't good advice!
 
-Nowadays (actually since the early days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL evolved to solve most complains, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this courses with SELinux enabled and in enforcing mode!
+Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this courses with SELinux enabled and in enforcing mode!
 
-IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of everyone, not just the administrators of mission-critical production servers. Opting out such a powerful and mature security technology as SELinux is not a good practice.
+IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of everyone, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.
 
-So you are strongy advised to run all your RHEL machines and VMs, and also all you CentOS and Fedora machines and VMs, with SELinux enabled and in enforcing mode.
+IMPORTANT:
+All organizations are strongy advised to run all their RHEL machines and VMs, and also all their CentOS and Fedora machines and VMs, with SELinux enabled and in *enforcing mode*.
 
 == What is SELinux
 
-Skipping the history lesson, as we expect that this course isn't your first exposure to SELinux, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, when they access any object managed by the Linux Kernel, such as a file or a TCP port. Processes can access objects only if allowed by the current SELinux policy in the kernel.
+Skipping the history lesson, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the proccess.
+
+SELinux *policies* control access to any object managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy do not allow access, them access is denied.
 
 Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is acessible to other users, like they could do with fle system permissions. SELinux policies are mandatory. They are not optional (or discretionary).
 
-The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the SELinux policy would not allow it to perform. For example, you cannot trick a web server to access files other than its web pages.
+SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and POSIX file permissions. These mecanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access.
+
+The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the SELinux policy would not allow it to perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
 
 //TODO find links to sample CVEs that were mitigated by SElinux, with the Red Hat's explanation of why they should be of low impact
 
-SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example, see [CVE-123] and [CVE-456]. To be effectie, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.
+SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example, see:
+
+* [CVE-123]
+* [CVE-456]
+
+To be effectie, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.
 
 == Who Provides SELinux Policies
 
@@ -50,12 +60,17 @@ Even without a policy designed specifically for that application, it's still muc
 
 If your organization has an internal software development group, ideally that group provides SELinux policies alongisde their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, filesystem permissions, and other requirements for deploying their application. If they don't then the system administrator resposible fo securing the deployment must work with them to create such a policy.
 
-Creating an SELinux policy requires knowledge about the architecture and implementation of an application. By "intimate knowledge" it doesn't mean access to the application's source code and understanding of its coding architecture. It means understanding of what an aplication does, do the level you are able to aswer questions such as: 
+== What You Need to Create Custom SELinux Policies
 
-* Does it make sense for that application to write or read file XYZ?
+All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming not scripting knowledge to create and validate SELinux policies.
+
+Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn't mean access to the application's source code and understanding of its internal implementation details. It means understanding of what an aplication does, to the level you are able to answer questions such as: 
+
+* Does it make sense for that application to write or read file /directory/file?
 * Does it make sense for that application to listen on TCP Port N?
+* Does it make sense for that application to open network connections to api.example.com?
 
-In fact, there's tooling to generate policies automatically from executable files, but you cannot verify if the resulting policy is too permissive (or not pemissive enough) without some deep knowledge about the target application.
+In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.
 
 == Why SELinux Policies Require Customization?
 
@@ -65,25 +80,27 @@ Of course, no preexisting policy can anticipate all variations of file paths, ne
 
 SELinux provides many ways you can design a policy to be maleable and yet ensure an application cannot be abused by exploring known and unknown bugs. The two main mechanisms are: 
 
-* Object labels: you chan change the labels on files and other objects to tell SELinux they should be allowed by the policy.
+* *Object labels*: you chan change the labels on files and other objects to tell SELinux they should be allowed by the policy.
 
-* Booleans: You can selectively enable or disable some rules inside a policy.
+* *Booleans*: You can selectively enable or disable some groups of rules inside a policy.
 
-By setting labels and booleans, a system administrator can address configuration changes and still run applications under a strict SELinux policy.
+By setting labels and booleans, a system administrator can address configuration changes and still run applications under a strict SELinux policy provided by a software vendor such as Red Hat.
 
-In the worst case scenario, system administrators can configure an application to run in permissive mode, so SELinux will bot block access to anything, without putting the entire system in permissive mode. That application will be unprotected and vulnerable ot exploits, but the remaining of the system will be protected.
+In the worst case scenario, system administrators can configure an application to run in *permissive mode*, so SELinux will not block access to anything, and without leaving the entire system in permissive mode. That application will be unprotected and vulnerable ot exploits, but the remaining of the system will be protected.
 
 In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.
 
-== Unconfined processes and objects
+== Unconfined Processes and Objects
 
-You could cheat and create a policy which basically states that a process can do aything. SELinux makes it very hard to create such a policy, but it enables creating what Red Hat calls unconfined processes: applications with unrestricted access to a set of objects that are also considered unconfined.
+You could cheat and create a policy which basically states that a process can do aything. SELinux makes it very hard to create such a policy, but it enables creating what Red Hat calls *unconfined* processes: applications with unrestricted access to a set of objects that are also considered unconfined.
 
 For example, all processes that a user starts from an interactive login are unconfined, and files on the user's home directory are also unconfined. This way a user can run any application to access their own files, without requiring custom policies, but still protecting system services and their files from interactive users.
 
-Unconfined processes may not be acceptable for some high-security organzations, such as those involved with national defense. For these organizaitons, SElinux enables you to configure policies with distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course do not teaches how to handle such scenarios.
+Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SElinux enables you to configure policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.
 
-// Comment out the cut-and paste from slides?
+//TODO break the pieces about labels and policies to another lecture, and explore with a lab to teach how to read and interpret policy rules
+
+// Comment out the cut-and paste from slides when done?
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
@@ -124,111 +141,6 @@ File permission bits
 PROBLEMS
 ROOT BYPASSING THIS SECURITY
 SETUID BIT
-
-=== SELinux policies and labels: slides #19-52
-
-SELINUX SECURITY POLICY
-
-CORE COMPONENT OF SELINUX
-COLLECTION OF SELINUX POLICY RULES
-LOADED INTO THE KERNEL BY SELINUX USERSPACE TOOLS
-
-Figure of policy --> tooling --> kernel
-
-ENFORCED BY THE KERNEL
-USED TO AUTHORIZE ACCESS REQUESTS ON THE SYSTEM
-
-BY DEFAULT EVERYTHING IS DENIED AND YOU DEFINE POLICY RULES TO ALLOW CERTAIN REQUESTS
-
-SELINUX POLICY RULES
-
-DESCRIBE AN INTERACTION BETWEEN PROCESSES AND SYSTEM RESOURCES
-
-SELINUX POLICY RULE IN HUMAN LANGUAGE
-
-"APACHE process can READ its LOGGING FILE"
-
-SELINUX VIEW OF THAT INTERACTION
-
-ALLOW apache_process apache_log:FILE READ;
-
-apache_process apache_log ARE LABELS
-
-LABELS
-
-ASSIGNED TO PROCESSES
-ASSIGNED TO SYSTEM RESOURCES
-BY SELINUX SECURITY POLICY
-MAP REAL SYSTEM ENTITIES INTO THE SELINUX WORLD
-
-LABELS IN REALITY
-
-STORED IN EXTENDED ATTRIBUTES OF FILE SYSTEMS - EXT2,EXT3, EXT4 ...
-
-[source,subs="verbatim,quotes"]
---
-# getfattr -n security.selinux /etc/passwd
-getfattr: Removing leading '/' from absolute path names
-# file: etc/passwd
-security.selinux="system_u:object_r:passwd_file_t:s0"
-
-# ls -Z /etc/passwd
-system_u:object_r:passwd_file_t:s0 /etc/passwd
---
-
-SELINUX LABELS CONSIST OF FOUR PARTS
-
-<user>:<role>:<type>:<MLS/MCS>
-
-<user>
-Not the same as Linux users
-Several Linux users can be mapped to a single SELinux user
-object_u is a placeholder for Linux system resources
-system_u is a placeholder for Linux processes
-Can be limited to a set of SELinux roles
-
-<role>
-SELinux users can have multiple roles but only one can be active
-object_r is a placeholder for Linux system resources
-system_r is a placeholder for system processes
-Can be limited to a set of SELinux types
-
-<type>
-Security model known as TYPE ENFORCEMENT
-In 99% you care only about TYPES
-policy rules and interactions between types
-
-<MLS/MCS>
-Multi Level Security
-Only the MCS part is used in Targeted Policy with the default s0 level
-Allow users to mark resources with compartment tags (MCS1, MCS2)
-Used for RHEL virtualization and for container security
-s0:c1 can not access s0:c2
-
-Figure of users, roles, and screenshots of user contexts
-
-[source,subs="verbatim,quotes"]
---
-# useradd -Z staff_u -G wheel staff
-# passwd staff
-# ssh staff@localhost
-$ id -Z
---
-
-=== Skip: targeted policies and types
-
-=== Skip: Type transitions for domains/processes and resources
-
-=== SELinux modes: slides #67-72
-
-SELINUX MODES
-
-ENFORCING
-SELINUX SECURITY POLICY IS ENFORCED BY KERNEL
-
-PERMISSIVE
-SELINUX SECURITY POLICY IS NOT ENFORCED BY KERNEL
-ACCESSES ARE LOGGED
 
 
 

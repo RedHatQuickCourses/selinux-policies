@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= How RHEL secures containers with SELinux
+= How Red Hat Protects Containers With SELinux on RHEL
 
 _Estimated reading time: *{time_estimate} minutes*._
 

@@ -1,14 +1,16 @@
 :time_estimate: 5
 
-= SELinux Labels and Contexts
+= SELinux Policies, Labels, and Contexts
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Review the fundamental concepts of SELinux policies and rules.
+Review the fundamental concepts required to read and interpret SELinux policies.
 
 WARNING: Pending Review
+
+//TODO refactor this and the previous section
 
 == SElinux Labels and Contexts
 
@@ -26,49 +28,109 @@ You can configure your RHEL system in such a way that a system administrator can
 
 https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
 
-=== Targeted policies and types: slides #53-57
 
-IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT
+=== SELinux policies and labels: slides #19-52
 
-WE MOSTLY CARE ONLY ABOUT TYPES
+SELINUX SECURITY POLICY
 
-SELINUX ALLOW RULE SYNTAX WITH TYPES
+CORE COMPONENT OF SELINUX
+COLLECTION OF SELINUX POLICY RULES
+LOADED INTO THE KERNEL BY SELINUX USERSPACE TOOLS
 
-ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;
+Figure of policy --> tooling --> kernel
 
-ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;
+ENFORCED BY THE KERNEL
+USED TO AUTHORIZE ACCESS REQUESTS ON THE SYSTEM
 
-=== Type transitions for domains/processes and resources (slides #58-66)
+BY DEFAULT EVERYTHING IS DENIED AND YOU DEFINE POLICY RULES TO ALLOW CERTAIN REQUESTS
 
-DOMAIN TRANSITION RULES
+SELINUX POLICY RULES
 
-TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;
+DESCRIBE AN INTERACTION BETWEEN PROCESSES AND SYSTEM RESOURCES
 
-TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;
+SELINUX POLICY RULE IN HUMAN LANGUAGE
 
-FILE TRANSITION RULES
+"APACHE process can READ its LOGGING FILE"
 
-TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;
+SELINUX VIEW OF THAT INTERACTION
 
-TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;
+ALLOW apache_process apache_log:FILE READ;
 
-FILE NAME TRANSITION RULES
+apache_process apache_log ARE LABELS
 
-TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;
+LABELS
 
-TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;
+ASSIGNED TO PROCESSES
+ASSIGNED TO SYSTEM RESOURCES
+BY SELINUX SECURITY POLICY
+MAP REAL SYSTEM ENTITIES INTO THE SELINUX WORLD
 
-=== Skip: SELinux modes
+LABELS IN REALITY
 
-=== Skip: SELinux with podman containers: MCS
+STORED IN EXTENDED ATTRIBUTES OF FILE SYSTEMS - EXT2,EXT3, EXT4 ...
 
-=== Skip: Udica
+[source,subs="verbatim,quotes"]
+--
+# getfattr -n security.selinux /etc/passwd
+getfattr: Removing leading '/' from absolute path names
+# file: etc/passwd
+security.selinux="system_u:object_r:passwd_file_t:s0"
 
-=== Multi Level Security MLS: slides #92-93
+# ls -Z /etc/passwd
+system_u:object_r:passwd_file_t:s0 /etc/passwd
+--
 
-Multi level security(MLS)
+SELINUX LABELS CONSIST OF FOUR PARTS
 
-Figure of read down and no write up
+<user>:<role>:<type>:<MLS/MCS>
 
-Type enforcement allow rule must be present before SELinux considers sensitivity level
+<user>
+Not the same as Linux users
+Several Linux users can be mapped to a single SELinux user
+object_u is a placeholder for Linux system resources
+system_u is a placeholder for Linux processes
+Can be limited to a set of SELinux roles
+
+<role>
+SELinux users can have multiple roles but only one can be active
+object_r is a placeholder for Linux system resources
+system_r is a placeholder for system processes
+Can be limited to a set of SELinux types
+
+<type>
+Security model known as TYPE ENFORCEMENT
+In 99% you care only about TYPES
+policy rules and interactions between types
+
+<MLS/MCS>
+Multi Level Security
+Only the MCS part is used in Targeted Policy with the default s0 level
+Allow users to mark resources with compartment tags (MCS1, MCS2)
+Used for RHEL virtualization and for container security
+s0:c1 can not access s0:c2
+
+Figure of users, roles, and screenshots of user contexts
+
+[source,subs="verbatim,quotes"]
+--
+# useradd -Z staff_u -G wheel staff
+# passwd staff
+# ssh staff@localhost
+$ id -Z
+--
+
+=== Skip: targeted policies and types
+
+=== Skip: Type transitions for domains/processes and resources
+
+=== SELinux modes: slides #67-72
+
+SELINUX MODES
+
+ENFORCING
+SELINUX SECURITY POLICY IS ENFORCED BY KERNEL
+
+PERMISSIVE
+SELINUX SECURITY POLICY IS NOT ENFORCED BY KERNEL
+ACCESSES ARE LOGGED
 

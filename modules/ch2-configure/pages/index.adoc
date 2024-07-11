@@ -8,6 +8,6 @@ WARNING: Work in Progress
 
 == Introduction
 
-This chapter reviews tools provided with RHEL that support managing and toubleshooting SELinux policies with the use case of an Apache web server with typical configuration changes.
+This chapter reviews tools provided with RHEL that support managing and toubleshooting SELinux policies. It provides a couple case studies of Apache Web Server with typical configuration changes.
 
-These tools will be used in the next chapter to create and validate custom policies for an application.
+These same tools will be used in the next chapter to create and validate custom policies for a sample application that you will deploy on a RHEL machine.
