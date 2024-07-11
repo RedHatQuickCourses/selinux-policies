@@ -1,0 +1,74 @@
+:time_estimate: 5
+
+= SELinux Labels and Contexts
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Review the fundamental concepts of SELinux policies and rules.
+
+WARNING: Pending Review
+
+== SElinux Labels and Contexts
+
+SELinux works by assigning labels to processes and to objects. Those labels define the SELinux context of a process (or domain) and of an object.
+
+SELinux policy rules allow process with a given label to access objects with a matching label. Process labels may grant different access levels to multiple object labels, for example read-only with some labels and read-write with others.
+
+SELinux policies control not only which process labels gets access to which resource labels, but also which labels processes and resources can get. These are called context transition rules. A context transition rules specifies the new label for a child process after a fork and exec, and the context on files created by process with a given context.
+
+You can configure your RHEL system in such a way that a system administrator can peform day-to-day tasks such as installing packages and creating users but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not on processes.
+
+[ LABELS AND CONTEXTS NEED WORK ]
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== Targeted policies and types: slides #53-57
+
+IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT
+
+WE MOSTLY CARE ONLY ABOUT TYPES
+
+SELINUX ALLOW RULE SYNTAX WITH TYPES
+
+ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;
+
+ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;
+
+=== Type transitions for domains/processes and resources (slides #58-66)
+
+DOMAIN TRANSITION RULES
+
+TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;
+
+TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;
+
+FILE TRANSITION RULES
+
+TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;
+
+TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;
+
+FILE NAME TRANSITION RULES
+
+TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;
+
+TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;
+
+=== Skip: SELinux modes
+
+=== Skip: SELinux with podman containers: MCS
+
+=== Skip: Udica
+
+=== Multi Level Security MLS: slides #92-93
+
+Multi level security(MLS)
+
+Figure of read down and no write up
+
+Type enforcement allow rule must be present before SELinux considers sensitivity level
+

@@ -1,2 +1,6 @@
 * xref:index.adoc[]
 ** xref:s1-intro.adoc[]
+** xref:s2-intro-quiz.adoc[]
+*** xref:s2-intro-quiz-answers.adoc[]
+** xref:s3-labels.adoc[]
+** xref:s5-containers.adoc[]

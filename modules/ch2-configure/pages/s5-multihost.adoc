@@ -1,0 +1,44 @@
+:time_estimate: 5
+
+= Consistent SElinux settings
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Ensure consistent SELinux settings on multiple servers using Ansible collections.
+
+WARNING: Pending Review
+
+// Check for a supported system role
+
+// Mention consistency between dev, test, and production; or multiple data centers running the same apps (multiple copies of the same servers)
+
+== Title
+
+Lorem Ipsum
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== Ansible collections: slides #129-133
+
+We have properly configured SELinux on one system, what about others?
+
+Let’s use ansible to deploy the same configuration to the rest of the servers!
+
+use the following Ansible role:
+https://github.com/linux-system-roles/selinux
+
+Expected Functionality:
+
+Set enforcing/permissive
+restorecon portions of filesystem tree
+Set/Get Booleans
+Set/Get file contexts
+Manage logins
+Manage ports
+
+Screenshot of a code listing [of which file?]
+

@@ -1,0 +1,65 @@
+:time_estimate: 5
+
+= Interpreting AVC messages
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Assess if an SELinux access denied message can be resolved by a change of configuration, without creating a custom policy.
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== Audit logs, ausearch, audit2allow: slides #94-104
+
+AVC MESSAGES
+
+WHERE CAN WE FIND LOGS? 
+
+[source,subs="verbatim,quotes"]
+--
+# cat /var/log/audit/audit.log
+# ausearch -m AVC
+--
+
+type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="file1" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file
+
+AUDITD.SERVICE HAVE TO BE RUNNING
+
+HOW TO PARSE AVC MESSAGES?
+
+[source,subs="verbatim,quotes"]
+--
+# ausearch
+# audit2allow
+--
+
+[source,subs="verbatim,quotes"]
+--
+# ausearch -m AVC -ts recent
+type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="shadow" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file
+# ausearch -m AVC -ts recent | audit2allow
+#============= httpd_t ==============
+allow httpd_t shadow_t:file read;
+--
+
+[source,subs="verbatim,quotes"]
+--
+# semanage fcontext -> manage SELinux contexts
+# semanage boolean -> manage SELinux booleans
+# semanage port -> manage SELinux ports
+# semanage permissive -> put SELinux domain to permissive mode
+# sesearch -> search for present SELinux rules
+# ausearch -> search for SELinux denials
+# sealert -> SELinux troubleshooter
+# audit2allow -> Parse SELinux denials / create local SELinux module
+# semodule -DB / # semodule -B -> SELinux policy rebuild
+--

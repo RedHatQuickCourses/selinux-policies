@@ -3,7 +3,7 @@
 
 == Writing Targeted Policies for SELinux on Red Hat Enterprise Linux
 
-This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) *targeted* policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the *audit2allow* command.
+This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) *targeted* policy set. It focuses on developing SELinux policies with the help of development tooling included in RHEL, especially the *sepolicy generate* and *audit2allow* commands.
 
 == Audience
 
@@ -12,6 +12,8 @@ System Administrators, Site Reliability Engineers, Application Developers, and o
 == Prerequisites
 
 Learners are expected to have have some familiarity with managing SELinux on RHEL. If you need a refresher on these tasks, please review the following Red Hat Training Courses:
+
+// Offer one of the blogs, KBs, or instruqts as a quick refresher and alternative to GLS courses
 
 * Chapters https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch06[06] and https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch11s03[11] of https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii[RH134: Red Hat System Administration II]
 * Chapter https://role.rhu.redhat.com/rol-rhu/app/courses/rh415-9.2/pages/ch08[08] of https://www.redhat.com/en/services/training/rh415-red-hat-security-linux-physical-virtual-and-cloud[RH415: Red Hat Security: Linux in Physical, Virtual, and Cloud]
@@ -31,11 +33,11 @@ If you need an overview of SELinux, please review the following conceptual intro
 
 == Classroom Environment
 
-For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and which can download RPM packages from Red Hat repositories or a Yum mirror.
+For now, there is no virtual labs for performing hands-on activities. You just need a RHEL server or VM to which you have root access and from which can download RPM packages from Red Hat repositories or a Yum mirror.
 
-As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as a ready-to-use environment for hands-on activities.
+As course development progresses, some Red Hat Training course classroom or Red Hat Demo workshop environment will be selected as ready-to-use environments for hands-on activities.
 
-You could even try these activities directly on your day-to-day machine because the worst consequence of trivial mistales would be waiting a few minutes to relabel the root partition at boot.
+You could even try these activities directly on your day-to-day machine if you're feeling brave ;-) because the worst consequence of trivial mistales would be waiting a few minutes to relabel the root partition at boot.
 
 //TODO try these demos. The Definitive RHEL 9 Hands-On Lab v9.1 - there's a 9.3 update in the works https://demo.redhat.com/catalog?item=babylon-catalog-event/sandboxes-gpte.rhel-9-lab-ce.event&utm_source=webapp&utm_medium=share-link
 
@@ -56,3 +58,12 @@ Of course, the ultimate sources of information about SELinux are the Red Hat Ent
 * https://fedoraproject.org/wiki/SELinux[SELinux - Fedora Project Wiki]
 * https://github.com/SELinuxProject/selinux-notebook[The SELinux Notebook]
 
+== Author
+
+*Fernando Lozano* +
+Training Content Architect +
+Red Hat - Product Portfoluio Marketing & Learning
+
+Based on previous work by Lukas Vrabec and Paul Armstrong. 
+
+//Special thanks to.. for...

@@ -1,0 +1,62 @@
+:time_estimate: 5
+
+= Supporting SELinux
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Adopt a structured workflow for resolving SELinux issues
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== selinux-policy-devel policycoreutils-python-utils: slides #136-144
+
+SUPPORT SELINUX CASES
+
+Very busy and confusing diagram of a workflow for troubleshooting SELinux issues. Keep it? Redraw for legibility?
+
+[source,subs="verbatim,quotes"]
+--
+# dnf install selinux-policy-devel policycoreutils-python-utils
+--
+
+Is audit daemon running? 
+[source,subs="verbatim,quotes"]
+--
+# systemctl status auditd.service
+--
+
+Is SELinux enabled? 
+[source,subs="verbatim,quotes"]
+--
+# getenforce
+--
+
+Put SELinux to permissive 
+[source,subs="verbatim,quotes"]
+--
+# setenforce 0
+--
+Reproduce the scenario
+
+What does ausearch say?
+[source,subs="verbatim,quotes"]
+--
+# ausearch -m AVC -m USER_AVC -ts today
+--
+
+Maybe needed
+[source,subs="verbatim,quotes"]
+--
+# semodule -DB
+--
+

@@ -1,0 +1,85 @@
+:time_estimate: 5
+
+= How RHEL secures containers with SELinux
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Undestand how RHEL uses category labels to confine local containers.
+
+WARNING: Pending Review
+
+== Title
+
+Lorem ipsum
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== Skip: SELinux with podman containers: MCS (slides #73-88)
+
+SELINUX VS. CONTAINERS
+
+APPLIES MAC TO IMPROVE SECURITY WHEN USING VIRTUAL MACHINES
+
+Figure of container MCS labels vs files MCS labels
+
+Granted access:
+
+container_t:s0:c1,c2 
+container_file_t:s0
+container_file_t:s0:c1
+container_file_t:s0:c2
+container_file_t:s0:c1,c2
+container_t:s0:c2,c3
+container_file_t:s0
+container_file_t:s0:c2
+container_file_t:s0:c3
+container_file_t:s0:c2,c3
+
+Figure of container sandbox, kernel, and volumes with MCS labels and granted/denied
+
+SELinux user:SELinux role:SELinux type:SELinux category
+system_u:object_r:svirt_t:c306,c536
+system_u:object_r:svirt_t:c206,c636
+
+SELINUX KEEPS YOUR CONTAINER IN ITS OWN SPACE
+
+Figure of containers with MCS labels, "management" and kernel
+
+SELinux user:SELinux role:SELinux type:SELinux category
+system_u:object_r:container_t:c306,c536
+system_u:object_r:container_t:c206,c636
+system_u:object_r:container_t:c406,c736
+
+[source,subs="verbatim,quotes"]
+--
+$ git clone https://github.com/wrabcak/SELinuxMCSdemo.git; cd SELinuxMCSdemo
+# chmod +x ./demo.sh
+# ./demo.sh
+--
+
+=== Udica: slides #89-91
+
+Generate SELinux policies for containers
+
+[source,subs="verbatim,quotes"]
+--
+# podman run -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it ubi9 bash
+[root@37a3635afb8f /]# ls /home/
+ls: cannot open directory '.': Permission denied
+
+# ps -efZ | grep container_t
+system_u:system_r:container_t:s0:c447,c628 root 15361 15350  0 15:15 pts/0 00:00:00 bash
+
+# podman inspect 37a3635afb8f | udica my_container
+# semodule -i my_container.cil /usr/share/udica/templates/{base_container.cil,net_container.cil,home_container.cil}
+
+# podman run --security-opt label=type:my_container.process -v /home:/home:ro -v /var/spool:/var/spool:rw -p 21:21 -it ubi9 bash
+[root@814ec56079e5 /]# cd /home
+[root@814ec56079e5 home]# ls
+ec2-user
+--
+

@@ -1,0 +1,129 @@
+:time_estimate: 5
+
+= Lab: Troubleshooting SElinux policies
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+//This is my first hands-on with Antora, look for formatting templates
+
+Objective::
+
+Run a customized Apache Web Server with the targeted policy from RHEL.
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
+
+=== Custom httpd config: slides #105-122
+
+TROUBLESHOOTING EXISTING POLICY
+
+MISLABELED SYSTEM I.E LABELS ON OBJECTS ARE WRONG
+
+[source,subs="verbatim,quotes"]
+--
+# restorecon -Rv /
+--
+
+or
+ 
+[source,subs="verbatim,quotes"]
+--
+# fixfiles onboot
+# reboot
+--
+
+SELINUX MODIFICATIONS OF THE DISTRO POLICY VIA SELINUX USERSPACE TOOLING
+
+SOMETIMES IT’S NOT NECESSARY TO CREATE CUSTOM SELINUX POLICY, LOCAL MODIFICATION CAN FIX IT.
+
+APACHE HTTP SERVER WITH CHANGES IN THE DEFAULT CONFIGURATION
+
+httpd service configured to listen on tcp port 3131 instead of port 80
+document root will be /var/test_www/ instead of /var/www/
+
+Change in /etc/httpd/conf/httpd.conf
+
+[source,subs="verbatim,quotes"]
+--
+# sed -i 's_Listen 80_Listen 3131_' /etc/httpd/conf/httpd.conf
+# sed -i 's_DocumentRoot "/var/www/html"_DocumentRoot "/var/test\_www/html"_' /etc/httpd/conf/httpd.conf
+# sed -i 's_<Directory "/var/www/html">_<Directory "/var/test\_www/html">_' /etc/httpd/conf/httpd.conf
+--
+
+[source,subs="verbatim,quotes"]
+--
+APPLY CHANGES IN THE CONFIGURATION AND SEARCH FOR AVC DENIALS 
+
+# systemctl restart httpd
+# ausearch -m AVC -ts recent
+--
+
+httpd service trying to bind on port 3131 instead of 80, this should be changed in SELinux policy
+
+type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket
+
+[source,subs="verbatim,quotes"]
+--
+# semanage port -l | grep 80
+http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
+
+# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
+Found 1 semantic av rules:
+  allow httpd_t http_port_t : tcp_socket name_bind ;
+
+# semanage port -a -t http_port_t -p tcp 3131
+# semanage port -l | grep http_port_t
+http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000
+--
+
+[source,subs="verbatim,quotes"]
+--
+# systemctl restart httpd
+# wget localhost:3131/index.html
+--
+
+httpd service DocumentRoot is in /var/test_www/html and this directory has wrong label
+
+type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file
+
+[source,subs="verbatim,quotes"]
+--
+# matchpathcon /var/test_www/html/index.html
+/var/test_www/html/index.html    system_u:object_r:var_t:s0
+
+# matchpathcon /var/www/html/index.html
+/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
+
+# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
+# restorecon -Rv /var/
+--
+
+[source,subs="verbatim,quotes"]
+--
+# semanage fcontext -l | grep httpd_sys_content_t | grep www
+var/www(/.*)?            all files
+system_u:object_r:httpd_sys_content_t:s0
+/var/test_www(/.*)?    all files
+system_u:object_r:httpd_sys_content_t:s0
+....
+....
+--
+
+HTTPD SERVICE SELINUX DENIALS ARE FIXED WITHOUT WRITING CUSTOM POLICY!
+
+=== Skip: Local policies using CIL
+
+=== Skip: Packaging policies as RPMs
+
+=== Skip: Ansible collections
+
+=== Skip: SELinux News
+
+
