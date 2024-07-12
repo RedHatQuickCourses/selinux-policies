@@ -62,7 +62,7 @@ Of course, the ultimate sources of information about SELinux are the Red Hat Ent
 
 *Fernando Lozano* +
 Training Content Architect +
-Red Hat - Product Portfoluio Marketing & Learning
+Red Hat - Product Portfolio Marketing & Learning
 
 Based on previous work by Lukas Vrabec and Paul Armstrong. 
 

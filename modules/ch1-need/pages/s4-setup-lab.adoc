@@ -1,0 +1,150 @@
+:time_estimate: 5
+
+= Lab: Verify the SELinux Status of a RHEL Machine
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+//This is my first hands-on with Antora, look for formatting templates
+
+Objective::
+
+Review the fundnamenal SELinux commands to ensure that a RHEL machine has SELinux enabled and in the enforced mode, with the tageted policy set loaded.
+
+WARNING: Pending Review
+
+== Before you Start
+
+You need a RHEL machine to which you have the root password or unrestricted sudo.
+
+// and access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+
+// You also need internet access to download sample applications and scripts from GitHub.
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+== Instructions
+
+1. Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the detault status of all new RHEL deployments:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo -i*
+# *getenforce*
+Enforcing
+--
+
+2. If your output was different on the previous step, follow one of the following to enable SELinux and set it to the enforced mode:
++
+2.1. If your system is on permissive mode, switch to enforced mode:
++
+[source,subs="verbatim,quotes"]
+--
+# *getenforce*
+Permissive
+# *setenforce 1*
+# getenforce
+Enforcing
+--
++
+2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don't have to use `sed`, you can use your preferred text editor on the `/etc/selinux/config` file.
++
+[source,subs="verbatim,quotes"]
+--
+# *getenforce*
+Disbled
+# *sed -i s/SELINUX=disabled/SELINUX=enforcing/ /etc/selinux/config*
+# *fixfiles -F onboot*
+System will relabel on next boot
+# reboot
+--
++
+Be patient, relabeling might take a while. After a new login, you should see the same output as *step 1*:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo -i*
+# *getenforce*
+Enforcing
+--
+
+3. Verify that the *targeted* policy set is loaded:
++
+[source,subs="verbatim,quotes"]
+--
+# *sestatus*
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33
+--
+
+// Do not try setting the MLS policy (to test setting it back to targeted) on a GUI system. It won't boot! Do it on a text-only system.
+
+4. If your output shows that at a differnet policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current machine, follow these steps:
++
+4.1. In the fllowing example, the system has the *mls* policy set loaded, but the instructions would be the same for the *minimum* policy set:
++
+[source,subs="verbatim,quotes"]
+--
+# *sestatus*
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             mls
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33
+--
++
+4.2. Change the SELinux policy set in the  `/etc/selinux/config` file:
++
+[source,subs="verbatim,quotes"]
+--
+# *yum install -y selinux-policy-targeted*
+...
+# *sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config*
+# *fixfiles -F onboot*
+System will relabel on next boot
+# reboot
+--
++
+Be patient, relabeling might take a while. After a new login, you should see the same output as *step 3*:
++
+[source,subs="verbatim,quotes"]
+--
+# *sestatus*
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+...
+--
+
+5. List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some of those packages:
+
++
+[source,subs="verbatim,quotes"]
+--
+# *rpm -qa | grep selinux*
+...
+# *yum search selinux*
+...
+--
+
+This concludes the activity.
+
+The next section introduces the *targeted* policy set, that is the focus of this course, and how it is designed to work on RHEL.
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+https://redhatgov.io/workshops/selinux_policy/setup/ 
+https://redhatgov.io/workshops/selinux_policy/exercise1.1/ 
