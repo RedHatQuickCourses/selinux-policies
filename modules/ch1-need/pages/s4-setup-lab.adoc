@@ -24,6 +24,10 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
+// Do not try setting the MLS policy (to test setting it back to targeted) on a GUI system. It won't boot! Do it on a text-only system.
+
+// Do I need to do 'restorecon -Rv /' before 'fixfiles -F onboot' ?
+
 1. Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the detault status of all new RHEL deployments:
 +
 [source,subs="verbatim,quotes"]
@@ -84,9 +88,7 @@ Memory protection checking:     actual (secure)
 Max kernel policy version:      33
 --
 
-// Do not try setting the MLS policy (to test setting it back to targeted) on a GUI system. It won't boot! Do it on a text-only system.
-
-4. If your output shows that at a differnet policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current machine, follow these steps:
+4. If your output shows that at a differnet policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:
 +
 4.1. In the fllowing example, the system has the *mls* policy set loaded, but the instructions would be the same for the *minimum* policy set:
 +
@@ -114,7 +116,7 @@ Max kernel policy version:      33
 # *sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config*
 # *fixfiles -F onboot*
 System will relabel on next boot
-# reboot
+# *reboot*
 --
 +
 Be patient, relabeling might take a while. After a new login, you should see the same output as *step 3*:
@@ -130,7 +132,6 @@ Loaded policy name:             targeted
 --
 
 5. List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some of those packages:
-
 +
 [source,subs="verbatim,quotes"]
 --
@@ -139,6 +140,31 @@ Loaded policy name:             targeted
 # *yum search selinux*
 ...
 --
+
+6. Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.
++
+You could review the raw audit log but the `ausearch` command provides many nice filters.
++
+6.1. For example, to show tha a policy was loaded:
++
+[source,subs="verbatim,quotes"]
+--
+# *ausearch -m MAC_POLICY_LOAD -i --just-one*
+----
+type=PROCTITLE msg=audit(11/09/23 03:43:12.299:347) : proctitle=/sbin/load_policy 
+type=SYSCALL msg=audit(11/09/23 03:43:12.299:347) : arch=x86_64 syscall=write success=yes exit=3519798 a0=0x4 a1=0x7fd2c8200000 a2=0x35b536 a3=0x0 items=0 ppid=5462 pid=5466 auid=devops uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=pts0 ses=1 comm=load_policy exe=/usr/sbin/load_policy subj=unconfined_u:unconfined_r:load_policy_t:s0-s0:c0.c1023 key=(null) 
+type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 lsm=selinux res=yes
+--
++
+6.2. Or to show recent denials, which on a good system should be none:
++
+[source,subs="verbatim,quotes"]
+--
+# *ausearch -m avc,user_avc,selinux_err,user_selinux_err -ts recent*
+<no matches>
+--
++
+Most of the time, you will be interested only in the `avc` audit events.
 
 This concludes the activity.
 
