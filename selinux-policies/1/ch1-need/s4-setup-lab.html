@@ -252,12 +252,8 @@ Max kernel policy version:      33</code></pre>
 </div>
 </div>
 </li>
-</ol>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
 <li>
-<p>If your output shows that at a differnet policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current machine, follow these steps:</p>
+<p>If your output shows that at a differnet policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:</p>
 <div class="paragraph">
 <p>4.1. In the fllowing example, the system has the <strong>mls</strong> policy set loaded, but the instructions would be the same for the <strong>minimum</strong> policy set:</p>
 </div>
@@ -286,7 +282,7 @@ Max kernel policy version:      33</code></pre>
 # <strong>sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config</strong>
 # <strong>fixfiles -F onboot</strong>
 System will relabel on next boot
-# reboot</code></pre>
+# <strong>reboot</strong></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -312,6 +308,36 @@ Loaded policy name:             targeted
 # <strong>yum search selinux</strong>
 ...</code></pre>
 </div>
+</div>
+</li>
+<li>
+<p>Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.</p>
+<div class="paragraph">
+<p>You could review the raw audit log but the <code>ausearch</code> command provides many nice filters.</p>
+</div>
+<div class="paragraph">
+<p>6.1. For example, to show tha a policy was loaded:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>ausearch -m MAC_POLICY_LOAD -i --just-one</strong>
+----
+type=PROCTITLE msg=audit(11/09/23 03:43:12.299:347) : proctitle=/sbin/load_policy
+type=SYSCALL msg=audit(11/09/23 03:43:12.299:347) : arch=x86_64 syscall=write success=yes exit=3519798 a0=0x4 a1=0x7fd2c8200000 a2=0x35b536 a3=0x0 items=0 ppid=5462 pid=5466 auid=devops uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=pts0 ses=1 comm=load_policy exe=/usr/sbin/load_policy subj=unconfined_u:unconfined_r:load_policy_t:s0-s0:c0.c1023 key=(null)
+type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 lsm=selinux res=yes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6.2. Or to show recent denials, which on a good system should be none:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>ausearch -m avc,user_avc,selinux_err,user_selinux_err -ts recent</strong>
+&lt;no matches&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Most of the time, you will be interested only in the <code>avc</code> audit events.</p>
 </div>
 </li>
 </ol>
