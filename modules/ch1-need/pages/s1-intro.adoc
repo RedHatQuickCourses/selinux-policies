@@ -16,33 +16,32 @@ WARNING: Pending Review
 
 SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn't good advice!
 
-Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this courses with SELinux enabled and in enforcing mode!
+Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this course with SELinux enabled and in enforcing mode!
 
 IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of everyone, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.
 
-IMPORTANT:
-All organizations are strongy advised to run all their RHEL machines and VMs, and also all their CentOS and Fedora machines and VMs, with SELinux enabled and in *enforcing mode*.
+Let's emphasize this critical advice:
+
+IMPORTANT: All organizations are should to run all their RHEL machines and VMs, and also all their CentOS and Fedora machines and VMs, with *SELinux enabled* and in *enforcing mode*.
 
 == What is SELinux
 
-Skipping the history lesson, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the proccess.
+Skipping the https://en.wikipedia.org/wiki/Security-Enhanced_Linux#History[history] https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/5/html/deployment_guide/rhlcommon-appendix-0005[lesson], suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the proccess.
 
 SELinux *policies* control access to any object managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy do not allow access, them access is denied.
 
-Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is acessible to other users, like they could do with fle system permissions. SELinux policies are mandatory. They are not optional (or discretionary).
+Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is acessible to other users, like they could do with file system permissions. SELinux policies are mandatory. They are not optional (or discretionary).
 
 SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and POSIX file permissions. These mecanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access.
 
-The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the SELinux policy would not allow it to perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
+The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the application wouldn't normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
 
-//TODO find links to sample CVEs that were mitigated by SElinux, with the Red Hat's explanation of why they should be of low impact
+SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example:
 
-SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example, see:
+* https://blog.hqcodeshop.fi/archives/243-SElinux-and-Shellshock.html[CVE-2014-6271 and CVE-2014-7169 a.k.a ShellShock]
+* https://access.redhat.com/security/cve/cve-2024-21626[CVE-2024-21626]
 
-* [CVE-123]
-* [CVE-456]
-
-To be effectie, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.
+To be effective, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.
 
 == Who Provides SELinux Policies
 
@@ -50,15 +49,19 @@ Red Hat provides a comprehensive policy for almost all packages included with RH
 
 Red Hat is not the only vendor that recommends enabling and configuring SELinux. As an example, see some https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/[advice from DataDog].
 
-Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, and instead leave the burden on their customers. Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer's environment, but they still encourage their customers to use SELinux for additional security.
+Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, and instead leave the burden on their customers.
 
-For example, https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux[IBM DB2] already included sample SELinux policies way before IBM acquired Red Hat.
+Among the vendors who stepped up we can name Microsoft, which provides an https://techcommunity.microsoft.com/t5/sql-server-blog/sql-server-2022-now-available-for-both-rhel-9-and-ubuntu-22-04/ba-p/3896410[SELinux policy for the MS SQL Server database].
 
-Other vendors, who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102[SAP Hana].
+Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer's environment, but they still encourage their customers to use SELinux for additional security. For example, IBM already provided https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux[sample SELinux policies for DB2] way before IBM acquired Red Hat.
 
-Even without a policy designed specifically for that application, it's still much better having SELinux policies that protecting everything else in a server than relying on other security mechanisms. By the way, you can find many in the SAP community who https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463[guide their fellow users] on how to create SELinux policies to protect SAP applications!
+Some vendors who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example SAP supports running https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102[SAP Hana with SElinux]. By the way, you can find members of the SAP community who guide their fellow users on https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463[how to create SELinux policies to protect SAP applications].
 
-If your organization has an internal software development group, ideally that group provides SELinux policies alongisde their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, filesystem permissions, and other requirements for deploying their application. If they don't then the system administrator resposible fo securing the deployment must work with them to create such a policy.
+Even without a policy designed specifically for that application, it's still much better having SELinux policies that protect everything else in a server than disabling SELinux
+ 
+If your organization has an internal software development group, ideally that group provides SELinux policies alongisde their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, filesystem permissions, and other requirements for deploying their application.
+
+If they don't, then the system administrator resposible fo securing the deployment must work with them to create such a policy.
 
 == What You Need to Create Custom SELinux Policies
 
@@ -70,7 +73,7 @@ Creating an SELinux policy requires intimate knowledge about the architecture an
 * Does it make sense for that application to listen on TCP Port N?
 * Does it make sense for that application to open network connections to api.example.com?
 
-In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.
+In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.
 
 == Why SELinux Policies Require Customization?
 
@@ -86,19 +89,19 @@ SELinux provides many ways you can design a policy to be maleable and yet ensure
 
 By setting labels and booleans, a system administrator can address configuration changes and still run applications under a strict SELinux policy provided by a software vendor such as Red Hat.
 
-In the worst case scenario, system administrators can configure an application to run in *permissive mode*, so SELinux will not block access to anything, and without leaving the entire system in permissive mode. That application will be unprotected and vulnerable ot exploits, but the remaining of the system will be protected.
+In the worst case scenario, system administrators can configure an application to run in *permissive mode*. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable ot exploits, but the remaining of the system will still be protected.
 
 In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.
 
+While it is possible to put the entire system in permissive move, this is rarely necessary. 
+
 == Unconfined Processes and Objects
 
-You could cheat and create a policy which basically states that a process can do aything. SELinux makes it very hard to create such a policy, but it enables creating what Red Hat calls *unconfined* processes: applications with unrestricted access to a set of objects that are also considered unconfined.
+You could cheat and create a policy which states that a process can do aything. SELinux makes it somewhat hard to create such a policy, but Red Hat includes, as part of the policies within RHEL, what is called *unconfined* processes: applications with unrestricted access all objects. For unconfined processes, SELinux effectively provide no security.
 
-For example, all processes that a user starts from an interactive login are unconfined, and files on the user's home directory are also unconfined. This way a user can run any application to access their own files, without requiring custom policies, but still protecting system services and their files from interactive users.
+For example, all processes that a user starts from an interactive login are unconfined. This way a user can run any application to access their own files, without requiring custom policies. User files are still protected by SELinux from access by system services which run as confined processes.
 
-Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SElinux enables you to configure policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.
-
-//TODO break the pieces about labels and policies to another lecture, and explore with a lab to teach how to read and interpret policy rules
+Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SELinux enables you to configure policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.
 
 // Comment out the cut-and paste from slides when done?
 
