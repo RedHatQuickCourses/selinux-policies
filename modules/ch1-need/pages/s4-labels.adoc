@@ -109,6 +109,10 @@ File context transition rules enable having common folders for files form differ
 
 Use of domain context transition rules based on SELinux uses and roles enables configuring your RHEL system in such a way that a system administrator can peform day-to-day tasks such as installing packages and creating users but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy managemen tasks.
 
+== SELinux Type Attributes
+
+The concept of attribute for SELinux types enables grouping multiple types and referring to the name of attribute name in allow rules. They allow specifying an allow rule only once for a number of different domain and/or resource types.
+
 == Multi Level Security (MLS) and Multi Category Security (MCS) systems
 
 The fourth field of an SELinux label sometimes looks like there's a fifth field because it is usually written as:
