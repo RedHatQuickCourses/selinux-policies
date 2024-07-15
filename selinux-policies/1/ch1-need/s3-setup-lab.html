@@ -306,23 +306,12 @@ Loaded policy name:             targeted
 </div>
 </li>
 <li>
-<p>List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some of those packages:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>rpm -qa | grep selinux</strong>
-...
-# <strong>yum search selinux</strong>
-...</code></pre>
-</div>
-</div>
-</li>
-<li>
 <p>Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.</p>
 <div class="paragraph">
 <p>You could review the raw audit log but the <code>ausearch</code> command provides many nice filters.</p>
 </div>
 <div class="paragraph">
-<p>6.1. For example, to show that a policy was loaded:</p>
+<p>5.1. For example, to show that a policy was loaded:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -334,7 +323,7 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 </div>
 </div>
 <div class="paragraph">
-<p>6.2. Or to show recent denials, which on a good system should be none:</p>
+<p>5.2. Or to show recent denials, which on a good system should be none:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -344,6 +333,17 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 </div>
 <div class="paragraph">
 <p>Most of the time, you will be interested only in the <code>avc</code> audit events.</p>
+</div>
+</li>
+<li>
+<p>List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some additional packages:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>rpm -qa | grep selinux</strong>
+...
+# <strong>yum search selinux</strong>
+...</code></pre>
+</div>
 </div>
 </li>
 <li>
