@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SELinux Policies, Labels, and Contexts :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s3-setup-lab.html">
+    <link rel="next" href="s5-labels-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s4-labels.html">SELinux Policies, Labels, and Contexts</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">SELinux Policies, Labels, and Contexts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Review the fundamental concepts required to read and interpret SELinux policies.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work In Progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_labels_and_contexts"><a class="anchor" href="#_selinux_labels_and_contexts"></a>SElinux Labels and Contexts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SELinux works by assigning labels to processes and to objects. Those labels define the SELinux context of a process (or domain) and of an object.</p>
+</div>
+<div class="paragraph">
+<p>SELinux policy rules allow process with a given label to access objects with a matching label. Process labels may grant different access levels to multiple object labels, for example read-only with some labels and read-write with others.</p>
+</div>
+<div class="paragraph">
+<p>SELinux policies control not only which process labels gets access to which resource labels, but also which labels processes and resources can get. These are called context transition rules. A context transition rules specifies the new label for a child process after a fork and exec, and the context on files created by process with a given context.</p>
+</div>
+<div class="paragraph">
+<p>You can configure your RHEL system in such a way that a system administrator can peform day-to-day tasks such as installing packages and creating users but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not on processes.</p>
+</div>
+<div class="paragraph">
+<p>[ LABELS AND CONTEXTS NEED WORK ]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
+</div>
+<div class="sect2">
+<h3 id="_selinux_policies_and_labels_slides_19_52"><a class="anchor" href="#_selinux_policies_and_labels_slides_19_52"></a>SELinux policies and labels: slides #19-52</h3>
+<div class="paragraph">
+<p>SELINUX SECURITY POLICY</p>
+</div>
+<div class="paragraph">
+<p>CORE COMPONENT OF SELINUX
+COLLECTION OF SELINUX POLICY RULES
+LOADED INTO THE KERNEL BY SELINUX USERSPACE TOOLS</p>
+</div>
+<div class="paragraph">
+<p>Figure of policy -&#8594; tooling -&#8594; kernel</p>
+</div>
+<div class="paragraph">
+<p>ENFORCED BY THE KERNEL
+USED TO AUTHORIZE ACCESS REQUESTS ON THE SYSTEM</p>
+</div>
+<div class="paragraph">
+<p>BY DEFAULT EVERYTHING IS DENIED AND YOU DEFINE POLICY RULES TO ALLOW CERTAIN REQUESTS</p>
+</div>
+<div class="paragraph">
+<p>SELINUX POLICY RULES</p>
+</div>
+<div class="paragraph">
+<p>DESCRIBE AN INTERACTION BETWEEN PROCESSES AND SYSTEM RESOURCES</p>
+</div>
+<div class="paragraph">
+<p>SELINUX POLICY RULE IN HUMAN LANGUAGE</p>
+</div>
+<div class="paragraph">
+<p>"APACHE process can READ its LOGGING FILE"</p>
+</div>
+<div class="paragraph">
+<p>SELINUX VIEW OF THAT INTERACTION</p>
+</div>
+<div class="paragraph">
+<p>ALLOW apache_process apache_log:FILE READ;</p>
+</div>
+<div class="paragraph">
+<p>apache_process apache_log ARE LABELS</p>
+</div>
+<div class="paragraph">
+<p>LABELS</p>
+</div>
+<div class="paragraph">
+<p>ASSIGNED TO PROCESSES
+ASSIGNED TO SYSTEM RESOURCES
+BY SELINUX SECURITY POLICY
+MAP REAL SYSTEM ENTITIES INTO THE SELINUX WORLD</p>
+</div>
+<div class="paragraph">
+<p>LABELS IN REALITY</p>
+</div>
+<div class="paragraph">
+<p>STORED IN EXTENDED ATTRIBUTES OF FILE SYSTEMS - EXT2,EXT3, EXT4 &#8230;&#8203;</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># getfattr -n security.selinux /etc/passwd
+getfattr: Removing leading '/' from absolute path names
+# file: etc/passwd
+security.selinux="system_u:object_r:passwd_file_t:s0"
+
+# ls -Z /etc/passwd
+system_u:object_r:passwd_file_t:s0 /etc/passwd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>SELINUX LABELS CONSIST OF FOUR PARTS</p>
+</div>
+<div class="paragraph">
+<p>&lt;user&gt;:&lt;role&gt;:&lt;type&gt;:&lt;MLS/MCS&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;user&gt;
+Not the same as Linux users
+Several Linux users can be mapped to a single SELinux user
+object_u is a placeholder for Linux system resources
+system_u is a placeholder for Linux processes
+Can be limited to a set of SELinux roles</p>
+</div>
+<div class="paragraph">
+<p>&lt;role&gt;
+SELinux users can have multiple roles but only one can be active
+object_r is a placeholder for Linux system resources
+system_r is a placeholder for system processes
+Can be limited to a set of SELinux types</p>
+</div>
+<div class="paragraph">
+<p>&lt;type&gt;
+Security model known as TYPE ENFORCEMENT
+In 99% you care only about TYPES
+policy rules and interactions between types</p>
+</div>
+<div class="paragraph">
+<p>&lt;MLS/MCS&gt;
+Multi Level Security
+Only the MCS part is used in Targeted Policy with the default s0 level
+Allow users to mark resources with compartment tags (MCS1, MCS2)
+Used for RHEL virtualization and for container security
+s0:c1 can not access s0:c2</p>
+</div>
+<div class="paragraph">
+<p>Figure of users, roles, and screenshots of user contexts</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># useradd -Z staff_u -G wheel staff
+# passwd staff
+# ssh staff@localhost
+$ id -Z</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_skip_targeted_policies_and_types"><a class="anchor" href="#_skip_targeted_policies_and_types"></a>Skip: targeted policies and types</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_type_transitions_for_domainsprocesses_and_resources"><a class="anchor" href="#_skip_type_transitions_for_domainsprocesses_and_resources"></a>Skip: Type transitions for domains/processes and resources</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_selinux_modes_slides_67_72"><a class="anchor" href="#_selinux_modes_slides_67_72"></a>SELinux modes: slides #67-72</h3>
+<div class="paragraph">
+<p>SELINUX MODES</p>
+</div>
+<div class="paragraph">
+<p>ENFORCING
+SELINUX SECURITY POLICY IS ENFORCED BY KERNEL</p>
+</div>
+<div class="paragraph">
+<p>PERMISSIVE
+SELINUX SECURITY POLICY IS NOT ENFORCED BY KERNEL
+ACCESSES ARE LOGGED</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a></span>
+  <span class="next"><a href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

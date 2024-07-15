@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Section 2 :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Lab: Explore Lables and Policies in a RHEL Machine :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s4-labels.html">
+    <link rel="next" href="s6-rhel.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -46,37 +48,37 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
+    <a class="nav-link" href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+    <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+    <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+    <a class="nav-link" href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
+    <a class="nav-link" href="s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
   </li>
 </ul>
   </li>
@@ -136,7 +138,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
-    <li><a href="section2.html">Section 2</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a></li>
   </ul>
 </nav>
 </div>
@@ -145,10 +148,82 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Section 2</h1>
+<h1 class="page">Lab: Explore Lables and Policies in a RHEL Machine</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>This is <em>Section 2</em> of <em>Chapter 3</em> in the <strong>hello</strong> quick course&#8230;&#8203;.</p>
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Explore the Labels and SELinux rules included with a default installation of Red Hat Enterprise Linux.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work In Progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_start"><a class="anchor" href="#_before_you_start"></a>Before you Start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Lorem Ipsum</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo -i</strong>
+# <strong>getenforce</strong>
+Enforcing</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Closing statement that related to the next section</p>
+</div>
+<div class="paragraph">
+<p>This concludes the activity.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TBD</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s4-labels.html">SELinux Policies, Labels, and Contexts</a></span>
+  <span class="next"><a href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a></span>
+</nav>
 </article>
   </div>
 </main>

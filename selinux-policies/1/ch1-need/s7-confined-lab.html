@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Check Confined and Unconfined Processes in RHEL :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s6-rhel.html">
+    <link rel="next" href="s8-containers.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Check Confined and Unconfined Processes in RHEL</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Verify that system services run as confined processes but processes from interactive sessions run unconfined.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work In Progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_start"><a class="anchor" href="#_before_you_start"></a>Before you Start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>First check that unprivileged users and their processes are unconfined.</p>
+<div class="paragraph">
+<p>1.1.
+Open a terminal to your RHEL machine and login with an unprivileged user. In my example, the username is <code>student</code> but the actual username and user id doesn&#8217;t matter, as long as it is not root.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>whoami</strong>
+student
+$ <strong>id</strong>
+uid=1000(student) gid=1000(student) groups=1000(student),10(wheel) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can tell the user is unconfined from the type field in the SELinux context of the user, which is <code>unconfind_t</code>.</p>
+</div>
+<div class="paragraph">
+<p>1.2. Verify that processes created by unprivileged users are unconfined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps -Z</strong>
+LABEL                               PID TTY          TIME CMD
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1128 pts/0 00:00:00 bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1275 pts/0 00:00:00 ps</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember that most commands in Bash, including the <code>ps</code> command, create new processes.</p>
+</div>
+</li>
+<li>
+<p>Check that files created by unprivileged users are NOT unconfined.</p>
+<div class="paragraph">
+<p>2.1. Verify the context on the user&#8217;s home directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ $HOME</strong>
+unconfined_u:object_r:user_home_dir_t:s0 /home/student</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.2. Create a file and verify it gets the same context as the user&#8217;s home directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>touch $HOME/test.empty</strong>
+$ <strong>ls -dZ $HOME/test.empty</strong>
+unconfined_u:object_r:user_home_t:s0 /home/student/test.empty</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Change the context of the file (requires root privileges) and see that the user cannot access the file anymore, despite being the owner and having POSIX permissions on it.</p>
+<div class="paragraph">
+<p>3.1. First, find a file type for something a regular user shouldn&#8217;t have access to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z /etc/shadow</strong>
+system_u:object_r:shadow_t:s0 /etc/shadow</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.2. Change the type of the file <code>test.empty</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo chcon -t shadow_t $HOME/test.empty
+$ ls -lZ  $HOME/test.empty
+-rw-r--r--. 1 student student unconfined_u:object_r:shadow_t:s0 0 Jul 12 15:09 /home/student/test.empty</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Surprise! The unconfined process can write to the file!</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ echo '123' &gt; $HOME/test.empty
+$ cat $HOME/test.empty
+123</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>So, how does unconfined user get access to their files? The <code>sesearch</code> and <code>seinfo</code> commands can show that information.</p>
+<div class="paragraph">
+<p>4.1. Install the the <code>setools-console</code> package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo install -y setools-console
+...
+Complete!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.2. Show the rule that enables unconfined access to everything</p>
+</div>
+</li>
+<li>
+<p>Show that a system service cannot access user files with runcon and sesearch. Contrast services which do need access to user files (crond, httpd) with services which do not (mysqld)</p>
+</li>
+<li>
+<p>Show a domain type transition? [CHECK WHEN TO SWITCH FROM PROCESS TO DOMAIN]</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This concludes the activity.</p>
+</div>
+<div class="paragraph">
+<p>The next section TBD</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://redhatgov.io/workshops/selinux_policy/exercise1.2/" class="bare">https://redhatgov.io/workshops/selinux_policy/exercise1.2/</a></p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a></span>
+  <span class="next"><a href="s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Interpreting AVC messages :: Writing Targeted Policies for SELinux on RHEL</title>
-    <link rel="prev" href="index.html">
-    <link rel="next" href="s2-troubleshoot-lab.html">
+    <title>How Red Hat Protects System Services With SELinux on RHEL :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s5-labels-lab.html">
+    <link rel="next" href="s7-confined-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -48,37 +48,37 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
+    <a class="nav-link" href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+    <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+    <a class="nav-link" href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
+    <a class="nav-link" href="s8-containers.html">How Red Hat Protects Containers With SELinux on RHEL</a>
   </li>
 </ul>
   </li>
@@ -88,22 +88,22 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">SELinux Management</a>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-avc.html">Interpreting AVC messages</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+    <a class="nav-link" href="../ch2-configure/s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
+    <a class="nav-link" href="../ch2-configure/s3-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s4-support-lab.html">Lab: Supporting SElinux</a>
+    <a class="nav-link" href="../ch2-configure/s4-support-lab.html">Lab: Supporting SElinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
   </li>
 </ul>
   </li>
@@ -138,8 +138,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
-    <li><a href="index.html">SELinux Management</a></li>
-    <li><a href="s1-avc.html">Interpreting AVC messages</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a></li>
   </ul>
 </nav>
 </div>
@@ -148,7 +148,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Interpreting AVC messages</h1>
+<h1 class="page">How Red Hat Protects System Services With SELinux on RHEL</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -158,7 +158,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Assess if an SELinux access denied message can be resolved by a change of configuration, without creating a custom policy.</p>
+<p>Understand how Red Hat uses SELinux policies within its products.</p>
 </dd>
 </dl>
 </div>
@@ -169,7 +169,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Pending Review
+Work In Progress
 </td>
 </tr>
 </table>
@@ -180,7 +180,7 @@ Pending Review
 <h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>Lorem ipsum</p>
 </div>
 </div>
 </div>
@@ -191,62 +191,82 @@ Pending Review
 <p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
 </div>
 <div class="sect2">
-<h3 id="_audit_logs_ausearch_audit2allow_slides_94_104"><a class="anchor" href="#_audit_logs_ausearch_audit2allow_slides_94_104"></a>Audit logs, ausearch, audit2allow: slides #94-104</h3>
+<h3 id="_targeted_policies_and_types_slides_53_57"><a class="anchor" href="#_targeted_policies_and_types_slides_53_57"></a>Targeted policies and types: slides #53-57</h3>
 <div class="paragraph">
-<p>AVC MESSAGES</p>
-</div>
-<div class="paragraph">
-<p>WHERE CAN WE FIND LOGS?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># cat /var/log/audit/audit.log
-# ausearch -m AVC</code></pre>
-</div>
+<p>IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT</p>
 </div>
 <div class="paragraph">
-<p>type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="file1" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file</p>
+<p>WE MOSTLY CARE ONLY ABOUT TYPES</p>
 </div>
 <div class="paragraph">
-<p>AUDITD.SERVICE HAVE TO BE RUNNING</p>
+<p>SELINUX ALLOW RULE SYNTAX WITH TYPES</p>
 </div>
 <div class="paragraph">
-<p>HOW TO PARSE AVC MESSAGES?</p>
+<p>ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch
-# audit2allow</code></pre>
+<div class="paragraph">
+<p>ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;</p>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -ts recent
-type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="shadow" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file
-# ausearch -m AVC -ts recent | audit2allow
-#============= httpd_t ==============
-allow httpd_t shadow_t:file read;</code></pre>
+<div class="sect2">
+<h3 id="_type_transitions_for_domainsprocesses_and_resources_slides_58_66"><a class="anchor" href="#_type_transitions_for_domainsprocesses_and_resources_slides_58_66"></a>Type transitions for domains/processes and resources (slides #58-66)</h3>
+<div class="paragraph">
+<p>DOMAIN TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;</p>
+</div>
+<div class="paragraph">
+<p>FILE TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;</p>
+</div>
+<div class="paragraph">
+<p>FILE NAME TRANSITION RULES</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;</p>
+</div>
+<div class="paragraph">
+<p>TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;</p>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># semanage fcontext -&gt; manage SELinux contexts
-# semanage boolean -&gt; manage SELinux booleans
-# semanage port -&gt; manage SELinux ports
-# semanage permissive -&gt; put SELinux domain to permissive mode
-# sesearch -&gt; search for present SELinux rules
-# ausearch -&gt; search for SELinux denials
-# sealert -&gt; SELinux troubleshooter
-# audit2allow -&gt; Parse SELinux denials / create local SELinux module
-# semodule -DB / # semodule -B -&gt; SELinux policy rebuild</code></pre>
+<div class="sect2">
+<h3 id="_skip_selinux_modes"><a class="anchor" href="#_skip_selinux_modes"></a>Skip: SELinux modes</h3>
+
 </div>
+<div class="sect2">
+<h3 id="_skip_selinux_with_podman_containers_mcs"><a class="anchor" href="#_skip_selinux_with_podman_containers_mcs"></a>Skip: SELinux with podman containers: MCS</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skip_udica"><a class="anchor" href="#_skip_udica"></a>Skip: Udica</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_multi_level_security_mls_slides_92_93"><a class="anchor" href="#_multi_level_security_mls_slides_92_93"></a>Multi Level Security MLS: slides #92-93</h3>
+<div class="paragraph">
+<p>Multi level security(MLS)</p>
+</div>
+<div class="paragraph">
+<p>Figure of read down and no write up</p>
+</div>
+<div class="paragraph">
+<p>Type enforcement allow rule must be present before SELinux considers sensitivity level</p>
 </div>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="index.html">SELinux Management</a></span>
-  <span class="next"><a href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a></span>
+  <span class="prev"><a href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a></span>
+  <span class="next"><a href="s7-confined-lab.html">Lab: Check Confined and Unconfined Processes in RHEL</a></span>
 </nav>
 </article>
   </div>
