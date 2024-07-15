@@ -8,7 +8,7 @@ Objective::
 
 Assess if any of those scenarios require a custom SELinux policy or if they could be satisfied with configuration of SELinux and applications.
 
-WARNING: Pending Review
+WARNING: Work In Progress
 
 == Questions
 

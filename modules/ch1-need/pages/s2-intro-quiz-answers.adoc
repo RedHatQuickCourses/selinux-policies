@@ -4,7 +4,7 @@
 
 _Estimated reading time: *{time_estimate} minutes*._
 
-WARNING: Pending Review
+WARNING: Work In Progress
 
 == Do you need a custom SELinux policy?
 

@@ -8,7 +8,7 @@ Objective::
 
 Review the fundamental concepts required to read and interpret SELinux policies.
 
-WARNING: Pending Review
+WARNING: Work In Progress
 
 //TODO refactor this and the previous section
 

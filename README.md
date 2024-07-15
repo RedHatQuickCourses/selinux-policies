@@ -8,7 +8,7 @@ The course design docs are available to Red Hat employees only:
 
 Figures on this course will be designed using Google Slides, and the deck will be available  to Red Hat employees only. Individual slides are exported to PNG files and those files are in the git repository.
 
-* TBD
+* [Figures](https://docs.google.com/presentation/d/1TYR3My9a8PKBdXIV2IO6CbH2B4Ry-lnX2RbuOq-Vsjo/edit?usp=sharing)
 
 The contents here are based on the
 [SELinux Workshop](https://docs.google.com/presentation/d11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/) by Lukas Vrabec and the [SELiux Labs](https://github.com/ldelouw/selinuxlab) by Lukas Vrabec and Luc de Louw and updates on the [Fork](https://github.com/parmstro/selinuxlab/) by Paul Armstrong.

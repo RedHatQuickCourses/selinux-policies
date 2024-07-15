@@ -1,0 +1,41 @@
+:time_estimate: 5
+
+= Lab: Explore Lables and Policies in a RHEL Machine
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+// This feels like should follow s1, it does not shows labels and contexts :-(
+
+Objective::
+
+Explore the Labels and SELinux rules included with a default installation of Red Hat Enterprise Linux.
+
+WARNING: Work In Progress
+
+== Before you Start
+
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+
+// You also need internet access to download sample applications and scripts from GitHub.
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+== Instructions
+
+1. Lorem Ipsum
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo -i*
+# *getenforce*
+Enforcing
+--
+
+Closing statement that related to the next section
+
+This concludes the activity.
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+TBD
