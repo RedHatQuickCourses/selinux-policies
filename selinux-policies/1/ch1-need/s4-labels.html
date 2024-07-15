@@ -69,7 +69,7 @@
     <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
@@ -343,6 +343,14 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_selinux_type_attributes"><a class="anchor" href="#_selinux_type_attributes"></a>SELinux Type Attributes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The concept of attribute for SELinux types enables grouping multiple types and referring to the name of attribute name in allow rules. They allow specifying an allow rule only once for a number of different domain and/or resource types.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_multi_level_security_mls_and_multi_category_security_mcs_systems"><a class="anchor" href="#_multi_level_security_mls_and_multi_category_security_mcs_systems"></a>Multi Level Security (MLS) and Multi Category Security (MCS) systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -558,7 +566,7 @@ ACCESSES ARE LOGGED</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="s3-setup-lab.html">Lab: Verify the SELinux Status of a RHEL Machine</a></span>
-  <span class="next"><a href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a></span>
+  <span class="next"><a href="s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a></span>
 </nav>
 </article>
   </div>

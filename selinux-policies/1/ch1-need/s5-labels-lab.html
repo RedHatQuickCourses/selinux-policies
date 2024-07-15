@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab: Explore Lables and Policies in a RHEL Machine :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Lab: Explore Labels and Policy Rules in a RHEL Machine :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s4-labels.html">
     <link rel="next" href="s6-rhel.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -69,7 +69,7 @@
     <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a>
+    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
@@ -139,7 +139,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Review of SELinux</a></li>
-    <li><a href="s5-labels-lab.html">Lab: Explore Lables and Policies in a RHEL Machine</a></li>
+    <li><a href="s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a></li>
   </ul>
 </nav>
 </div>
@@ -148,7 +148,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Lab: Explore Lables and Policies in a RHEL Machine</h1>
+<h1 class="page">Lab: Explore Labels and Policy Rules in a RHEL Machine</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -177,10 +177,13 @@ Work In Progress
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_start"><a class="anchor" href="#_before_you_start"></a>Before you Start</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+</div>
+<div class="paragraph">
+<p>Ensure that your system has SELinux enabled and in enforcing mode. See the first activity of this course if you need help with those checks.</p>
 </div>
 <div class="paragraph">
 <p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
@@ -193,12 +196,225 @@ Work In Progress
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Lorem Ipsum</p>
+<p>Log in as a regular Linux user (not root) and verify the SELinux context of your files and processes.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo -i</strong>
-# <strong>getenforce</strong>
-Enforcing</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ $HOME</strong>
+unconfined_u:object_r:user_home_dir_t:s0 /home/student
+$ <strong>ps Z</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1175 pts/0 Ss   0:00 -bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1592 pts/0 R+   0:00 ps Z--</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See that all processes you stat from your login shell, such as <code>ps</code> in the example above, inherit the context of their parent process.</p>
+</div>
+<div class="paragraph">
+<p>For now, ignore all fields of the domain (process) and resource (files) context, except for their types, which are <code>unconfined_t</code> and <code>user_home_dir_t</code>, respectively.</p>
+</div>
+</li>
+<li>
+<p>Show that SELinux allows the domain to access home files.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow files_unconfined_type file_type:file execmod; [ selinuxuser_execmod ]:True
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on files.</p>
+</div>
+</li>
+<li>
+<p>If you&#8217;re adventurous, retry the previous command without one of the <code>-s</code>, <code>-t</code>, or <code>-c</code> options. Be warned that it&#8217;ll display a large number of allow rules.</p>
+</li>
+<li>
+<p>Run a <code>passwd</code> command and check its context and of the system password files.</p>
+<div class="paragraph">
+<p>4.1. Run the <code>passwd</code> command in the backgrond so it get stuck and you can check its SELinux context:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>passwd &gt; /dev/null &amp;</strong>
+[1] 1628
+$
+
+[1]+  Stopped                 passwd &gt; /dev/null
+$ <strong>ps -Z 1628</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+unconfined_u:unconfined_r:passwd_t:s0-s0:c0.c1023 1628 pts/0 T   0:00 passwd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See that the passwd command transitions from the unconfined_t to the passwd_t context.
+4.2. Check the context of the password files. The option after <code>-Z</code> uses the numeral one for "one file per line":</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z -1 /etc/passwd /etc/shadow</strong>
+system_u:object_r:passwd_file_t:s0 /etc/passwd
+     system_u:object_r:shadow_t:s0 /etc/shadow</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See, there are different SELinux types for <code>/etc/passwd</code>, which everyone&#8217;s supposed to read, and for <code>/etc/shadow</code>, which no one is supposed to read.</p>
+</div>
+<div class="paragraph">
+<p>4.3. Don&#8217;t forget to kill the passwd process that you left in the background:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>kill %1</strong>
+[student@servera ~]$
+[1]+  Terminated              passwd &gt; /dev/null</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check if the <code>passwd</code> command and your interactive processes are allowed to access the password files by the SELinux policy.</p>
+<div class="paragraph">
+<p>5.1. See that the <code>passwd_t</code> domain is allowed access to both password files, as expected:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s passwd_t -t passwd_file_t -c file</strong>
+...
+allow passwd_t passwd_file_t:file { append create link rename setattr unlink watch watch_reads write };
+$ <strong>sesearch --allow -s passwd_t -t shadow_t -c file</strong>
+...
+allow passwd_t shadow_t:file { append create getattr ioctl link lock map open read relabelfrom relabelto rename setattr unlink watch watch_reads write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. See that, surprisingly, the <code>unconfined_t</code> domain is also allowed access to both password files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t passwd_file_t -c file</strong>
+...
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };
+...
+$ <strong>sesearch --allow -s unconfined_t -t shadow_t -c file</strong>
+...
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.3. It seems, from the previous output, that the <code>passwd_file_t</code> and <code>shadow_t</code> resource domains include the <code>file_type</code> attribute files are allowed to domains with the <code>files_unconfined_type</code> attribute. Check that those resource and domain types do include the attributes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a file_type -x | grep shadow_t</strong>
+        shadow_t
+$ <strong>seinfo -a file_type -x | grep passwd_file_t</strong>
+        passwd_file_t
+$ <strong>seinfo -a files_unconfined_type -x | grep unconfined_t</strong>
+   attribute files_unconfined_type;
+        certmonger_unconfined_t
+        pegasus_openlmi_unconfined_t
+        unconfined_t
+        virt_qemu_ga_unconfined_t
+        vmtools_unconfined_t
+        watchdog_unconfined_t
+        xdm_unconfined_t</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>File type mappings for home dirs and passwd files</p>
+<div class="paragraph">
+<p>6.1. TBD</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep user_home_t</strong>
+/home/[^/]+/.+                                     all files          unconfined_u:object_r:user_home_t:s0
+$ # NO PASSWD_T
+$ sudo semanage fcontext -l | grep passwd_t
+/etc/dovecot\.passwd.*                             all files          system_u:object_r:dovecot_passwd_t:s0
+$ sudo semanage fcontext -l | grep shadow_t
+/etc/gshadow.*                                     regular file       system_u:object_r:shadow_t:s0
+/etc/nshadow.*                                     regular file       system_u:object_r:shadow_t:s0
+/etc/security/opasswd                              regular file       system_u:object_r:shadow_t:s0
+/etc/security/opasswd\.old                         regular file       system_u:object_r:shadow_t:s0
+/etc/shadow.*                                      regular file       system_u:object_r:shadow_t:s0
+/etc/tcb/.+/shadow.*                               regular file       system_u:object_r:shadow_t:s0
+/var/db/shadow.*                                   regular file       system_u:object_r:shadow_t:s0
+$ sudo semanage fcontext -l | grep ssh_home_t
+/home/[^/]+/\.ansible/cp/.*                        socket             unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.shosts                               all files          unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.ssh(/.*)?                            all files          unconfined_u:object_r:ssh_home_t:s0
+---</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that system services run under different contexts, so they belong to different domains than interactive user logins, which may or may not have access to user files.</p>
+<div class="paragraph">
+<p>7.1.Find the context of common system services such as the SSH and Cron deamons.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps ax -Z | grep sshd</strong>
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1117 ?   Ss     0:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1161 ?   Ss     0:00 sshd: student [priv]
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1174 ? S   0:00 sshd: student@pts/0
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1279 ?   Ss     0:00 sshd: student [priv]
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1282 ? S   0:00 sshd: student@pts/1
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1711 pts/0 S+   0:00 grep --color=auto sshd
+$ <strong>ps ax -Z | grep crond</strong>
+system_u:system_r:crond_t:s0-s0:c0.c1023 1119 ?  Ss     0:00 /usr/sbin/atd -f
+system_u:system_r:crond_t:s0-s0:c0.c1023 1120 ?  Ss     0:00 /usr/sbin/crond -n
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep --color=auto crond</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>7.2. Check if the domain types for SSH and Cron daemons have access to user&#8217;s home directories. By now you should be able to interpret the outputs by youself:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s sshd_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+$ <strong>sesearch --allow -s crond_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow files_unconfined_type file_type:file execmod; [ selinuxuser_execmod ]:True
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See, the SSH daemon has no access to user&#8217;s files but the Cron damon does have access. The SSH daemon starts with elevated privileges, as the root user, and should be constrained as a potential avenue for exploit. On the other side, regular users are expected to create their own cron or at jobs which would acccess their own files.</p>
+</div>
+<div class="paragraph">
+<p>7.3. But how does the SSH daemon gets the user&#8217;s list of authorized keys? There&#8217;s a different context type for those files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z .ssh/authorized_keys</strong>
+unconfined_u:object_r:ssh_home_t:s0 .ssh/authorized_keys
+$ <strong>sesearch --allow -s sshd_t -t ssh_home_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow login_pgm ssh_home_t:file { getattr ioctl lock open read };
+allow ssh_server ssh_home_t:file { append create link rename setattr unlink watch watch_reads write };
+allow sshd_t user_home_type:file { getattr ioctl lock open read };</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify domain transition rules</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ sesearch --allow -s init_t -t crond_t -c process -p transition
+allow initrc_domain daemon:process transition;
+[student@servera ~]$
+[student@servera ~]$ sesearch --allow -s init_t -t sshd_t -c process -p transition
+allow initrc_domain daemon:process transition;
+[student@servera ~]$
+[student@servera ~]$ sesearch --allow -s init_t -t unconfined_t -c process -p transition
+allow init_t login_userdomain:process transition;
+[student@servera ~]$</code></pre>
 </div>
 </div>
 </li>
