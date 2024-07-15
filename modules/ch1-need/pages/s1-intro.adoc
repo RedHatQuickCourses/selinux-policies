@@ -59,6 +59,8 @@ Unfortunately, few IT vendors stepped up to provide SELinux policies for their p
 
 Among the vendors who stepped up we can name Microsoft, which provides an https://techcommunity.microsoft.com/t5/sql-server-blog/sql-server-2022-now-available-for-both-rhel-9-and-ubuntu-22-04/ba-p/3896410[SELinux policy for the MS SQL Server database].
 
+Another vendor who provides SELinux policies for their software is https://docs.trellix.com/bundle/trellix-agent-5.7.x-product-guide/page/GUID-4C38F3FD-0881-4D48-AA52-572E4BFFC167.html[Trellix] for their endpoint security suite.
+
 Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer's environment, but they still encourage their customers to use SELinux for additional security. For example, IBM already provided https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux[sample SELinux policies for DB2] way before IBM acquired Red Hat.
 
 Some vendors who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example SAP supports running https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102[SAP Hana with SElinux]. By the way, you can find members of the SAP community who guide their fellow users on https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463[how to create SELinux policies to protect SAP applications].

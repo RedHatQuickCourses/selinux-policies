@@ -129,21 +129,11 @@ Loaded policy name:             targeted
 ...
 --
 
-5. List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some of those packages:
-+
-[source,subs="verbatim,quotes"]
---
-# *rpm -qa | grep selinux*
-...
-# *yum search selinux*
-...
---
-
-6. Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.
+5. Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.
 +
 You could review the raw audit log but the `ausearch` command provides many nice filters.
 +
-6.1. For example, to show that a policy was loaded:
+5.1. For example, to show that a policy was loaded:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -154,7 +144,7 @@ type=SYSCALL msg=audit(11/09/23 03:43:12.299:347) : arch=x86_64 syscall=write su
 type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 lsm=selinux res=yes
 --
 +
-6.2. Or to show recent denials, which on a good system should be none:
+5.2. Or to show recent denials, which on a good system should be none:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -163,6 +153,16 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 --
 +
 Most of the time, you will be interested only in the `avc` audit events.
+
+6. List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some additional packages:
++
+[source,subs="verbatim,quotes"]
+--
+# *rpm -qa | grep selinux*
+...
+# *yum search selinux*
+...
+--
 
 7. A standard installation of RHEL includes no tool to inspect all about the loaded SELinux policies. You can install the `seinfo` and `sesearch` commands to get visibiity over the policies:
 +
@@ -223,8 +223,6 @@ allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:as
 --
 +
 There are thousands of rules in the default targeted policy set provided with RHEL. Later in this course we'll learn how to filter the results of `sesearch`, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.
-
-// TODO: If this stays as s4, we ALREADY introduced labels, contexts, and rules, and can do some interesting searches.
 
 This concludes the activity.
 
