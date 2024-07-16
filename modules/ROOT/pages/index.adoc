@@ -11,7 +11,7 @@ System Administrators, Site Reliability Engineers, Application Developers, and o
 
 == Prerequisites
 
-Learners are expected to have have some familiarity with managing SELinux on RHEL. If you need a refresher on these tasks, please review the following Red Hat Training Courses:
+Learners are expected to have have some familiarity with managing SELinux on RHEL. If you are new to SELinux on RHEL, please review the following Red Hat Training Courses:
 
 // Offer one of the blogs, KBs, or instruqts as a quick refresher and alternative to GLS courses
 
@@ -25,6 +25,8 @@ The direct links to course chapters above are valid only for Red Hat employees. 
 * https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch11s03[RH134 Chapter 11]
 * https://rol.redhat.com/rol/app/courses/rh415-9.2/pages/ch08[RH415 Chapter 8]
 * https://rol.redhat.com/rol/app/courses/rh342-8.4/pages/ch09[RH342 Chapter 9]
+
+If you're not new to SELinux but need a refresher on it's day-to-day administration, please review the https://developers.redhat.com/courses/enhance-red-hat-enterprise-linux-selinux[Enhance RHEL with SELinux] tutorial by https://developers.redhat.com/learn[Red Hat Developers].
 
 If you need an overview of SELinux, please review the following conceptual introduction:
 
