@@ -183,7 +183,7 @@ Work In Progress
 <p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
 </div>
 <div class="paragraph">
-<p>Ensure that your system has SELinux enabled and in enforcing mode. See the first activity of this course if you need help with those checks.</p>
+<p>Ensure that your system has SELinux enabled and in enforcing mode. Review the first activity in this course if you need help with those checks.</p>
 </div>
 <div class="paragraph">
 <p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
@@ -197,25 +197,35 @@ Work In Progress
 <ol class="arabic">
 <li>
 <p>Log in as a regular Linux user (not root) and verify the SELinux context of your files and processes.</p>
+<div class="paragraph">
+<p>1.1. Notice that your home directory and your files have different resource types:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ $HOME</strong>
 unconfined_u:object_r:user_home_dir_t:s0 /home/student
-$ <strong>ps Z</strong>
+$ <strong>echo '123' &gt; test.file</strong>
+$ <strong>ls -Z test.file</strong>
+unconfined_u:object_r:user_home_t:s0 test.file</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. All your process inherit the resource type of your login shell:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps Z</strong>
 LABEL                               PID TTY      STAT   TIME COMMAND
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1175 pts/0 Ss   0:00 -bash
-unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1592 pts/0 R+   0:00 ps Z--</code></pre>
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1592 pts/0 R+   0:00 ps Z</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>See that all processes you stat from your login shell, such as <code>ps</code> in the example above, inherit the context of their parent process.</p>
-</div>
-<div class="paragraph">
-<p>For now, ignore all fields of the domain (process) and resource (files) context, except for their types, which are <code>unconfined_t</code> and <code>user_home_dir_t</code>, respectively.</p>
+<p>For now, ignore all fields of the domain (process) and resource (files) contexts, except for their types, which are <code>unconfined_t</code> and <code>user_home_dir_t</code> or <code>user_home_t</code>, respectively.</p>
 </div>
 </li>
 <li>
-<p>Show that SELinux allows the domain to access home files.</p>
+<p>Show that SELinux allows the domain to access home directories.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t user_home_dir_t -c file</strong>
@@ -225,14 +235,17 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 </div>
 </div>
 <div class="paragraph">
-<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on files.</p>
+<p>If you wish, you can also try a similar search for user&#8217;s home files. Just replace <code>user_home_dir_t</code> with <code>user_home_t</code> in the previous command.</p>
+</div>
+<div class="paragraph">
+<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on user&#8217;s home directories.</p>
 </div>
 </li>
 <li>
 <p>If you&#8217;re adventurous, retry the previous command without one of the <code>-s</code>, <code>-t</code>, or <code>-c</code> options. Be warned that it&#8217;ll display a large number of allow rules.</p>
 </li>
 <li>
-<p>Run a <code>passwd</code> command and check its context and of the system password files.</p>
+<p>Run the <code>passwd</code> command and check its context and of the system password files.</p>
 <div class="paragraph">
 <p>4.1. Run the <code>passwd</code> command in the backgrond so it get stuck and you can check its SELinux context:</p>
 </div>
@@ -249,8 +262,10 @@ unconfined_u:unconfined_r:passwd_t:s0-s0:c0.c1023 1628 pts/0 T   0:00 passwd</co
 </div>
 </div>
 <div class="paragraph">
-<p>See that the passwd command transitions from the unconfined_t to the passwd_t context.
-4.2. Check the context of the password files. The option after <code>-Z</code> uses the numeral one for "one file per line":</p>
+<p>Notice that the <code>passwd</code> transitioned from the <code>unconfined_t</code> type of its Bash shell to the <code>passwd_t</code> type.</p>
+</div>
+<div class="paragraph">
+<p>4.2. Check the context of the password files. The option after <code>-Z</code> uses the numeral one for "one file per line":</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -260,10 +275,10 @@ system_u:object_r:passwd_file_t:s0 /etc/passwd
 </div>
 </div>
 <div class="paragraph">
-<p>See, there are different SELinux types for <code>/etc/passwd</code>, which everyone&#8217;s supposed to read, and for <code>/etc/shadow</code>, which no one is supposed to read.</p>
+<p>Notice that there are different SELinux types for <code>/etc/passwd</code>, which everyone&#8217;s supposed to read, and for <code>/etc/shadow</code>, which no one is supposed to read.</p>
 </div>
 <div class="paragraph">
-<p>4.3. Don&#8217;t forget to kill the passwd process that you left in the background:</p>
+<p>4.3. Don&#8217;t forget to kill the <code>passwd</code> process that you left in the background:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -276,7 +291,7 @@ system_u:object_r:passwd_file_t:s0 /etc/passwd
 <li>
 <p>Check if the <code>passwd</code> command and your interactive processes are allowed to access the password files by the SELinux policy.</p>
 <div class="paragraph">
-<p>5.1. See that the <code>passwd_t</code> domain is allowed access to both password files, as expected:</p>
+<p>5.1. Notice that the <code>passwd_t</code> domain is allowed access to both password files, as expected:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -289,7 +304,7 @@ allow passwd_t shadow_t:file { append create getattr ioctl link lock map open re
 </div>
 </div>
 <div class="paragraph">
-<p>5.2. See that, surprisingly, the <code>unconfined_t</code> domain is also allowed access to both password files:</p>
+<p>5.2. Check that, surprisingly, the <code>unconfined_t</code> domain is also allowed access to both password files:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -303,15 +318,14 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 </div>
 </div>
 <div class="paragraph">
-<p>5.3. It seems, from the previous output, that the <code>passwd_file_t</code> and <code>shadow_t</code> resource domains include the <code>file_type</code> attribute files are allowed to domains with the <code>files_unconfined_type</code> attribute. Check that those resource and domain types do include the attributes.</p>
+<p>This will make sense in the next section, when we explain the reasoning behind the default policies included with RHEL. For now, let&#8217;s move forward.</p>
+</div>
+<div class="paragraph">
+<p>5.3. It seems, from the previous output, that unconfined_t domain type inherits from the <code>files_unconfined_type</code> attribute. Check that assumption:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a file_type -x | grep shadow_t</strong>
-        shadow_t
-$ <strong>seinfo -a file_type -x | grep passwd_file_t</strong>
-        passwd_file_t
-$ <strong>seinfo -a files_unconfined_type -x | grep unconfined_t</strong>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a files_unconfined_type -x | grep unconfined_t</strong>
    attribute files_unconfined_type;
         certmonger_unconfined_t
         pegasus_openlmi_unconfined_t
@@ -322,20 +336,49 @@ $ <strong>seinfo -a files_unconfined_type -x | grep unconfined_t</strong>
         xdm_unconfined_t</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>File type mappings for home dirs and passwd files</p>
 <div class="paragraph">
-<p>6.1. TBD</p>
+<p>5.4. Similarly, it seems that the <code>passwd_file_t</code> and <code>shadow_t</code> resource types inherit from the <code>file_type</code> attribute:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep user_home_t</strong>
-/home/[^/]+/.+                                     all files          unconfined_u:object_r:user_home_t:s0
-$ # NO PASSWD_T
-$ sudo semanage fcontext -l | grep passwd_t
-/etc/dovecot\.passwd.*                             all files          system_u:object_r:dovecot_passwd_t:s0
-$ sudo semanage fcontext -l | grep shadow_t
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a file_type -x | grep shadow_t</strong>
+        shadow_t
+$ <strong>seinfo -a file_type -x | grep passwd_file_t</strong>
+        passwd_file_t</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check that the loaded policy sets default contexts for files under user&#8217;s home directories and also for password files. You have to use the <code>semanage</code> comand instead of the <code>sesearch</code> command:</p>
+<div class="paragraph">
+<p>6.1. First check user home directories, with type <code>user_home_dir_t</code>, and user&#8217;s files, with type <code>user_home_t</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep user_home_dir_t</strong>
+/home/[^/]+                                        directory          unconfined_u:object_r:user_home_dir_t:s0
+/home/[^/]+                                        symbolic link      unconfined_u:object_r:user_home_dir_t:s0
+$ <strong>sudo semanage fcontext -l | grep user_home_t</strong>
+/home/[^/]+/.+                                     all files          unconfined_u:object_r:user_home_t:s0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6.2. Check the default context for user&#8217;s SSH keys, to prove that not all files under the <code>/home</code> directory get the same context:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep ssh_home_t</strong>
+/home/[^/]+/\.ansible/cp/.*                        socket             unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.shosts                               all files          unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.ssh(/.*)?                            all files          unconfined_u:object_r:ssh_home_t:s0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6.3. Check the default context for password files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep shadow_t</strong>
 /etc/gshadow.*                                     regular file       system_u:object_r:shadow_t:s0
 /etc/nshadow.*                                     regular file       system_u:object_r:shadow_t:s0
 /etc/security/opasswd                              regular file       system_u:object_r:shadow_t:s0
@@ -343,18 +386,22 @@ $ sudo semanage fcontext -l | grep shadow_t
 /etc/shadow.*                                      regular file       system_u:object_r:shadow_t:s0
 /etc/tcb/.+/shadow.*                               regular file       system_u:object_r:shadow_t:s0
 /var/db/shadow.*                                   regular file       system_u:object_r:shadow_t:s0
-$ sudo semanage fcontext -l | grep ssh_home_t
-/home/[^/]+/\.ansible/cp/.*                        socket             unconfined_u:object_r:ssh_home_t:s0
-/home/[^/]+/\.shosts                               all files          unconfined_u:object_r:ssh_home_t:s0
-/home/[^/]+/\.ssh(/.*)?                            all files          unconfined_u:object_r:ssh_home_t:s0
----</code></pre>
+$ <strong>sudo semanage fcontext -l | grep passwd_file_t</strong>
+/etc/\.pwd\.lock                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/group[-\+]?                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/group\.lock                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd[-\+]?                                  regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.OLD                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.adjunct.*                             regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.lock                                  regular file       system_u:object_r:passwd_file_t:s0
+/etc/ptmptmp                                       regular file       system_u:object_r:passwd_file_t:s0</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Verify that system services run under different contexts, so they belong to different domains than interactive user logins, which may or may not have access to user files.</p>
+<p>Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system servics have access to user&#8217;s files.</p>
 <div class="paragraph">
-<p>7.1.Find the context of common system services such as the SSH and Cron deamons.</p>
+<p>7.1. Find the context of common system services such as the Secure Shell and Cron deamons.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -372,7 +419,7 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep 
 </div>
 </div>
 <div class="paragraph">
-<p>7.2. Check if the domain types for SSH and Cron daemons have access to user&#8217;s home directories. By now you should be able to interpret the outputs by youself:</p>
+<p>7.2. Check if the domain types for the Secure Shell and Cron daemons have access to user&#8217;s home directories.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -385,10 +432,16 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 </div>
 </div>
 <div class="paragraph">
-<p>See, the SSH daemon has no access to user&#8217;s files but the Cron damon does have access. The SSH daemon starts with elevated privileges, as the root user, and should be constrained as a potential avenue for exploit. On the other side, regular users are expected to create their own cron or at jobs which would acccess their own files.</p>
+<p>Notice that the Secure Shell daemon has no access to user&#8217;s files but the Cron daemon does have access.</p>
 </div>
 <div class="paragraph">
-<p>7.3. But how does the SSH daemon gets the user&#8217;s list of authorized keys? There&#8217;s a different context type for those files:</p>
+<p>The Secure Shell daemon starts with elevated privileges, as the root user, and should be constrained as a potential avenue for security exploits.</p>
+</div>
+<div class="paragraph">
+<p>On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to acccess user&#8217;s files.</p>
+</div>
+<div class="paragraph">
+<p>7.3. But how does the Secure Shell daemon gets the user&#8217;s list of authorized keys? We already know there&#8217;s a different resource type for those files:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -403,36 +456,35 @@ allow sshd_t user_home_type:file { getattr ioctl lock open read };</code></pre>
 </div>
 </li>
 <li>
-<p>Verify domain transition rules</p>
+<p>Verify domain transition rules which allow interactive processes and system services to be assigned to their intended domain types.</p>
+<div class="paragraph">
+<p>8.1. Check the domain transition rule for interactive processes:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sesearch --allow -s init_t -t crond_t -c process -p transition
-allow initrc_domain daemon:process transition;
-[student@servera ~]$
-[student@servera ~]$ sesearch --allow -s init_t -t sshd_t -c process -p transition
-allow initrc_domain daemon:process transition;
-[student@servera ~]$
-[student@servera ~]$ sesearch --allow -s init_t -t unconfined_t -c process -p transition
-allow init_t login_userdomain:process transition;
-[student@servera ~]$</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s init_t -t unconfined_t -c process -p transition</strong>
+allow init_t login_userdomain:process transition;</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>8.2. Check the domain transitions rule for system services:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s init_t -t crond_t -c process -p transition</strong>
+allow initrc_domain daemon:process transition;
+$ <strong>sesearch --allow -s init_t -t sshd_t -c process -p transition</strong>
+allow initrc_domain daemon:process transition;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Domain transitions require a few more rules to exist, such as access to the correct executable file. We will see those rules later, when we learn to create custom policies. Before that, we will learn the assumptions behind SELinux policies included with RHEL.</p>
 </div>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>Closing statement that related to the next section</p>
-</div>
-<div class="paragraph">
 <p>This concludes the activity.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>TBD</p>
 </div>
 </div>
 </div>

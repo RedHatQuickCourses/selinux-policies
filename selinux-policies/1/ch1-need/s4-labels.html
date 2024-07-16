@@ -348,6 +348,9 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <div class="paragraph">
 <p>The concept of attribute for SELinux types enables grouping multiple types and referring to the name of attribute name in allow rules. They allow specifying an allow rule only once for a number of different domain and/or resource types.</p>
 </div>
+<div class="paragraph">
+<p>When you search for allow rules in the current loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
