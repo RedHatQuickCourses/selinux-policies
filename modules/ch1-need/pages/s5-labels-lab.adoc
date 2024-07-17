@@ -277,5 +277,5 @@ Domain transitions require a few more rules to exist, such as access to the corr
 
 == Next Steps
 
-Before learning to configure and create SELinux policies, we must learn the assumptions behind SELinux policies included with RHEL, which we see in the next section.
+Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we see in the next section.
 

@@ -7,4 +7,3 @@
 ** xref:s5-labels-lab.adoc[]
 ** xref:s6-rhel.adoc[]
 ** xref:s7-confined-lab.adoc[]
-** xref:s8-containers.adoc[]
