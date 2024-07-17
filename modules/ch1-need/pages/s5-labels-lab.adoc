@@ -273,7 +273,9 @@ $ *sesearch --allow -s init_t -t sshd_t -c process -p transition*
 allow initrc_domain daemon:process transition;
 --
 +
-Domain transitions require a few more rules to exist, such as access to the correct executable file. We will see those rules later, when we learn to create custom policies. Before that, we will learn the assumptions behind SELinux policies included with RHEL.
+Domain transitions require a few more rules to exist, such as access to the correct executable file. We will see those rules later, when we learn to create custom policies.
 
-This concludes the activity.
+== Next Steps
+
+Before learning to configure and create SELinux policies, we must learn the assumptions behind SELinux policies included with RHEL, which we see in the next section.
 

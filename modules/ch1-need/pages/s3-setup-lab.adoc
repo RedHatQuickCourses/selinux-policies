@@ -222,9 +222,11 @@ allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:as
 ...
 --
 +
-There are thousands of rules in the default targeted policy set provided with RHEL. Later in this course we'll learn how to filter the results of `sesearch`, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.
+Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming but SELinux tools help navigating loaded policies.
 
-This concludes the activity.
+== Next Steps
+
+Later in this course we'll learn how to filter the results of `sesearch`, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.
 
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
