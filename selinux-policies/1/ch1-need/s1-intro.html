@@ -233,6 +233,11 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <div class="paragraph">
 <p>The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the application wouldn&#8217;t normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/s1-intro-fig-2.svg" alt="s1 intro fig 2">
+</div>
+</div>
 <div class="paragraph">
 <p>SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example:</p>
 </div>
@@ -259,6 +264,11 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <div class="sectionbody">
 <div class="paragraph">
 <p>Red Hat provides a comprehensive policy for almost all packages included with RHEL and its add-on products but, if you deploy any application from a third-party vendor, you must load a policy that is specifically tailored for that application. As you are attending this course, you are probably involved with creating such a policy.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/s1-intro-fig-3.svg" alt="s1 intro fig 3">
+</div>
 </div>
 <div class="paragraph">
 <p>Red Hat is not the only vendor that recommends enabling and configuring SELinux. As an example, see some <a href="https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/">advice from DataDog</a>.</p>
@@ -304,7 +314,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <p>Does it make sense for that application to read the contents of /directory/file?</p>
 </li>
 <li>
-<p>Does it make sense for that application to listen on TCP Port N?</p>
+<p>Does it make sense for that application to listen on TCP Port 12345?</p>
 </li>
 <li>
 <p>Does it make sense for that application to open network connections to api.example.com?</p>
@@ -340,16 +350,10 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 </div>
 </div>
 <div class="sect1">
-<h2 id="_unconfined_processes_and_objects"><a class="anchor" href="#_unconfined_processes_and_objects"></a>Unconfined Processes and Objects</h2>
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You could cheat and create a policy which states that a process can do aything. SELinux makes it somewhat hard to create such a policy, but Red Hat includes, as part of the policies within RHEL, what is called <strong>unconfined</strong> processes: applications with unrestricted access all objects. For unconfined processes, SELinux effectively provide no security.</p>
-</div>
-<div class="paragraph">
-<p>For example, all processes that a user starts from an interactive login are unconfined. This way a user can run any application to access their own files, without requiring custom policies. User files are still protected by SELinux from access by system services which run as confined processes.</p>
-</div>
-<div class="paragraph">
-<p>Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SELinux enables you to configure Multi Level Security (MLS) policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.</p>
+<p>You will now check your understanding of the concepts just presented and verify that you have a test machine with SELinux enabled and with the recommended default policy set loaded. Later you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.</p>
 </div>
 </div>
 </div>
