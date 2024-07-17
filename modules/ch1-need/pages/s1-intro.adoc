@@ -40,6 +40,8 @@ SELinux is not a replacement for other security mechanisms in Linux, such as Net
 
 The biggest benefit of SELinux is protecting systems from zero-day vulnerabilities. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the application wouldn't normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
 
+image::s1-intro-fig-2.svg[]
+
 SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example:
 
 * https://blog.hqcodeshop.fi/archives/243-SElinux-and-Shellshock.html[CVE-2014-6271 and CVE-2014-7169] a.k.a ShellShock
@@ -52,6 +54,8 @@ Notice that SELinux cannot prevent an application from doing things it's suppose
 == Who Provides SELinux Policies
 
 Red Hat provides a comprehensive policy for almost all packages included with RHEL and its add-on products but, if you deploy any application from a third-party vendor, you must load a policy that is specifically tailored for that application. As you are attending this course, you are probably involved with creating such a policy.
+
+image::s1-intro-fig-3.svg[]
 
 Red Hat is not the only vendor that recommends enabling and configuring SELinux. As an example, see some https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/[advice from DataDog].
 
@@ -78,7 +82,7 @@ All tools required to create, deploy, manage, and troubleshoot SELinux policies 
 Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn't mean access to the application's source code and understanding of its internal implementation details. It means understanding of what an aplication does, to the level you are able to answer questions such as: 
 
 * Does it make sense for that application to read the contents of /directory/file?
-* Does it make sense for that application to listen on TCP Port N?
+* Does it make sense for that application to listen on TCP Port 12345?
 * Does it make sense for that application to open network connections to api.example.com?
 
 In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.
@@ -97,15 +101,9 @@ In fact, the recommended workflow for creating a custom SELinux policy starts by
 
 While it is possible to put the entire system in permissive move, this is rarely necessary. 
 
-// Defer that concept until s5-rhel.adoc ?
+== Next Steps
 
-== Unconfined Processes and Objects
-
-You could cheat and create a policy which states that a process can do aything. SELinux makes it somewhat hard to create such a policy, but Red Hat includes, as part of the policies within RHEL, what is called *unconfined* processes: applications with unrestricted access all objects. For unconfined processes, SELinux effectively provide no security.
-
-For example, all processes that a user starts from an interactive login are unconfined. This way a user can run any application to access their own files, without requiring custom policies. User files are still protected by SELinux from access by system services which run as confined processes.
-
-Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SELinux enables you to configure Multi Level Security (MLS) policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.
+You will now check your understanding of the concepts just presented and verify that you have a test machine with SELinux enabled and with the recommended default policy set loaded. Later you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.
 
 // Comment out the cut-and paste from slides when done?
 
