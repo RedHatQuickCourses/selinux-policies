@@ -177,7 +177,20 @@ Work In Progress
 <h2 id="_before_you_start"><a class="anchor" href="#_before_you_start"></a>Before you Start</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have the root password or unrestricted sudo.</p>
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELinux enabled and enforcing the targeted policy.</p>
+</li>
+<li>
+<p>The <code>setools-console</code> package.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You also need internet access to download sample applications and scripts from GitHub.</p>
 </div>
 <div class="paragraph">
 <p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
@@ -192,8 +205,7 @@ Work In Progress
 <li>
 <p>First check that unprivileged users and their processes are unconfined.</p>
 <div class="paragraph">
-<p>1.1.
-Open a terminal to your RHEL machine and login with an unprivileged user. In my example, the username is <code>student</code> but the actual username and user id doesn&#8217;t matter, as long as it is not root.</p>
+<p>1.1. Open a terminal to your RHEL machine and login with an unprivileged user. In the following example, the username is <code>student</code> but the actual username and user id doesn&#8217;t matter, as long as it is not the root user.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -204,10 +216,10 @@ uid=1000(student) gid=1000(student) groups=1000(student),10(wheel) context=uncon
 </div>
 </div>
 <div class="paragraph">
-<p>You can tell the user is unconfined from the type field in the SELinux context of the user, which is <code>unconfind_t</code>.</p>
+<p>You can tell the user is unconfined from the type field in the SELinux context of the user, which is <code>unconfined_t</code>.</p>
 </div>
 <div class="paragraph">
-<p>1.2. Verify that processes created by unprivileged users are unconfined:</p>
+<p>1.2. Verify that processes created by interactive users are unconfined:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -218,92 +230,151 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1275 pts/0 00:00:00 ps</co
 </div>
 </div>
 <div class="paragraph">
-<p>Remember that most commands in Bash, including the <code>ps</code> command, create new processes.</p>
+<p>Remember that most commands in Bash, including the <code>ps</code> command, create new processes and they inherit the SELinux context of their parent processes.</p>
 </div>
 </li>
 <li>
-<p>Check that files created by unprivileged users are NOT unconfined.</p>
+<p>Check that system services run with their own confined domains.</p>
 <div class="paragraph">
-<p>2.1. Verify the context on the user&#8217;s home directory:</p>
+<p>2.1. Install and start the Apache Web Server and the MySQL database server.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ $HOME</strong>
-unconfined_u:object_r:user_home_dir_t:s0 /home/student</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>2.2. Create a file and verify it gets the same context as the user&#8217;s home directory:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>touch $HOME/test.empty</strong>
-$ <strong>ls -dZ $HOME/test.empty</strong>
-unconfined_u:object_r:user_home_t:s0 /home/student/test.empty</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Change the context of the file (requires root privileges) and see that the user cannot access the file anymore, despite being the owner and having POSIX permissions on it.</p>
-<div class="paragraph">
-<p>3.1. First, find a file type for something a regular user shouldn&#8217;t have access to:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z /etc/shadow</strong>
-system_u:object_r:shadow_t:s0 /etc/shadow</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>3.2. Change the type of the file <code>test.empty</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo chcon -t shadow_t $HOME/test.empty
-$ ls -lZ  $HOME/test.empty
--rw-r--r--. 1 student student unconfined_u:object_r:shadow_t:s0 0 Jul 12 15:09 /home/student/test.empty</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>3.3. Surprise! The unconfined process can write to the file!</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ echo '123' &gt; $HOME/test.empty
-$ cat $HOME/test.empty
-123</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>So, how does unconfined user get access to their files? The <code>sesearch</code> and <code>seinfo</code> commands can show that information.</p>
-<div class="paragraph">
-<p>4.1. Install the the <code>setools-console</code> package:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo install -y setools-console
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo yum -y install httpd mysql-server</strong>
 ...
-Complete!</code></pre>
+Complete!
+$ <strong>sudo systemctl start httpd</strong>
+$ <strong>sudo systemctl start mysqld</strong></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>4.2. Show the rule that enables unconfined access to everything</p>
+<p>2.2. Notice that, among the dependencies for MySQL, there&#8217;s an SELinux policy package. If you missed that in the output of the previous command, you may check its RPM package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -qi mysql-selinux</strong>
+...
+Description :
+SELinux policy modules for MySQL and MariaDB packages.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.3. Check the context types of the httpd and mysqld processes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps ax -Z | grep httpd</strong>
+system_u:system_r:httpd_t:s0      28746 ?        Ss     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28747 ?        S      0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28748 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28749 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28750 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28964 pts/0 S+   0:00 grep --color=auto httpd
+$ <strong>ps ax -Z | grep mysqld</strong>
+system_u:system_r:mysqld_t:s0     28698 ?        Ssl    0:00 /usr/libexec/mysqld --basedir=/usr
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28966 pts/0 S+   0:00 grep --color=auto mysqld</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and differnet unconfined processes.</p>
 </div>
 </li>
 <li>
-<p>Show that a system service cannot access user files with runcon and sesearch. Contrast services which do need access to user files (crond, httpd) with services which do not (mysqld)</p>
+<p>Install a third-party application and check that Systemd runs it unconfined.</p>
+<div class="paragraph">
+<p>3.1. Install packages required for compiling the test application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>yum install -y git gcc-c++ make libcurl-devel</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.2. Clone the source code repository from the test application and enter its source directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git</strong>
+...
+Resolving deltas: 100% (60/60), done.
+$ <strong>cd selinux-policies-samples/testapp</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Compile and install the test application as a Systemd service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>make</strong>
+g++ -std=c++11 -g -o testapp testapp.c -lcurl
+$ <strong>sudo make install</strong>
+install -m 0755 testapp /usr/local/sbin
+install -m 0644 testapp.service /usr/lib/systemd/system/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.4. Return to your home directory and start the test application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>sudo systemctl start testapp</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.5. Find the PID of the test application service and check it runs unconfined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl show --property MainPID --value testapp</strong>
+37507
+$ <strong>ps -Z 37507</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/testapp -d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that, though the test application gets the <code>unconfined_t</code> domain context type, it&#8217;s under the <code>system_u</code> SELinux user and <code>system_r</code> SELinux role because it was started by Systemd.</p>
+</div>
 </li>
 <li>
-<p>Show a domain type transition? [CHECK WHEN TO SWITCH FROM PROCESS TO DOMAIN]</p>
+<p>Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather foreacasts from cities with Red Hat offices.</p>
+<div class="paragraph">
+<p>4.1. Start the test application on your shell and let it running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>/usr/local/sbin/testapp</strong>
+Brisbane: ☀️   +9°C
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.2. Open another terminal and check the SELinux context of the interactive application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps a -Z | grep testapp</strong>
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38858 pts/0 S+   0:00 /usr/local/sbin/testapp
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38892 pts/1 S+   0:00 grep --color=auto testapp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the test application runs with an unconfined domain type in both ways, but under different SELinux use and role, deppending on if it was started by Systemd or by an interactive shell.</p>
+</div>
+<div class="paragraph">
+<p>4.3. Go back to the previous terminal and kill the test application with Ctrl+C.</p>
+</div>
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>This concludes the activity.</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The next section TBD</p>
+<p>Before learning to create custom SELinux policies, we must learn about configuring the SELinux in RHEL so you can address applications that do not require custom policies to be protected by SELinux.</p>
 </div>
 </div>
 </div>

@@ -177,10 +177,10 @@ Work In Progress
 <h2 id="_selinux_policy_sets_in_red_hat_enterprise_linux"><a class="anchor" href="#_selinux_policy_sets_in_red_hat_enterprise_linux"></a>SElinux Policy Sets in Red Hat Enterprise Linux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The SELinux policies in RHEL are based on upstream policies from the SELinux project plus customizations from Red Hat and extensions from the open source community, for example policies for PostgreSQL and MySQL.</p>
+<p>The SELinux policies in RHEL are based on upstream policies from the SELinux project and extensions from the open source community, for example policies for PostgreSQL and MySQL, plus customizations by Red Hat.</p>
 </div>
 <div class="paragraph">
-<p>Red Hat Enterprise Linux (RHEL) defaults to the <strong>targeted</strong> policy set. That policy aims to protect system services while not interfering with interactive users.</p>
+<p>Red Hat Enterprise Linux (RHEL) defaults to the <strong>targeted</strong> policy set. That policy aims to protect system services while not interfering with interactive users and third-paty applications you deploy on RHEL servers.</p>
 </div>
 <div class="paragraph">
 <p>Red Hat Enterprise Linux also provides the <strong>mls</strong> policy set as a starting point for customers with strict information security requirements.</p>
@@ -189,7 +189,7 @@ Work In Progress
 <p>Earlier releases of RHEL provided an additional policy set called <strong>minimum</strong> but that set is not included anymore since RHEL 9.</p>
 </div>
 <div class="paragraph">
-<p>This course focus on the targetet policy set, but this section also provides some information about the intended usage of the mls policy set.</p>
+<p>This course focus on the targeted policy set, but this section also provides some information about the intended usage of the mls policy set.</p>
 </div>
 </div>
 </div>
@@ -205,7 +205,7 @@ Work In Progress
 </div>
 </div>
 <div class="paragraph">
-<p>RHEL provides the base policy sets (targeted or mls) as RPM packages and additional policy modules in packages named after the system service they protect. Most additional policy modules included with RHEL are tested only with the targeted policy set and require customization to work with the mls policy set.</p>
+<p>RHEL provides the base policy sets (targeted or mls) as RPM packages and additional policy modules in packages named after the system service they protect. Most policy modules from RHEL are tested only with the targeted policy set and require customization to work with the mls policy set.</p>
 </div>
 <div class="paragraph">
 <p>The use of policy modules by RHEL enables an internative process for developing custom policies:</p>
@@ -229,16 +229,18 @@ Work In Progress
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>Before you can work on creating and testing custom policies, you must undersand how Red Hat designed its targeted policy set, because your custom policy effectively works as an extension to the Red Hat policies and cannot conflict with them.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_confined_contexts_in_the_rhel_targeted_policy"><a class="anchor" href="#_confined_contexts_in_the_rhel_targeted_policy"></a>Confined Contexts in the RHEL Targeted Policy</h2>
+<h2 id="_the_rhel_targeted_policy"><a class="anchor" href="#_the_rhel_targeted_policy"></a>The RHEL targeted policy</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The targeted policy set focus on context types to create what we call <strong>confined domains</strong>. Each system service belongs to its own domain type and policy rules grant that type access to a limited set of resource types.</p>
+<p>Before you can work on creating and testing custom policies, you must undersand how Red Hat designed its targeted policy set, because your custom policy effectively works as an extension to the Red Hat policies and cannot conflict with them.</p>
+</div>
+<div class="sect2">
+<h3 id="_confined_contexts"><a class="anchor" href="#_confined_contexts"></a>Confined Contexts</h3>
+<div class="paragraph">
+<p>The targeted policy set focus on context types to create what we call <strong>confined domains</strong>. Each system service belongs to its own domain type. Policy rules grant that type access to a limited set of resource types.</p>
 </div>
 <div class="paragraph">
 <p>Policies in RHEL are also designed to be flexible regarding the configuration of system services. Most times, service configuration changes can be addressed by two means:</p>
@@ -256,40 +258,43 @@ Work In Progress
 <div class="paragraph">
 <p>Later this course will provide details on how to perform those operators, so you can configure SELinux to match your application settings without creating a custom policy.</p>
 </div>
-<div class="sect2">
-<h3 id="_labeling_files_with_a_new_context_type"><a class="anchor" href="#_labeling_files_with_a_new_context_type"></a>Labeling Files With a New Context Type</h3>
-<div class="paragraph">
-<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not adivised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
-</div>
-<div class="paragraph">
-<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
-</div>
-<div class="paragraph">
-<p>Another example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
-</div>
 </div>
 <div class="sect2">
-<h3 id="_setting_selinux_booleans"><a class="anchor" href="#_setting_selinux_booleans"></a>Setting SELinux Booleans</h3>
+<h3 id="_default_users_and_roles"><a class="anchor" href="#_default_users_and_roles"></a>Default Users and Roles</h3>
 <div class="paragraph">
-<p>The SELinux policies from RHEL define a number of booleans, which enabe system administrators to selectively grant permission to use enable features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
-</div>
-<div class="paragraph">
-<p>Booleans provide a compromise between a too script policy, which becomes unusable, and a too lenient policy, which leaves too large an attach surface.</p>
+<p>The targeted policy in RHEL assigns most confined domain to the same SELinux and role, and does the same for most resources allowed to confined domains. This way you can focus on just the domain and resource type when checking most targeted policy rules.</p>
 </div>
 <div class="paragraph">
-<p>For example, the Apache We Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks using it Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_can_network_connect_db</code> and <code>httpd_can_sendmail</code>.</p>
+<p>Processes in a confined domain have context labels starting with:</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_unconfined_domains_and_users"><a class="anchor" href="#_unconfined_domains_and_users"></a>Unconfined Domains and Users</h2>
-<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
 <div class="paragraph">
-<p>When Red Hat introduced SELinux as a standard feature of RHEL, there was the challenge of making adoption less painful. Increased security usually commes with usability issues and resistance from users which would prefer to disable the new security setting to perform their work quickly.</p>
+<p><code>system_u:system_r</code></p>
+</div>
+</blockquote>
 </div>
 <div class="paragraph">
-<p>RHEL avoids that with the concept of <strong>unconfined domains</strong>. They are processes assigned with a domain type that is allowed to do pretty much everything: acessing user files, opening network connections, and so on.</p>
+<p>And resources restricted to confined domains access have context labels stating with:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><code>system_u:object_r</code></p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The only domains which get different SELinux users and roles are the uconfined domains.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unconfined_domains_and_users"><a class="anchor" href="#_unconfined_domains_and_users"></a>Unconfined Domains and Users</h3>
+<div class="paragraph">
+<p>When Red Hat introduced SELinux as a standard feature of RHEL, there was the challenge of making adoption less painful. Increased security usually meet resistance from users which would prefer to disable the new security setting to perform their work quickly.</p>
+</div>
+<div class="paragraph">
+<p>RHEL minimizes usabilty issues with the concept of <strong>unconfined domains</strong>. They are processes assigned with a domain type that is allowed to do pretty much everything: acessing user files, opening network connections, and so on.</p>
 </div>
 <div class="paragraph">
 <p>Unconfined domains are NOT special for SELinux: they are still subject to the same policies as all other domains in the system. They are just allowed access to a lot of resource types.</p>
@@ -301,13 +306,41 @@ Work In Progress
 <p>Systemd also runs all service units as unconfined domains unless there is a domain type transition rule. That means you should be able to deploy and run virtually any application on RHEL with SELinux enabled and in enforcing mode.</p>
 </div>
 <div class="paragraph">
-<p>Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizaitons, SELinux enables you to configure Multi Level Security (MLS) policies with enforce distinct security clearance levels, and confine all users (and all their processes) to a specific clearance level. This course does not teach how to handle such scenarios.</p>
+<p>The context labels of unconfined domains start with the following SELinux user and role:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><code>unconfined_u:unconfined_r</code></p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>And the context labels of resources allowed to unconfined domains start with the following SELinux user and role:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><code>unconfined_u:object_r</code></p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizations, RHEL offers two alternatives:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Enabling confined uses with the targeted policy set</p>
+</li>
+<li>
+<p>Switching to the msl policy set</p>
+</li>
+</ol>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_confined_users"><a class="anchor" href="#_confined_users"></a>Confined Users</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_confined_users"><a class="anchor" href="#_confined_users"></a>Confined Users</h3>
 <div class="paragraph">
 <p>The targeted policy set from RHEL offers an intermediate level of security between using the targeted policy set with unconfined users and the mls policy set. It is using the targeted policy set with confined users.</p>
 </div>
@@ -324,10 +357,8 @@ Work In Progress
 <p>Confied users log in with a lower privilege SELinux role. When a confined user needs to perform privileged operations such as system administration tasks, they must use the <code>sudo</code> command to explicltly change their role, or rely on a domain transition role which automatically changes the role of a new process.</p>
 </div>
 <div class="paragraph">
-<p>This course does not teach how to manage confined users nor how to create custom roles for custom confined uses. The focus is on confined services only.</p>
+<p>This course does not teach how to manage confined users nor how to create custom roles for custom confined uses. You can find more information on the subject in the Knowledge Base article <a href="https://access.redhat.com/articles/3263671">How to set up a system with SELinux confined users</a> and in the <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index#managing-confined-and-unconfined-users_using-selinux">RHEL 9 product documentation</a>.</p>
 </div>
-<div class="paragraph">
-<p>[ ADD A LINK FOR MORE INFO AND INSTRUCTIONS ]</p>
 </div>
 </div>
 </div>
@@ -360,7 +391,10 @@ In fact, if you enable the mls policy from RHEL, you cannot boot into graphical 
 <p>Aditional challenges come from remote servers, such as file servers, mail servers, and database servers, which are not designed to label and enforce MLS security. Sometimes you can work around such challenges by using compartimentalized networks, where each network and all devices attched to them arededicated to only one clearance level. And special gateway systems dedicated to transfer information between those compartimentalized networks and their different sensitivity levels.</p>
 </div>
 <div class="paragraph">
-<p>This course does not teach how to design and create policies for MLS. But the related concept of MCS is very important to RHEL, containes, and virtual machines. For now, suffices to say that the targeted policy assigns all contexts the same level: <code>s0</code>, wich is the lowest level.</p>
+<p>This course does not teach how to design and create policies for MLS. But the related concept of MCS is very important to RHEL, containes, and virtual machines. For now, suffices to say that the targeted policy assigns all contexts the same sensitivity and clearance level: <code>s0</code>, wich is the lowest level.</p>
+</div>
+<div class="paragraph">
+<p>For more information on using the mls policy set, refer to the <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index#using-multi-level-security-mls_using-selinux">RHEL 9 product documentation</a>.</p>
 </div>
 </div>
 </div>
@@ -377,13 +411,10 @@ In fact, if you enable the mls policy from RHEL, you cannot boot into graphical 
 <p>To implement MCS in practice, you need a workflow for assigning categories to resoures and domains. You also need custom policies which assign categories to SELinux users and roles, and allow users to transition between different roles, so they can access resources from different categories. And you need applications and networks designed to work with multiple categories, or to compartimentalize networks and systems on the basis of categories, in addition to levels.</p>
 </div>
 <div class="paragraph">
-<p>This course does not teach how to design and create policies for MCS. But MCS is applied by a number of Red Hat products to manage containers and virtual machines. For now, suffices to say that the targeted policy defines 1024 categories, from <code>c0</code> to <code>c1023</code> but no domain nor resouce is assigned to any category.</p>
+<p>This course does not teach how to design and create policies for MCS. But MCS is applied by a number of Red Hat products to manage containers and virtual machines. For now, suffices to say that the targeted policy defines 1024 categories, from <code>c0</code> to <code>c1023</code> but no context is assigned to any category, by default.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_textual_names_for_mls_levels_and_mcs_categories"><a class="anchor" href="#_textual_names_for_mls_levels_and_mcs_categories"></a>Textual Names for MLS levels and MCS categories</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_textual_names_for_mls_levels_and_mcs_categories"><a class="anchor" href="#_textual_names_for_mls_levels_and_mcs_categories"></a>Textual Names for MLS levels and MCS categories</h3>
 <div class="paragraph">
 <p>Working with MCS levels and MCS categories using ther numbers is not user-friendly. RHEL includes the MCS translation service (<a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/assembly_using-multi-category-security-mcs-for-data-confidentiality_using-selinux#proc_defining-category-labels-in-mcs_assembly_using-multi-category-security-mcs-for-data-confidentiality">mcstrans</a>) and related utilities to manage a mapping from the level and category number to textual names.</p>
 </div>
@@ -391,10 +422,8 @@ In fact, if you enable the mls policy from RHEL, you cannot boot into graphical 
 <p>Because this course does not focus on policies using MLS and MCS labels, we do not provide more details on the usage of the MCS translation service.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_container_security_with_mcs_on_rhel"><a class="anchor" href="#_container_security_with_mcs_on_rhel"></a>Container Security with (MCS) on RHEL</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_container_security_with_mcs_on_rhel"><a class="anchor" href="#_container_security_with_mcs_on_rhel"></a>Container Security with MCS on RHEL</h3>
 <div class="paragraph">
 <p>Containers in RHEL are already protected from each other and from non-containerized processes by Linux Kernel namespaces. But containers could run with full root privileges and be vulnerable to exploits which break namespace isolation and access the namespaces of other containers or their host namespaces.</p>
 </div>
@@ -408,27 +437,29 @@ In fact, if you enable the mls policy from RHEL, you cannot boot into graphical 
 <p>The container domain and resource types protect container hosts and intractive users from containers, but do not protect containers from each other. For example, it would be possible for a container to explore a path traversal vulnerability to access the ephemeral storage of other containers.</p>
 </div>
 <div class="paragraph">
-<p>RHEL further protects containers with MCS to protect containers from each other. Each container is assigned two random categories, and podman automatically labels the ephemeral storage and volumes from containers to the same two categories.</p>
+<p>RHEL further protects containers by using MCS categories to compartimentalize containers from each other. Each container is assigned two random categories, and podman automatically labels the ephemeral storage and volumes from containers to the same two categories.</p>
 </div>
 <div class="paragraph">
-<p>These defaults from RHEL are good for containers without persistent storage and that open no network connections. For distributed applications which run as containers started by Systemd, you are advised to create a custom SELinux policy which sets a fixed pair of categories and labels the volumes and network ports accordingly. RHEL includes a tool named udica for automatically generating such policies.</p>
+<p>The higher and lower category numbers are reserved for non-containerized processes, so you may see <code>c0.c1023</code> in the end of context label of interactive processes.</p>
+</div>
+<div class="paragraph">
+<p>These defaults from RHEL are good for containers that do not share persistent storage and that listen to no network connections. For distributed applications which run as containers started by Systemd, you are advised to create a custom SELinux policy which sets a fixed pair of categories and labels the volumes and network ports accordingly. RHEL includes a tool named Udica for automatically generating such policies.</p>
 </div>
 <div class="paragraph">
 <p>This course does not teach how to customize SELinux policies for containes, but there&#8217;s an <a href="https://developers.redhat.com/courses/securing-containers-with-selinux">Udica tutorial</a> by Red Hat Developers.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_virtual_machine_security_with_mcs_on_rhel"><a class="anchor" href="#_virtual_machine_security_with_mcs_on_rhel"></a>Virtual Machine Security with (MCS) on RHEL</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_virtual_machine_security_with_mcs_on_rhel"><a class="anchor" href="#_virtual_machine_security_with_mcs_on_rhel"></a>Virtual Machine Security with (MCS) on RHEL</h3>
 <div class="paragraph">
 <p>Libvirt runs KVM virtual machines (VMs) with a dedicated context type of <code>svirt_t</code> and defines a set of resource types to protect virtual machine images on disk and virtual network devices, protecting an hypervisor host from its own VMs.</p>
 </div>
 <div class="paragraph">
-<p>Libvirt also assigns random categories to its VMs and automatically labels its disk images and network devices, similar to how podman does. Actually, it is podman that does it similarly to libvirtd.</p>
+<p>Libvirt also assigns random categories to its VMs and automatically labels its disk images and network devices, similar to how podman does. Actually, it is podman that does it similarly to libvirtd because support for SELinux with VMs came in RHEL before there were containers.</p>
 </div>
 <div class="paragraph">
 <p>Unlike containers, which could access host files and devices directly, and thus require custom SELinux policies, there&#8217;s no need to protect VMS further, because VMs by definition do not interact directly with their host Kernel resources.</p>
+</div>
 </div>
 </div>
 </div>
@@ -436,7 +467,7 @@ In fact, if you enable the mls policy from RHEL, you cannot boot into graphical 
 <h2 id="_selinux_with_other_red_hat_products"><a class="anchor" href="#_selinux_with_other_red_hat_products"></a>SELinux With Other Red Hat Products</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Red Hat OpenShift, Red Hat OpenStack, and Red Hat Virtualization all employ a similar approach than podman and libvirt for protecting containers, pods, and virtual machines using MCS labels. Most of the times you just let these platforms do the hard work for you and enjoy increased security, as compared to their community upstreams with default minimal settings.</p>
+<p>Red Hat OpenShift, Red Hat OpenStack, and Red Hat Virtualization all employ a similar approach than podman and libvirt for protecting containers, pods, and virtual machines using MCS categories. Most of the times you just let these platforms do the hard work for you and enjoy increased security, as compared to their community upstreams with default minimal settings.</p>
 </div>
 <div class="paragraph">
 <p>While it is possible to configure explicit context types and categories for your containers and VMs, there&#8217;s rarely a need for doing so. Most scenarios do not come from end user applications, but from infrastructure services such as networking and storage providers, which run as extensions to the platform.</p>
