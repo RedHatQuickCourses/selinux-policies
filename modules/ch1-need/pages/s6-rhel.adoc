@@ -170,7 +170,7 @@ These defaults from RHEL are good for containers that do not share persistent st
 
 This course does not teach how to customize SELinux policies for containes, but there's an https://developers.redhat.com/courses/securing-containers-with-selinux[Udica tutorial] by Red Hat Developers.
 
-=== Virtual Machine Security with (MCS) on RHEL
+=== Virtual Machine Security with MCS on RHEL
 
 Libvirt runs KVM virtual machines (VMs) with a dedicated context type of `svirt_t` and defines a set of resource types to protect virtual machine images on disk and virtual network devices, protecting an hypervisor host from its own VMs.
 

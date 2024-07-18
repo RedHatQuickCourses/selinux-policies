@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Check Confined and Unconfined Processes in RHEL
+= Lab: Explore Confined and Unconfined Processes in RHEL
 
 _Estimated reading time: *{time_estimate} minutes*._
 
