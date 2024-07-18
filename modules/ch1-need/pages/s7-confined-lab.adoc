@@ -4,22 +4,22 @@
 
 _Estimated reading time: *{time_estimate} minutes*._
 
-// How to break activities between "reading policies" and "the Red Hat way on RHEL"?
-// Maybe I should reverse the order of presentations?
-
 Objective::
 
 Verify that system services run as confined processes but processes from interactive sessions run unconfined.
 
 WARNING: Work In Progress
 
+// This is very similar to the previous lab, for now there's a lot of concepts and little to actually do
+
 == Before you Start
 
-You need a RHEL machine to which you have the root password or unrestricted sudo.
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
-// and access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+* SELinux enabled and enforcing the targeted policy.
+* The `setools-console` package.
 
-// You also need internet access to download sample applications and scripts from GitHub.
+You also need internet access to download sample applications and scripts from GitHub.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
@@ -27,8 +27,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 1. First check that unprivileged users and their processes are unconfined.
 +
-1.1.
-Open a terminal to your RHEL machine and login with an unprivileged user. In my example, the username is `student` but the actual username and user id doesn't matter, as long as it is not root.
+1.1. Open a terminal to your RHEL machine and login with an unprivileged user. In the following example, the username is `student` but the actual username and user id doesn't matter, as long as it is not the root user.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -37,9 +36,9 @@ student
 $ *id*
 uid=1000(student) gid=1000(student) groups=1000(student),10(wheel) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 --
-You can tell the user is unconfined from the type field in the SELinux context of the user, which is `unconfind_t`.
+You can tell the user is unconfined from the type field in the SELinux context of the user, which is `unconfined_t`.
 +
-1.2. Verify that processes created by unprivileged users are unconfined:
+1.2. Verify that processes created by interactive users are unconfined:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -49,76 +48,123 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1128 pts/0 00:00:00 bash
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1275 pts/0 00:00:00 ps
 --
 +
-Remember that most commands in Bash, including the `ps` command, create new processes.
+Remember that most commands in Bash, including the `ps` command, create new processes and they inherit the SELinux context of their parent processes.
 
-2. Check that files created by unprivileged users are NOT unconfined.
+2. Check that system services run with their own confined domains.
 +
-2.1. Verify the context on the user's home directory:
-+
-[source,subs="verbatim,quotes"]
---
-$ *ls -dZ $HOME*
-unconfined_u:object_r:user_home_dir_t:s0 /home/student
---
-+
-2.2. Create a file and verify it gets the same context as the user's home directory:
+2.1. Install and start the Apache Web Server and the MySQL database server.
 +
 [source,subs="verbatim,quotes"]
 --
-$ *touch $HOME/test.empty*
-$ *ls -dZ $HOME/test.empty*
-unconfined_u:object_r:user_home_t:s0 /home/student/test.empty
---
-
-3. Change the context of the file (requires root privileges) and see that the user cannot access the file anymore, despite being the owner and having POSIX permissions on it.
-+
-3.1. First, find a file type for something a regular user shouldn't have access to:
-+
-[source,subs="verbatim,quotes"]
---
-$ *ls -Z /etc/shadow*
-system_u:object_r:shadow_t:s0 /etc/shadow
---
-+
-3.2. Change the type of the file `test.empty`:
-+
-[source,subs="verbatim,quotes"]
---
-$ sudo chcon -t shadow_t $HOME/test.empty
-$ ls -lZ  $HOME/test.empty
--rw-r--r--. 1 student student unconfined_u:object_r:shadow_t:s0 0 Jul 12 15:09 /home/student/test.empty
---
-+
-3.3. Surprise! The unconfined process can write to the file!
-+
-[source,subs="verbatim,quotes"]
---
-$ echo '123' > $HOME/test.empty
-$ cat $HOME/test.empty
-123
---
-
-4. So, how does unconfined user get access to their files? The `sesearch` and `seinfo` commands can show that information.
-+
-4.1. Install the the `setools-console` package:
-+
-[source,subs="verbatim,quotes"]
---
-$ sudo install -y setools-console
+$ *sudo yum -y install httpd mysql-server*
 ...
 Complete!
+$ *sudo systemctl start httpd*
+$ *sudo systemctl start mysqld*
 --
 +
-4.2. Show the rule that enables unconfined access to everything
+2.2. Notice that, among the dependencies for MySQL, there's an SELinux policy package. If you missed that in the output of the previous command, you may check its RPM package:
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -qi mysql-selinux*
+...
+Description :
+SELinux policy modules for MySQL and MariaDB packages.
+--
++
+2.3. Check the context types of the httpd and mysqld processes:
++
+[source,subs="verbatim,quotes"]
+--
+$ *ps ax -Z | grep httpd*
+system_u:system_r:httpd_t:s0      28746 ?        Ss     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28747 ?        S      0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28748 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28749 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+system_u:system_r:httpd_t:s0      28750 ?        Sl     0:00 /usr/sbin/httpd -DFOREGROUND
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28964 pts/0 S+   0:00 grep --color=auto httpd
+$ *ps ax -Z | grep mysqld*
+system_u:system_r:mysqld_t:s0     28698 ?        Ssl    0:00 /usr/libexec/mysqld --basedir=/usr
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28966 pts/0 S+   0:00 grep --color=auto mysqld
+--
++
+Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and differnet unconfined processes.
 
-5. Show that a system service cannot access user files with runcon and sesearch. Contrast services which do need access to user files (crond, httpd) with services which do not (mysqld)
+3. Install a third-party application and check that Systemd runs it unconfined.
++
+3.1. Install packages required for compiling the test application:
++
+[source,subs="verbatim,quotes"]
+--
+$ *yum install -y git gcc-c++ make libcurl-devel*
+--
+3.2. Clone the source code repository from the test application and enter its source directory:
++
+[source,subs="verbatim,quotes"]
+--
+$ *git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git*
+...
+Resolving deltas: 100% (60/60), done.
+$ *cd selinux-policies-samples/testapp*
+--
+3.3. Compile and install the test application as a Systemd service:
++
+[source,subs="verbatim,quotes"]
+--
+$ *make*
+g++ -std=c++11 -g -o testapp testapp.c -lcurl
+$ *sudo make install*
+install -m 0755 testapp /usr/local/sbin
+install -m 0644 testapp.service /usr/lib/systemd/system/
+--
+3.4. Return to your home directory and start the test application:
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *sudo systemctl start testapp*
+--
+3.5. Find the PID of the test application service and check it runs unconfined:
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl show --property MainPID --value testapp*
+37507
+$ *ps -Z 37507*
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/testapp -d
+--
++
+Notice that, though the test application gets the `unconfined_t` domain context type, it's under the `system_u` SELinux user and `system_r` SELinux role because it was started by Systemd.
 
-6. Show a domain type transition? [CHECK WHEN TO SWITCH FROM PROCESS TO DOMAIN]
+4. Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather foreacasts from cities with Red Hat offices.
++
+4.1. Start the test application on your shell and let it running:
++
+[source,subs="verbatim,quotes"]
+--
+$ */usr/local/sbin/testapp*
+Brisbane: ☀️   +9°C
+...
+--
++
+4.2. Open another terminal and check the SELinux context of the interactive application:
++
+[source,subs="verbatim,quotes"]
+--
+$ *ps a -Z | grep testapp*
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38858 pts/0 S+   0:00 /usr/local/sbin/testapp
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38892 pts/1 S+   0:00 grep --color=auto testapp
+--
++
+Notice that the test application runs with an unconfined domain type in both ways, but under different SELinux use and role, deppending on if it was started by Systemd or by an interactive shell.
++
+4.3. Go back to the previous terminal and kill the test application with Ctrl+C.
 
+== Next Steps
 
-This concludes the activity.
-
-The next section TBD
+Before learning to create custom SELinux policies, we must learn about configuring the SELinux in RHEL so you can address applications that do not require custom policies to be protected by SELinux.
 
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION

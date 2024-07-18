@@ -51,6 +51,19 @@ For now, ignore all fields of the domain (process) and resource (files) contexts
 
 2. Show that SELinux allows the domain to access home directories.
 +
+2.1. Install the the `setools-console` package, if it's not already installed on your test machine:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo install -y setools-console*
+...
+Complete!
+--
++
+
++
+2.2. Search for allow rules using the domain and resource types from the previous step:
++
 [source,subs="verbatim,quotes"]
 --
 $ *sesearch --allow -s unconfined_t -t user_home_dir_t -c file*
@@ -62,12 +75,12 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 If you wish, you can also try a similar search for user's home files. Just replace `user_home_dir_t` with `user_home_t` in the previous command.
 +
 The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on user's home directories.
-
-3. If you're adventurous, retry the previous command without one of the `-s`, `-t`, or `-c` options. Be warned that it'll display a large number of allow rules.
-
-4. Run the `passwd` command and check its context and of the system password files.
 +
-4.1. Run the `passwd` command in the backgrond so it get stuck and you can check its SELinux context:
+2.3. If you're adventurous, retry the previous command without one of the `-s`, `-t`, or `-c` options. Be warned that it'll display a large number of allow rules.
+
+3. Run the `passwd` command and check its context and of the system password files.
++
+3.1. Run the `passwd` command in the backgrond so it get stuck and you can check its SELinux context:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -83,7 +96,7 @@ unconfined_u:unconfined_r:passwd_t:s0-s0:c0.c1023 1628 pts/0 T   0:00 passwd
 +
 Notice that the `passwd` transitioned from the `unconfined_t` type of its Bash shell to the `passwd_t` type.
 +
-4.2. Check the context of the password files. The option after `-Z` uses the numeral one for "one file per line":
+3.2. Check the context of the password files. The option after `-Z` uses the numeral one for "one file per line":
 +
 [source,subs="verbatim,quotes"]
 --
@@ -94,7 +107,7 @@ system_u:object_r:passwd_file_t:s0 /etc/passwd
 +
 Notice that there are different SELinux types for `/etc/passwd`, which everyone's supposed to read, and for `/etc/shadow`, which no one is supposed to read.
 +
-4.3. Don't forget to kill the `passwd` process that you left in the background:
+3.3. Don't forget to kill the `passwd` process that you left in the background:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -103,9 +116,9 @@ $ *kill %1*
 [1]+  Terminated              passwd > /dev/null 
 --
 
-5. Check if the `passwd` command and your interactive processes are allowed to access the password files by the SELinux policy.
+4. Check if the `passwd` command and your interactive processes are allowed to access the password files by the SELinux policy.
 +
-5.1. Notice that the `passwd_t` domain is allowed access to both password files, as expected:
+4.1. Notice that the `passwd_t` domain is allowed access to both password files, as expected:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -117,7 +130,7 @@ $ *sesearch --allow -s passwd_t -t shadow_t -c file*
 allow passwd_t shadow_t:file { append create getattr ioctl link lock map open read relabelfrom relabelto rename setattr unlink watch watch_reads write };
 --
 +
-5.2. Check that, surprisingly, the `unconfined_t` domain is also allowed access to both password files:
+4.2. Check that, surprisingly, the `unconfined_t` domain is also allowed access to both password files:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -132,7 +145,7 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 +
 This will make sense in the next section, when we explain the reasoning behind the default policies included with RHEL. For now, let's move forward.
 +
-5.3. It seems, from the previous output, that unconfined_t domain type inherits from the `files_unconfined_type` attribute. Check that assumption:
+4.3. It seems, from the previous output, that unconfined_t domain type inherits from the `files_unconfined_type` attribute. Check that assumption:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -147,7 +160,7 @@ $ *seinfo -a files_unconfined_type -x | grep unconfined_t*
         xdm_unconfined_t
 --
 +
-5.4. Similarly, it seems that the `passwd_file_t` and `shadow_t` resource types inherit from the `file_type` attribute:
+4.4. Similarly, it seems that the `passwd_file_t` and `shadow_t` resource types inherit from the `file_type` attribute:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -157,9 +170,9 @@ $ *seinfo -a file_type -x | grep passwd_file_t*
         passwd_file_t
 --
 
-6. Check that the loaded policy sets default contexts for files under user's home directories and also for password files. You have to use the `semanage` comand instead of the `sesearch` command:
+5. Check that the loaded policy sets default contexts for files under user's home directories and also for password files. You have to use the `semanage` comand instead of the `sesearch` command:
 +
-6.1. First check user home directories, with type `user_home_dir_t`, and user's files, with type `user_home_t`:
+5.1. First check user home directories, with type `user_home_dir_t`, and user's files, with type `user_home_t`:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -170,7 +183,7 @@ $ *sudo semanage fcontext -l | grep user_home_t*
 /home/[^/]+/.+                                     all files          unconfined_u:object_r:user_home_t:s0 
 --
 +
-6.2. Check the default context for user's SSH keys, to prove that not all files under the `/home` directory get the same context:
+5.2. Check the default context for user's SSH keys, to prove that not all files under the `/home` directory get the same context:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -180,7 +193,7 @@ $ *sudo semanage fcontext -l | grep ssh_home_t*
 /home/[^/]+/\.ssh(/.*)?                            all files          unconfined_u:object_r:ssh_home_t:s0 
 --
 +
-6.3. Check the default context for password files:
+5.3. Check the default context for password files:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -203,9 +216,9 @@ $ *sudo semanage fcontext -l | grep passwd_file_t*
 /etc/ptmptmp                                       regular file       system_u:object_r:passwd_file_t:s0
 --
 
-7. Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system servics have access to user's files.
+6. Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system servics have access to user's files.
 +
-7.1. Find the context of common system services such as the Secure Shell and Cron deamons.
+6.1. Find the context of common system services such as the Secure Shell and Cron deamons.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -222,7 +235,7 @@ system_u:system_r:crond_t:s0-s0:c0.c1023 1120 ?  Ss     0:00 /usr/sbin/crond -n
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep --color=auto crond
 --
 +
-7.2. Check if the domain types for the Secure Shell and Cron daemons have access to user's home directories.
+6.2. Check if the domain types for the Secure Shell and Cron daemons have access to user's home directories.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -240,7 +253,7 @@ The Secure Shell daemon starts with elevated privileges, as the root user, and s
 +
 On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to acccess user's files.
 +
-7.3. But how does the Secure Shell daemon gets the user's list of authorized keys? We already know there's a different resource type for those files:
+6.3. But how does the Secure Shell daemon gets the user's list of authorized keys? We already know there's a different resource type for those files:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -253,9 +266,9 @@ allow ssh_server ssh_home_t:file { append create link rename setattr unlink watc
 allow sshd_t user_home_type:file { getattr ioctl lock open read };
 --
 
-8. Verify domain transition rules which allow interactive processes and system services to be assigned to their intended domain types.
+7. Verify domain transition rules which allow interactive processes and system services to be assigned to their intended domain types.
 +
-8.1. Check the domain transition rule for interactive processes:
+7.1. Check the domain transition rule for interactive processes:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -263,7 +276,14 @@ $ *sesearch --allow -s init_t -t unconfined_t -c process -p transition*
 allow init_t login_userdomain:process transition;
 --
 +
-8.2. Check the domain transitions rule for system services:
+7.2. Check that interactice processes can transition to the domain type of the `passwd `command:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sesearch --allow -s unconfined_t -t passwd_t -c process -p transition*
+allow unconfined_t domain:process transition;
+--
+7.3. Check the domain transitions rule for system services:
 +
 [source,subs="verbatim,quotes"]
 --

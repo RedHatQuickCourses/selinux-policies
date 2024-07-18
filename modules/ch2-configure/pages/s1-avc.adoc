@@ -14,6 +14,24 @@ WARNING: Pending Review
 
 Lorem Ipsum
 
+=== Labeling Files With a New Context Type
+
+You can change the context type of a file directly with the `chcon` command, but you're not adivised to. It is recommended that you define a new path expression for the intended type with the `semanage` command, and them you apply the type to the file with the `restorecon` command.
+
+For example, the SELinux policy for the Apache Web Server defines the `httpd_sys_content_t` type for web pages. If you create a virtual host with a document root somewhere else, you must label that directory with the `httpd_sys_content_t` type.
+
+Another example, the SELinux policy for MySQL defines the `mysqld_port_t` type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the `mysqld_port_t` type.
+
+=== Setting SELinux Booleans
+
+The SELinux policies from RHEL define a number of booleans, which enabe system administrators to selectively grant permission to use enable features of system services. If you enable the feature in the service's configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.
+
+Booleans provide a compromise between a too script policy, which becomes unusable, and a too lenient policy, which leaves too large an attach surface.
+
+For example, the Apache We Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks using it Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as `httpd_can_network_connect_db` and `httpd_can_sendmail`.
+
+
+
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
 https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
