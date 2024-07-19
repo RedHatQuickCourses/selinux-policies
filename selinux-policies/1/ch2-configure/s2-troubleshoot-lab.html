@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab: Troubleshooting SElinux policies :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Lab: Troubleshooting SELinux policies :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s1-avc.html">
     <link rel="next" href="s3-support.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s1-avc.html">Interpreting AVC messages</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a>
+    <a class="nav-link" href="s2-troubleshoot-lab.html">Lab: Troubleshooting SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s3-support.html">Supporting SELinux</a>
@@ -139,7 +139,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">SELinux Management</a></li>
-    <li><a href="s2-troubleshoot-lab.html">Lab: Troubleshooting SElinux policies</a></li>
+    <li><a href="s2-troubleshoot-lab.html">Lab: Troubleshooting SELinux policies</a></li>
   </ul>
 </nav>
 </div>
@@ -148,7 +148,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Lab: Troubleshooting SElinux policies</h1>
+<h1 class="page">Lab: Troubleshooting SELinux policies</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -158,7 +158,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Run a customized Apache Web Server with the targeted policy from RHEL.</p>
+<p>Run an Apache Web Server with changes to its default configuration under the targeted policy from RHEL.</p>
 </dd>
 </dl>
 </div>
@@ -177,10 +177,391 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELinux enabled and enforcing, using the targeted policy.</p>
+</li>
+<li>
+<p>The <code>setools-console</code> package.</p>
+</li>
+<li>
+<p>The <code>policycoreutils-python-utils</code> package.</p>
+</li>
+<li>
+<p>The <code>httpd</code> package.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Change the configuration of your Apache Web Server to listen to a non-standard TCP port and serve web pages from a different document root.</p>
+<div class="paragraph">
+<p>1.1. Verify that the Apache Web Server is installed but not running. It is OK if you have a different version of the <code>httpd</code> package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q httpd</strong>
+httpd-2.4.57-5.el9.x86_64
+$ <strong>systemctl is-active httpd</strong>
+inactive</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. Save a backup copy of the configuration file, just in case:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ cp /etc/httpd/conf/httpd.conf $HOME/httpd.conf.sav</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.3. Edit the <code>/etc/httpd/conf/httpd.conf</code> file and change the following three lines:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+Listen 30000
+...
+DocumentRoot "/var/website"
+...
+# Further relax access to the default document root:
+&lt;Directory "/var/website"&gt;
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can find a copy of the file with all changes already done in the <a href="https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf">sample app</a> repository.</p>
+</div>
+<div class="paragraph">
+<p>1.4. Create a test web site:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo mkdir /var/website</strong>
+$ <strong>sudo echo "&lt;h1&gt;Minimal Web Site&lt;/h1&gt;" &gt; /var/website/index.html</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.5. Make the HTML files public, so the web server (and everything else) can access them:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo chmod a+rx /var/website/</strong>
+$ <strong>sudo chmod a+r /var/website/index.html</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the Apache Web Server, verify that it fails to serve web pages, and search for AVC error messages.</p>
+<div class="paragraph">
+<p>2.1. Try to start the Apache Web Server, it is expected to fail:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl start httpd</strong>
+Job for httpd.service failed because the control process exited with error code.
+See "systemctl status httpd.service" and "journalctl -xeu httpd.service" for details.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.2. The web server status shows that it could not listen to the configured port. This shouldn&#8217;t be an issue because the <code>httpd</code> process starts as root.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl status httpd.service</strong>
+...
+Jul 19 14:27:36 servera.lab.example.com systemd[1]: Starting The Apache HTTP Server...
+Jul 19 14:27:36 servera.lab.example.com httpd[1582]: (13)Permission denied: AH00072: make_sock: could not bind to address [::]:30000
+Jul 19 14:27:36 servera.lab.example.com httpd[1582]: (13)Permission denied: AH00072: make_sock: could not bind to address 0.0.0.0:30000
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.3. Search for recent AVC errors.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -ts recent</strong>
+----
+time-&gt;Fri Jul 19 14:27:36 2024
+type=PROCTITLE msg=audit(1721413656.365:161): proctitle=2F7573722F7362696E2F6874747064002D44464F524547524F554E44
+type=SYSCALL msg=audit(1721413656.365:161): arch=c000003e syscall=49 success=no exit=-13 a0=4 a1=557ed0e8c438 a2=1c a3=7ffc8c05e0fc items=0 ppid=1 pid=1582 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="httpd" exe="/usr/sbin/httpd" subj=system_u:system_r:httpd_t:s0 key=(null)
+type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=1582 comm="httpd" src=30000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You might expect a second AVC on the new document root, but the Apache Web Server terminated with an error code before it tried to open any web page. We will get there shortly.</p>
+</div>
+<div class="paragraph">
+<p>In the previous AVC error, notice the following fields, starting from the end of the message and going backwards:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The resource class (<code>t_class</code>) of <code>tcp_socket</code></p>
+</li>
+<li>
+<p>The resource context (<code>tcontext</code>) of type <code>unreserved_port_t</code></p>
+</li>
+<li>
+<p>The domain context (<code>scontext</code>) of type <code>httpd_t</code></p>
+</li>
+<li>
+<p>The resource name (<code>src</code>) which matches the port number <code>30000</code></p>
+</li>
+<li>
+<p>The message (<code>msg</code>) which includes the string "denied"</p>
+</li>
+<li>
+<p>The audit event type (<code>type</code>) of <code>AVC</code></p>
+</li>
+<li>
+<p>The executable file (<code>exec</code>) of <code>/usr/sbin/httpd</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Get an explanation for the AVC error.</p>
+<div class="paragraph">
+<p>3.1. In a real scenario, there could be multiple AVC denials from different processes, and you would triage and save them into different files to process in small groups, or one-by-one. Because we have only one AVC error, we can pipe the output of <code>ausearch</code> directly into <code>audit2why</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -ts recent | audit2why</strong>
+type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=1582 comm="httpd" src=30000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0
+
+        Was caused by:
+        The boolean nis_enabled was set incorrectly.
+        Description:
+        Allow nis to enabled
+
+        Allow access by executing:
+        # setsebool -P nis_enabled 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that <code>audit2why</code> suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.</p>
+</div>
+<div class="paragraph">
+<p>3.2. If you took too long to review the AVC error, the previous step might return "&lt;no matches&gt;". In this case, you can filter by the application binary, which is also useful when there are AVC erros from multiple processes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/sbin/httpd | audit2why</strong>
+... same output as previous step...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. To illustrate how the suggestion from <code>audit2why</code> could look more sane, here&#8217;s the output you would get if, instead of 30000, you configure your Apache Web Serve to listen on port 8000:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">type=AVC msg=audit(1721416004.455:243): avc:  denied  { name_bind } for  pid=5343 comm="httpd" src=8000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:soundd_port_t:s0 tclass=tcp_socket permissive=0
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this case, <code>audit2why</code> suggests creating a custom policy module to fix the AVC. Sometimes this can be the right approach, but in this particular case the loaded policy already assigns TCP port 8000 to a different resource type (<code>soundd_port_t</code>). It would be better to avoid interfering with the default policies from RHEL, but if you have to, you could add allow rules so the Apache Web Server has access to more resource types.</p>
+</div>
+<div class="paragraph">
+<p>Feel free to change your Apache Web Server configuration and retry the previous steps to see this differeent suggestion by yourself. Or if you prefer, just proceed to the next step.</p>
+</div>
+</li>
+<li>
+<p>Review the online policy docs for a proper fix.</p>
+<div class="paragraph">
+<p>You could use the <code>seinfo</code>, <code>sesearch</code>, and <code>semanage</code> commands, which we already explored in previous labs, to introspect the loaded SELinux policy and figure the resource type you must assign to TCP port 30000 for the confined domain of the Apache Web Server. Let&#8217;s instead check if the policy docs provides a fix.</p>
+</div>
+<div class="paragraph">
+<p>4.1. Install the <code>selinux-policy-docs</code> package and review the man pages for the Apache Web Server policy module.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>yum -y install selinux-policy docs</strong>
+...
+Complete!
+$ <strong>man httpd_selinux</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.</p>
+</div>
+<div class="paragraph">
+<p>4.2. From the man page, the follwing resource type seems to be the one we need:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+       http_port_t
+
+       Default Defined Ports:
+                 tcp 80,81,443,488,8008,8009,8443,9000
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.4. Check that your system sets only the default ports to the <code>http_port_t</code> type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage port -l | grep http_port_t</strong>
+http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage port -a -t http_port_t -p tcp 30000</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.8. And verify the new port was added to the policy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage port -l | grep http_port_t</strong>
+http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Try again starting the Apache Web Server and check if there are more AVC errors.</p>
+<div class="paragraph">
+<p>5.1. Start Apache Web and verify it sucessfully listen for connections on the new port:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl start httpd</strong>
+$ <strong>systemctl is-active httpd</strong>
+active
+$ <strong>ss -ltnp | grep 30000</strong>
+LISTEN 0      511                <strong>:30000            *:</strong>    users:(("httpd",pid=5682,fd=4),("httpd",pid=5681,fd=4),("httpd",pid=5680,fd=4),("httpd",pid=5678,fd=4))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl http://127.0.0.1:30000/index.html</strong>
+&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;403 Forbidden&lt;/title&gt;
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. You are sure the <code>httpd</code> daemon should have access to the <code>/var/website/index.html</code> file, right?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ls -l /var/website/index.html
+-rw-r--r--. 1 root root 26 Jul 19 14:22 /var/website/index.html</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.3. Verify if there are new AVC errors. You shold see "denied" entry which refers to a <code>path</code> of <code>/var/website/index.html</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ausearch -m AVC -ts recent
+----
+time-&gt;Fri Jul 19 16:26:33 2024
+type=PROCTITLE msg=audit(1721420793.896:460): proctitle=2F7573722F7362696E2F6874747064002D44464F524547524F554E44
+type=SYSCALL msg=audit(1721420793.896:460): arch=c000003e syscall=262 success=no exit=-13 a0=ffffff9c a1=7f1bc8004af8 a2=7f1bddffa8b0 a3=0 items=0 ppid=5678 pid=5682 auid=4294967295 uid=48 gid=48 euid=48 suid=48 fsuid=48 egid=48 sgid=48 fsgid=48 tty=(none) ses=4294967295 comm="httpd" exe="/usr/sbin/httpd" subj=system_u:system_r:httpd_t:s0 key=(null)
+type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 comm="httpd" path="/var/website/index.html" dev="vda4" ino=26341349 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file permissive=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because <code>httpd</code> runs in a confined domain, it is expected that it has no access to most resource types, such as <code>var_t</code> from our web page, which is the default context set by the loaded policy for all files under the <code>/var</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>5.4. Check the advice, if any, from <code>audit2why</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ausearch -m AVC -ts recent | audit2why
+type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 comm="httpd" path="/var/website/index.html" dev="vda4" ino=26341349 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file permissive=0
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It suggests generating a policy module, which would allow the <code>httpd_t</code> domain type access to the <code>var_t</code> resource type. It is a best practice to avoiding adding to the policy, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.</p>
+</div>
+</li>
+<li>
+<p>Change the context type of the alternate document root.</p>
+<div class="paragraph">
+<p>6.1. Review the <code>httpd_selinux(8)</code> man page for a proper resource type for web pages. Or copy it from the default document root:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ /var/www/html/</strong>
+system_u:object_r:httpd_sys_content_t:s0 /var/www/html/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6.2. Add the <code>/var/website</code> directory tree to the resource type for web pages:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>semanage fcontext -a -t httpd_sys_content_t "/var/website(/.</strong>)?"*
+$ <strong>restorecon -Rv /var/website</strong>
+Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restart the Apache Web Server and check that now you can access the static web site.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl restart httpd</strong>
+$ <strong>curl http://127.0.0.1/index.html</strong>
+&lt;h1&gt;Minimal Web Site&lt;/h1&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This lab demonstrates that interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.</p>
+</div>
+<div class="paragraph">
+<p>The next section reviews some troubleshooting practice for SELinux and we get more practice interpreting AVC errors with a dynamic web site.</p>
 </div>
 </div>
 </div>
