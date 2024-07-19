@@ -1,20 +1,319 @@
 :time_estimate: 5
 
-= Lab: Troubleshooting SElinux policies
+= Lab: Troubleshooting SELinux policies
 
 _Estimated reading time: *{time_estimate} minutes*._
 
-//This is my first hands-on with Antora, look for formatting templates
-
 Objective::
 
-Run a customized Apache Web Server with the targeted policy from RHEL.
+Run an Apache Web Server with changes to its default configuration under the targeted policy from RHEL.
 
 WARNING: Pending Review
 
-== Title
+== Before you Begin
 
-Lorem Ipsum
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+
+* SELinux enabled and enforcing, using the targeted policy.
+* The `setools-console` package.
+* The `policycoreutils-python-utils` package.
+* The `httpd` package.
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+
+== Instructions
+
+1. Change the configuration of your Apache Web Server to listen to a non-standard TCP port and serve web pages from a different document root.
++
+1.1. Verify that the Apache Web Server is installed but not running. It is OK if you have a different version of the `httpd` package:
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q httpd*
+httpd-2.4.57-5.el9.x86_64
+$ *systemctl is-active httpd*
+inactive
+--
+1.2. Save a backup copy of the configuration file, just in case:
++
+[source,subs="verbatim,quotes"]
+--
+$ cp /etc/httpd/conf/httpd.conf $HOME/httpd.conf.sav
+--
++
+1.3. Edit the `/etc/httpd/conf/httpd.conf` file and change the following three lines:
++
+[source,subs="verbatim,quotes"]
+--
+...
+Listen 30000
+...
+DocumentRoot "/var/website"
+...
+# Further relax access to the default document root:
+<Directory "/var/website">
+...
+--
++
+You can find a copy of the file with all changes already done in the https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf[sample app] repository.
++
+1.4. Create a test web site:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo mkdir /var/website*
+$ *sudo echo "<h1>Minimal Web Site</h1>" > /var/website/index.html*
+--
+1.5. Make the HTML files public, so the web server (and everything else) can access them:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo chmod a+rx /var/website/*
+$ *sudo chmod a+r /var/website/index.html*
+--
+
+2. Start the Apache Web Server, verify that it fails to serve web pages, and search for AVC error messages.
++
+2.1. Try to start the Apache Web Server, it is expected to fail:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl start httpd*
+Job for httpd.service failed because the control process exited with error code.
+See "systemctl status httpd.service" and "journalctl -xeu httpd.service" for details.
+--
+2.2. The web server status shows that it could not listen to the configured port. This shouldn't be an issue because the `httpd` process starts as root.
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl status httpd.service*
+...
+Jul 19 14:27:36 servera.lab.example.com systemd[1]: Starting The Apache HTTP Server...
+Jul 19 14:27:36 servera.lab.example.com httpd[1582]: (13)Permission denied: AH00072: make_sock: could not bind to address [::]:30000
+Jul 19 14:27:36 servera.lab.example.com httpd[1582]: (13)Permission denied: AH00072: make_sock: could not bind to address 0.0.0.0:30000
+...
+--
+2.3. Search for recent AVC errors.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -ts recent*
+----
+time->Fri Jul 19 14:27:36 2024
+type=PROCTITLE msg=audit(1721413656.365:161): proctitle=2F7573722F7362696E2F6874747064002D44464F524547524F554E44
+type=SYSCALL msg=audit(1721413656.365:161): arch=c000003e syscall=49 success=no exit=-13 a0=4 a1=557ed0e8c438 a2=1c a3=7ffc8c05e0fc items=0 ppid=1 pid=1582 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="httpd" exe="/usr/sbin/httpd" subj=system_u:system_r:httpd_t:s0 key=(null)
+type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=1582 comm="httpd" src=30000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0
+--
++
+You might expect a second AVC on the new document root, but the Apache Web Server terminated with an error code before it tried to open any web page. We will get there shortly.
++
+In the previous AVC error, notice the following fields, starting from the end of the message and going backwards:
++
+* The resource class (`t_class`) of `tcp_socket`
+* The resource context (`tcontext`) of type `unreserved_port_t`
+* The domain context (`scontext`) of type `httpd_t`
+* The resource name (`src`) which matches the port number `30000`
+* The message (`msg`) which includes the string "denied"
+* The audit event type (`type`) of `AVC`
+* The executable file (`exec`) of `/usr/sbin/httpd`
+
+3. Get an explanation for the AVC error.
++
+3.1. In a real scenario, there could be multiple AVC denials from different processes, and you would triage and save them into different files to process in small groups, or one-by-one. Because we have only one AVC error, we can pipe the output of `ausearch` directly into `audit2why`
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -ts recent | audit2why*
+type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=1582 comm="httpd" src=30000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket permissive=0
+
+        Was caused by:
+        The boolean nis_enabled was set incorrectly. 
+        Description:
+        Allow nis to enabled
+
+        Allow access by executing:
+        # setsebool -P nis_enabled 1
+--
++
+Notice that `audit2why` suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.
++
+3.2. If you took too long to review the AVC error, the previous step might return "<no matches>". In this case, you can filter by the application binary, which is also useful when there are AVC erros from multiple processes:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -x /usr/sbin/httpd | audit2why*
+... same output as previous step...
+--
++
+3.3. To illustrate how the suggestion from `audit2why` could look more sane, here's the output you would get if, instead of 30000, you configure your Apache Web Serve to listen on port 8000:
++
+[source,subs="verbatim,quotes"]
+--
+type=AVC msg=audit(1721416004.455:243): avc:  denied  { name_bind } for  pid=5343 comm="httpd" src=8000 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:soundd_port_t:s0 tclass=tcp_socket permissive=0
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.
+--
++
+In this case, `audit2why` suggests creating a custom policy module to fix the AVC. Sometimes this can be the right approach, but in this particular case the loaded policy already assigns TCP port 8000 to a different resource type (`soundd_port_t`). It would be better to avoid interfering with the default policies from RHEL, but if you have to, you could add allow rules so the Apache Web Server has access to more resource types.
++
+Feel free to change your Apache Web Server configuration and retry the previous steps to see this differeent suggestion by yourself. Or if you prefer, just proceed to the next step.
+
+
+4. Review the online policy docs for a proper fix.
++
+You could use the `seinfo`, `sesearch`, and `semanage` commands, which we already explored in previous labs, to introspect the loaded SELinux policy and figure the resource type you must assign to TCP port 30000 for the confined domain of the Apache Web Server. Let's instead check if the policy docs provides a fix.
++
+4.1. Install the `selinux-policy-docs` package and review the man pages for the Apache Web Server policy module.
++
+[source,subs="verbatim,quotes"]
+--
+$ *yum -y install selinux-policy docs*
+...
+Complete!
+$ *man httpd_selinux*
+--
++
+Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.
++
+4.2. From the man page, the follwing resource type seems to be the one we need:
++
+[source,subs="verbatim,quotes"]
+--
+...
+       http_port_t
+
+       Default Defined Ports:
+                 tcp 80,81,443,488,8008,8009,8443,9000
+...
+--
++
+4.4. Check that your system sets only the default ports to the `http_port_t` type:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo semanage port -l | grep http_port_t*
+http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
+...
+--
++
+4.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo semanage port -a -t http_port_t -p tcp 30000*
+--
++
+4.8. And verify the new port was added to the policy:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo semanage port -l | grep http_port_t*
+http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+...
+--
+
+
+5. Try again starting the Apache Web Server and check if there are more AVC errors.
++
+5.1. Start Apache Web and verify it sucessfully listen for connections on the new port:
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl start httpd*
+$ *systemctl is-active httpd*
+active
+$ *ss -ltnp | grep 30000*
+LISTEN 0      511                *:30000            *:*    users:(("httpd",pid=5682,fd=4),("httpd",pid=5681,fd=4),("httpd",pid=5680,fd=4),("httpd",pid=5678,fd=4))
+--
++
+5.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:
++
+[source,subs="verbatim,quotes"]
+--
+$ *curl http://127.0.0.1:30000/index.html*
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+...
+--
+5.2. You are sure the `httpd` daemon should have access to the `/var/website/index.html` file, right?
++
+[source,subs="verbatim,quotes"]
+--
+ls -l /var/website/index.html 
+-rw-r--r--. 1 root root 26 Jul 19 14:22 /var/website/index.html
+--
++
+5.3. Verify if there are new AVC errors. You shold see "denied" entry which refers to a `path` of `/var/website/index.html`
++
+[source,subs="verbatim,quotes"]
+--
+ausearch -m AVC -ts recent 
+----
+time->Fri Jul 19 16:26:33 2024
+type=PROCTITLE msg=audit(1721420793.896:460): proctitle=2F7573722F7362696E2F6874747064002D44464F524547524F554E44
+type=SYSCALL msg=audit(1721420793.896:460): arch=c000003e syscall=262 success=no exit=-13 a0=ffffff9c a1=7f1bc8004af8 a2=7f1bddffa8b0 a3=0 items=0 ppid=5678 pid=5682 auid=4294967295 uid=48 gid=48 euid=48 suid=48 fsuid=48 egid=48 sgid=48 fsgid=48 tty=(none) ses=4294967295 comm="httpd" exe="/usr/sbin/httpd" subj=system_u:system_r:httpd_t:s0 key=(null)
+type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 comm="httpd" path="/var/website/index.html" dev="vda4" ino=26341349 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file permissive=0
+--
++
+Because `httpd` runs in a confined domain, it is expected that it has no access to most resource types, such as `var_t` from our web page, which is the default context set by the loaded policy for all files under the `/var` directory.
++
+5.4. Check the advice, if any, from `audit2why`:
++
+[source,subs="verbatim,quotes"]
+--
+ausearch -m AVC -ts recent | audit2why
+type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 comm="httpd" path="/var/website/index.html" dev="vda4" ino=26341349 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file permissive=0
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.
+--
++
+It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoiding adding to the policy, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
+
+6. Change the context type of the alternate document root.
++
+6.1. Review the `httpd_selinux(8)` man page for a proper resource type for web pages. Or copy it from the default document root:
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls -dZ /var/www/html/*
+system_u:object_r:httpd_sys_content_t:s0 /var/www/html/
+--
++
+6.2. Add the `/var/website` directory tree to the resource type for web pages:
++
+[source,subs="verbatim,quotes"]
+--
+$ *semanage fcontext -a -t httpd_sys_content_t "/var/website(/.*)?"*
+$ *restorecon -Rv /var/website*
+Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+--
+
+7. Restart the Apache Web Server and check that now you can access the static web site.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl restart httpd*
+$ *curl http://127.0.0.1/index.html*
+<h1>Minimal Web Site</h1>
+--
+
+//TODO got 403 from apache but no AVC, config error?
+
+== Next Steps
+
+This lab demonstrates that interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.
+
+The next section reviews some troubleshooting practice for SELinux and we get more practice interpreting AVC errors with a dynamic web site.
+
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 

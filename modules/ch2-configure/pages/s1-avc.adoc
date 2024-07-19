@@ -10,6 +10,41 @@ Assess if an SELinux access denied message can be resolved by a change of config
 
 WARNING: Pending Review
 
+== SELinux Audit Messages
+
+//TODO as a kernel thing, shouldn't avcs start at dmesg and from them to /var/log/messages and them to audit log? Who triages kernel messges into different logs? Or do I need a daemon?
+
+SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, these are a lot of messages in any RHEL server, even with light load.
+
+If the audit daemon is running (as it is default and recommended in most RHEL systems), those messages are saved in the `/var/log/audit` directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analisys.
+
+Most sysadmins are interested in permission denied events, which SELinux calls *AVC errors*. The term "AVC" comes from an internal component of the Linux kernel, named Access Vector Cache, which builds a database of allow rules keyed by domain and resource contexts to improve performance.
+
+The standard Linux audit log search tool (`ausearch`) provides built-in filters for SELinux events, including AVC errors. Anyway, any SELinux event contains lots of information, which makes them hard to read:
+
+* Domain and resource contexts labes
+* Domain and resoruce identifiers, such as uid, pid, file system device, file inode, and network port
+* Additional information on domains and resouces, such as user name, file name, and executable file name
+* AVC check results and text log message
+
+Follows a sample AVC error message. Take your time to read it and identify the information from previous bullets.
+____
+`type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="file1" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file`
+____
+
+//TODO a diagram breaking an AVC error into its pieces?
+
+=== The SELinux Audit Tools [FIND A BETTER TITLE]
+
+The `policycoreutils-python-utils` package provides the `audit2why` command which helps interpreting AVC erros from SELinux. It also provides the `audit2allow` which we use later in this course to help generate custom policies for third-party applications.
+
+The `audit2why` command and its suite of commands take AVC messages as text, so you feed them with AVC messages stored anywhere or pipe them directly from the `ausearch` command.
+
+// Mention setroubleshoot packages and tools (sealert)?
+
+
+Lorem Ipsum
+
 == Title
 
 Lorem Ipsum
@@ -31,6 +66,10 @@ Booleans provide a compromise between a too script policy, which becomes unusabl
 For example, the Apache We Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks using it Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as `httpd_can_network_connect_db` and `httpd_can_sendmail`.
 
 
+
+== Next Steps
+
+Lorem Ipsum
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
