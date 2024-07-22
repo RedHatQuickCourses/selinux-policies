@@ -40,7 +40,7 @@ The `policycoreutils-python-utils` package provides the `audit2why` command whic
 
 The `audit2why` command and its suite of commands take AVC messages as text, so you feed them with AVC messages stored anywhere or pipe them directly from the `ausearch` command.
 
-// Mention setroubleshoot packages and tools (sealert)?
+// Mention setroubleshoot packages and tools (sealert)? YES!
 
 
 Lorem Ipsum

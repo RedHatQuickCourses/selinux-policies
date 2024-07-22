@@ -143,7 +143,7 @@ Notice that `audit2why` suggests an INCORRECT way of fixing the AVC, so do NOT f
 [source,subs="verbatim,quotes"]
 --
 $ *sudo ausearch -m AVC -x /usr/sbin/httpd | audit2why*
-... same output as previous step...
+... same output as previous step ...
 --
 +
 3.3. To illustrate how the suggestion from `audit2why` could look more sane, here's the output you would get if, instead of 30000, you configure your Apache Web Serve to listen on port 8000:
@@ -163,11 +163,120 @@ In this case, `audit2why` suggests creating a custom policy module to fix the AV
 Feel free to change your Apache Web Server configuration and retry the previous steps to see this differeent suggestion by yourself. Or if you prefer, just proceed to the next step.
 
 
-4. Review the online policy docs for a proper fix.
+4. Assess if the suggestion from `audit2why` was a good one.
 +
-You could use the `seinfo`, `sesearch`, and `semanage` commands, which we already explored in previous labs, to introspect the loaded SELinux policy and figure the resource type you must assign to TCP port 30000 for the confined domain of the Apache Web Server. Let's instead check if the policy docs provides a fix.
+4.1. We already know that our Apache Web Server configuration does not require NIS, and that the previous recommendation looks odd. But let's check what enabling that boolean entais:
 +
-4.1. Install the `selinux-policy-docs` package and review the man pages for the Apache Web Server policy module.
+[source,subs="verbatim,quotes"]
+--
+$ *sudo sesearch -A -s httpd_t -b nis_enabled*
+...
+allow nsswitch_domain reserved_port_type:tcp_socket name_connect; [ nis_enabled ]:True
+...
+allow nsswitch_domain unreserved_port_t:tcp_socket name_connect; [ nis_enabled ]:True
+...
+--
++
+It is a long list of allow rules, which raises a red flag. After all, we want network servers to run under the most restrictive policy we can.
++
+4.2. Check the range of ports that would be allowed by the boolean.
+It includes a resouce types which grant a large range of TCP ports:
++
+[source,subs="verbatim,quotes"]
+--
+$ *semanage port -l | grep tcp | grep 'unreserved_port_t'*
+unreserved_port_t              tcp      61000-65535, 1024-3276
+--
++
+That made `audit2why` suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports.
++
+By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is not considered secure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default and you should be careful to not enable them unless there's a real need.
+
+5. Because we didn't like the suggestion from `audit2why`, check if the `sealert` provides a better suggesiton.
++
+5.1. Save the AVC errors into a text file:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -x /usr/sbin/httpd > avc.log*
+--
++
+5.2. Install the `sealert` tool, if it's not available on your test machine:
++
+[source,subs="verbatim,quotes"]
+--
+$ *yum -y install setroubleshoot-server*
+Complete!
+--
++
+5.3. Process the text file with `sealert`. It gives a long output, with multiple suggestions. Let's revew them one by one:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sealert -a avc.log*
+found 1 alerts in avc.log
+--------------------------------------------------------------------------------
+
+SELinux is preventing /usr/sbin/httpd from name_bind access on the tcp_socket port 30000.
+...
+--
++
+5.4. The first suggestion is to change the resource type for port 30000. It seems a good one, but the Apache Web Server can listen to multiple port types and we need some guidance on which one, if we decide to follow this suggestion:
++
+[source,subs="verbatim"]
+--
+...
+*****  Plugin bind_ports (92.2 confidence) suggests   ************************
+
+If you want to allow /usr/sbin/httpd to bind to network port 30000
+Then you need to modify the port type.
+Do
+# semanage port -a -t PORT_TYPE -p tcp 30000
+    where PORT_TYPE is one of the following: http_cache_port_t, http_port_t, jboss_management_port_t, jboss_messaging_port_t, ntop_port_t, puppet_port_t.
+...
+--
++
+5.5. The second suggestion is enabling the same boolean we got from `audit2why`, which we do not consider a good suggesiton:
++
+[source,subs="verbatim"]
+--
+...
+*****  Plugin catchall_boolean (7.83 confidence) suggests   ******************
+
+If you want to allow nis to enabled
+Then you must tell SELinux about this by enabling the 'nis_enabled' boolean.
+You can read 'httpd_selinux' man page for more details.
+Do
+setsebool -P nis_enabled 1
+...
+--
++
+5.6. The third and latest suggestion is creating a custom policy module, and this is something we wish to avoid, if we can:
++
+[source,subs="verbatim"]
+--
+...
+*****  Plugin catchall (1.41 confidence) suggests   **************************
+
+If you believe that httpd should be allowed name_bind access on the port 30000 tcp_socket by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# ausearch -c 'httpd' --raw | audit2allow -M my-httpd
+# semodule -X 300 -i my-httpd.pp
+...
+--
++
+We can ignore the remaining of the output of `sealert`, which provides contextual information about the system where it runs and the AVC errors it processed.
+
+6. Review the online policy docs for a proper fix.
++
+The first suggestion from `sealert`, of changing the resource type of TCP port 30000, seems to be the best one. It is the more restrictive one, but it lists a number of candidate port types that the Apache Web Server confined domain has access to and we must pick one.
++
+You could use the `seinfo`, `sesearch`, and `semanage` commands, which we already explored in previous labs, to introspect the loaded SELinux policy and figure the resource type for listening to HTTP connections. Instead of guessing, let's review the policy documentation for the purpose of each of the port types.
++
+6.1. Install the `selinux-policy-docs` package and review the man pages for the Apache Web Server policy module.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -179,7 +288,7 @@ $ *man httpd_selinux*
 +
 Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.
 +
-4.2. From the man page, the follwing resource type seems to be the one we need:
+6.2. From the man page, the follwing resource type seems to be the one we need:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -191,7 +300,7 @@ Browse the man page and see it includes a somewhat long list of booleans from th
 ...
 --
 +
-4.4. Check that your system sets only the default ports to the `http_port_t` type:
+6.4. Check that your system sets only the default ports to the `http_port_t` type:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -200,14 +309,14 @@ http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
 ...
 --
 +
-4.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:
+6.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:
 +
 [source,subs="verbatim,quotes"]
 --
 $ *sudo semanage port -a -t http_port_t -p tcp 30000*
 --
 +
-4.8. And verify the new port was added to the policy:
+6.6. And verify the new port was added to the policy:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -217,9 +326,9 @@ http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 844
 --
 
 
-5. Try again starting the Apache Web Server and check if there are more AVC errors.
+7. Try again starting the Apache Web Server and check if there are more AVC errors.
 +
-5.1. Start Apache Web and verify it sucessfully listen for connections on the new port:
+7.1. Start Apache Web and verify it sucessfully listen for connections on the new port:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -230,7 +339,8 @@ $ *ss -ltnp | grep 30000*
 LISTEN 0      511                *:30000            *:*    users:(("httpd",pid=5682,fd=4),("httpd",pid=5681,fd=4),("httpd",pid=5680,fd=4),("httpd",pid=5678,fd=4))
 --
 +
-5.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:
+6
+7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -240,7 +350,7 @@ $ *curl http://127.0.0.1:30000/index.html*
 <title>403 Forbidden</title>
 ...
 --
-5.2. You are sure the `httpd` daemon should have access to the `/var/website/index.html` file, right?
+7.3. You are sure the `httpd` daemon should have access to the `/var/website/index.html` file, right?
 +
 [source,subs="verbatim,quotes"]
 --
@@ -248,7 +358,7 @@ ls -l /var/website/index.html
 -rw-r--r--. 1 root root 26 Jul 19 14:22 /var/website/index.html
 --
 +
-5.3. Verify if there are new AVC errors. You shold see "denied" entry which refers to a `path` of `/var/website/index.html`
+7.4. Verify if there are new AVC errors. You shold see "denied" entry which refers to a `path` of `/var/website/index.html`
 +
 [source,subs="verbatim,quotes"]
 --
@@ -262,11 +372,11 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
 +
 Because `httpd` runs in a confined domain, it is expected that it has no access to most resource types, such as `var_t` from our web page, which is the default context set by the loaded policy for all files under the `/var` directory.
 +
-5.4. Check the advice, if any, from `audit2why`:
+7.5. Check the advice, if any, from `audit2why`:
 +
 [source,subs="verbatim,quotes"]
 --
-ausearch -m AVC -ts recent | audit2why
+$ *ausearch -m AVC -ts recent | audit2why*
 type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 comm="httpd" path="/var/website/index.html" dev="vda4" ino=26341349 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file permissive=0
 
         Was caused by:
@@ -276,10 +386,34 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
 --
 +
 It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoiding adding to the policy, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
-
-6. Change the context type of the alternate document root.
 +
-6.1. Review the `httpd_selinux(8)` man page for a proper resource type for web pages. Or copy it from the default document root:
+7.6. Check the advice from `sealert`:
++
+[source,subs="verbatim,quotes"]
+$ *ausearch -m AVC -ts recent > avc2.log*
+$ *sealert -a avc2.log*
+...
++
+The first suggestion looks like a good one:
++
+[source,subs="verbatim"]
+--
+*****  Plugin restorecon (94.8 confidence) suggests   ************************
+
+If you want to fix the label. 
+/var/website/index.html default label should be httpd_sys_content_t.
+Then you can run restorecon. The access attempt may have been stopped due to insufficient permissions to access a parent directory in which case try to change the following command accordingly.
+Do
+# /sbin/restorecon -v /var/website/index.html
+...
+--
++
+The other suggestion from `sealert` provides a long list of file types the Apache Web Server domains has access to.
+
+
+8. Change the context type of the alternate document root.
++
+8.1. Review the `httpd_selinux(8)` man page to confirm the proper resource type for web pages. Or copy it from the default document root:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -287,7 +421,7 @@ $ *ls -dZ /var/www/html/*
 system_u:object_r:httpd_sys_content_t:s0 /var/www/html/
 --
 +
-6.2. Add the `/var/website` directory tree to the resource type for web pages:
+8.2. Add the `/var/website` directory tree to the resource type for web pages:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -297,7 +431,7 @@ Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:objec
 Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
 --
 
-7. Restart the Apache Web Server and check that now you can access the static web site.
+9. Restart the Apache Web Server and check that now you can access the static web site.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -305,8 +439,6 @@ $ *sudo systemctl restart httpd*
 $ *curl http://127.0.0.1/index.html*
 <h1>Minimal Web Site</h1>
 --
-
-//TODO got 403 from apache but no AVC, config error?
 
 == Next Steps
 
