@@ -339,7 +339,6 @@ $ *ss -ltnp | grep 30000*
 LISTEN 0      511                *:30000            *:*    users:(("httpd",pid=5682,fd=4),("httpd",pid=5681,fd=4),("httpd",pid=5680,fd=4),("httpd",pid=5678,fd=4))
 --
 +
-6
 7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:
 +
 [source,subs="verbatim,quotes"]
@@ -436,7 +435,7 @@ Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfi
 [source,subs="verbatim,quotes"]
 --
 $ *sudo systemctl restart httpd*
-$ *curl http://127.0.0.1/index.html*
+$ *curl http://127.0.0.1:30000/index.html*
 <h1>Minimal Web Site</h1>
 --
 
