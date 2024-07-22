@@ -21,7 +21,6 @@ You need a RHEL machine to which you have the root password or unrestricted sudo
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
-
 == Instructions
 
 1. Change the configuration of your Apache Web Server to listen to a non-standard TCP port and serve web pages from a different document root.
@@ -441,9 +440,9 @@ $ *curl http://127.0.0.1:30000/index.html*
 
 == Next Steps
 
-This lab demonstrates that interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.
+Interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.
 
-The next section reviews some troubleshooting practice for SELinux and we get more practice interpreting AVC errors with a dynamic web site.
+Before we start activities related to creating a custom SELinux policy, let's discuss how to ensure multiple servers and desktops have consistent SELinux settings.
 
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
