@@ -232,48 +232,12 @@ Pending Review
 <p>The <code>audit2why</code> command and its suite of commands take AVC messages as text, so you feed them with AVC messages stored anywhere or pipe them directly from the <code>ausearch</code> command.</p>
 </div>
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>Lorem Ipsum
+== Next Steps</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>Lorem Ipsum</p>
 </div>
-<div class="sect2">
-<h3 id="_labeling_files_with_a_new_context_type"><a class="anchor" href="#_labeling_files_with_a_new_context_type"></a>Labeling Files With a New Context Type</h3>
-<div class="paragraph">
-<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not adivised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
-</div>
-<div class="paragraph">
-<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
-</div>
-<div class="paragraph">
-<p>Another example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_setting_selinux_booleans"><a class="anchor" href="#_setting_selinux_booleans"></a>Setting SELinux Booleans</h3>
-<div class="paragraph">
-<p>The SELinux policies from RHEL define a number of booleans, which enabe system administrators to selectively grant permission to use enable features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
-</div>
-<div class="paragraph">
-<p>Booleans provide a compromise between a too script policy, which becomes unusable, and a too lenient policy, which leaves too large an attach surface.</p>
-</div>
-<div class="paragraph">
-<p>For example, the Apache We Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks using it Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_can_network_connect_db</code> and <code>httpd_can_sendmail</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Lorem Ipsum</p>
 </div>
 </div>
 </div>

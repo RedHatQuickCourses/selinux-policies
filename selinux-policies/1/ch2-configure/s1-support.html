@@ -164,7 +164,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Adopt a structured workflow for resolving SELinux issues</p>
+<p>Adopt a structured workflow for resolving SELinux issues.</p>
 </dd>
 </dl>
 </div>
@@ -183,10 +183,133 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<h2 id="_common_issues_with_selinux"><a class="anchor" href="#_common_issues_with_selinux"></a>Common Issues With SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>As you learned in the previous chapter, the SELinux targeted policy in RHEL was designed to protect system services included with RHEL and not interfere with interactive users nor with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
+</div>
+<div class="paragraph">
+<p>You also learned that, if you add a third-party application to a RHEL server, it&#8217;s better that you, its developer, or its vendor provides a custom policy module to protect that third-party application. But you don&#8217;t have to: it is recommended but optional.</p>
+</div>
+<div class="paragraph">
+<p>Why people stil struggle with runing Linux servers with SELinux enabled and in enforcing mode? Most of the times, it&#8217;s because they did one of those common things:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Moved files around, so their SELinux context do not match the policy rules anymore.</p>
+</li>
+<li>
+<p>Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, so the SELinux context of those files was lost.</p>
+</li>
+<li>
+<p>Configured a system server to listen on a non-standard network port, and that port is not labeled to match the policy rules.</p>
+</li>
+<li>
+<p>Configured a system server to read or write to different data and log directories, and those directories do not have labels which match the policy rules.</p>
+</li>
+<li>
+<p>Enabled an optional feature of a system service that is potentialy dangerouns so it&#8217;s not allowed by default policy rules.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You resolve most of those isues by setting files and directories to the correct SELinux context, and the latest issue you resolve by setting an SELinux boolean.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_labeling_files_with_a_new_context"><a class="anchor" href="#_labeling_files_with_a_new_context"></a>Labeling Files With a New Context</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not adivised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
+</div>
+<div class="paragraph">
+<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_labeling_non_file_resources"><a class="anchor" href="#_labeling_non_file_resources"></a>Labeling Non-file Resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To label other classes of kernel objects, which cannot store the labels in extended attributes, you must use the <code>semanage</code> command. For example, use <code>semanage port</code> to label TCP and UDP ports.</p>
+</div>
+<div class="paragraph">
+<p>For example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_setting_selinux_booleans"><a class="anchor" href="#_setting_selinux_booleans"></a>Setting SELinux Booleans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SELinux policies from RHEL define a number of booleans, which enabe system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
+</div>
+<div class="paragraph">
+<p>Booleans provide a compromise between a too strict policy, which becomes unusable, and a too lenient policy, which leaves a wide attach surface open.</p>
+</div>
+<div class="paragraph">
+<p>You can list and query the status of an SELinux boolean using the <code>getsebool</code> command, and you can change its status using the <code>setsebool</code> command.</p>
+</div>
+<div class="paragraph">
+<p>For example, the Apache Web Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generic_workflow_for_troubleshooting_selinux_issues"><a class="anchor" href="#_generic_workflow_for_troubleshooting_selinux_issues"></a>Generic Workflow for Troubleshooting SELinux Issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever you find something that looks like an issue with SELinux, follow these troubleshooting steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ensure that the application was not denied access to files, networks, or devices by other Linux mechanisms such as file system permissions and packet filtering. Remember that SELinux does not override other Linux security mechanisms.</p>
+</li>
+<li>
+<p>Install SELinux support tools from packages such as <code>setools-console</code> and <code>policycoreutils-python-utils</code>.</p>
+</li>
+<li>
+<p>Ensure that the audit daemon is active.</p>
+</li>
+<li>
+<p>Check that SELinux is enabled and in enforcing mode.</p>
+</li>
+<li>
+<p>Check that the targeted policy was loaded.</p>
+</li>
+<li>
+<p>Review SELinux messages in the audit log using <code>ausearch</code>.</p>
+</li>
+<li>
+<p>Put the application&#8217;s confined domain in permissive mode, and reproduce the scenario which creates the issue.</p>
+</li>
+<li>
+<p>If necessary, put the entire system in permissive mode, and reproduce the scenario.</p>
+</li>
+<li>
+<p>Use SELinux tools, such as <code>audit2why</code> and <code>sealert</code>, to help you interpret AVC errors and suggest potential fixes.</p>
+</li>
+<li>
+<p>Implement configuration changes, such as relabeling files and enabling booleans.</p>
+</li>
+<li>
+<p>If all else fails, create a custom policy module.</p>
+</li>
+<li>
+<p>If you put a confined domain or a system in permissive mode, restore it to enforcing mode.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will perform two activities where you troubleshoot and fix SELinux issues. In between those activities, we will learn how to interpret SELinux errors, especially AVC errors.</p>
 </div>
 </div>
 </div>
