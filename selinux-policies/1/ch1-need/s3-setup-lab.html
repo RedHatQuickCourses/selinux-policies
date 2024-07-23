@@ -289,7 +289,7 @@ Max kernel policy version:      33</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>yum install -y selinux-policy-targeted</strong>
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>dnf install -y selinux-policy-targeted</strong>
 ...
 # <strong>sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config</strong>
 # <strong>fixfiles -F onboot</strong>
@@ -347,7 +347,7 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs"># <strong>rpm -qa | grep selinux</strong>
 ...
-# <strong>yum search selinux</strong>
+# <strong>dnf search selinux</strong>
 ...</code></pre>
 </div>
 </div>
@@ -359,7 +359,7 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>yum install setools-console</strong>
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>dnf install setools-console</strong>
 ...
 Completed!</code></pre>
 </div>
