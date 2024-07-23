@@ -109,7 +109,7 @@ Max kernel policy version:      33
 +
 [source,subs="verbatim,quotes"]
 --
-# *yum install -y selinux-policy-targeted*
+# *dnf install -y selinux-policy-targeted*
 ...
 # *sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config*
 # *fixfiles -F onboot*
@@ -160,7 +160,7 @@ Most of the time, you will be interested only in the `avc` audit events.
 --
 # *rpm -qa | grep selinux*
 ...
-# *yum search selinux*
+# *dnf search selinux*
 ...
 --
 
@@ -170,7 +170,7 @@ Most of the time, you will be interested only in the `avc` audit events.
 +
 [source,subs="verbatim,quotes"]
 --
-# *yum install setools-console*
+# *dnf install setools-console*
 ...
 Completed!
 --

@@ -56,7 +56,7 @@ Remember that most commands in Bash, including the `ps` command, create new proc
 +
 [source,subs="verbatim,quotes"]
 --
-$ *sudo yum -y install httpd mysql-server*
+$ *sudo dnf -y install httpd mysql-server*
 ...
 Complete!
 $ *sudo systemctl start httpd*
@@ -97,7 +97,7 @@ Notice, in the previous outputs, the different SELinux users and roles of the da
 +
 [source,subs="verbatim,quotes"]
 --
-$ *yum install -y git gcc-c++ make libcurl-devel*
+$ *dnf install -y git gcc-c++ make libcurl-devel*
 --
 3.2. Clone the source code repository from the test application and enter its source directory:
 +
