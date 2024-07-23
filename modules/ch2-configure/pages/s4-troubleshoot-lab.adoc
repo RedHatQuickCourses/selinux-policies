@@ -34,6 +34,7 @@ httpd-2.4.57-5.el9.x86_64
 $ *systemctl is-active httpd*
 inactive
 --
++
 1.2. Save a backup copy of the configuration file, just in case:
 +
 [source,subs="verbatim,quotes"]

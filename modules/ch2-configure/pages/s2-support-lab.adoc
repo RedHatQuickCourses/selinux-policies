@@ -172,11 +172,14 @@ $ *curl http://127.0.0.1/*
 </html>
 --
 +
-4.3. Click the link to the "random quote", or visit it using the `curl` command. You shoud get an empty response, which is a sign of trouble, besides a sign of a badly designed application, without any error reporting:
+4.3. Click the link to the "random quote", or visit it using the `curl` command. You should get what looks, from a web browser, like an empty page, but which is actually a truncated response. This is a sign of trouble, besides a sign of a badly designed application which does not perform any error handling:
 +
 [source,subs="verbatim,quotes"]
 --
 $ *curl http://127.0.0.1/quotes.php*
+<html>
+<body>
+<h1>
 --
 +
 4.4. Check the Apache Web Server logs. The error log should show only the error from the first attempt to access the web page, and the access log should show an internal error (HTTP 500) which is quite common with unhandled errors from PHP scripts:

@@ -1,0 +1,242 @@
+:time_estimate: 5
+
+= Lab: Automating SELinux Configuration
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Automate the configuration of SELinux to support a web server with non-standard configurations and a PHP application which connects to a database.
+
+WARNING: Pending Review
+
+== Before you Begin
+
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+
+* SELinux enabled and enforcing, using the targeted policy.
+* The `setools-console` package.
+* The `policycoreutils-python-utils` package.
+* The `httpd` package.
+* The `mysql-server` package.
+* The `git` client.
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+== Instructions
+
+1. Because Ansibe is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it's better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.
++
+1.1. Install the Ansible core and system roles pacakages.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf -y install rhel-system-roles ansible-core*
+...
+Complete!
+--
++
+1.2. If you didn't clone the course samples repository in a previous activity, clone it now and enter the `playbooks` directory: 
++
+[source,subs="verbatim,quotes"]
+--
+$ *git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git*
+...
+Resolving deltas: 100% (25/25), done.
+$ *cd selinux-policies-samples/quotes*
+$ *ls*
+enforce-targeted.yaml  quotes.yaml  website.yaml
+--
+
+2. Examine and run the `enforce-targeted.yaml` playbook, which you can use as a starting point for your own custom playbooks.
++
+2.1. There's a single play which defines a couple variables required by he SELinux system role.
++
+[source,subs="verbatim"]
+--
+...
+- name: Enforce the targeted policy
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+
+  tasks:
+...
+--
++
+2.2. A single task includes and runs the SELinux system role and it persforms all changes required by variables with the `selinux_` preffix.
++
+[source,subs="verbatim"]
+--
+...
+  tasks:
+    - name: Configure SELinux
+      block:
+        - name: Include selinux role
+          include_role:
+            name: rhel-system-roles.selinux
+      rescue:
+...
+--
++
+2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended for remove execution by Ansible Automation Platform or Red Hat Insights.
++
+[source,subs="verbatim"]
+--
+...
+        # Fail if failed for a different reason than selinux_reboot_required.
+        - name: Handle errors
+          fail:
+            msg: "role failed"
+          when: not selinux_reboot_required
+
+        - name: Restart managed host
+          reboot
+...
+--
++
+If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic reboot and reconnection to resume playbook execution only works with remote execution.
++
+2.4. Run the playbook, which should do nothing on a properly configured RHEL machine:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ansible-playbook enforce-targeted.yaml*
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+...
+--
++
+Here are the important parts of the playbook execution log:
++
+[source,subs="verbatim"]
+--
+...
+PLAY [Enforce the targeted policy] **********************************************************************************************************************************
+...
+TASK [rhel-system-roles.selinux : Set permanent SELinux state if enabled] *******************************************************************************************
+ok: [localhost]
+
+TASK [rhel-system-roles.selinux : Set permanent SELinux state if disabled] ******************************************************************************************
+skipping: [localhost]
+
+TASK [rhel-system-roles.selinux : Set selinux_reboot_required] ******************************************************************************************************
+ok: [localhost]
+...
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=8    changed=0    unreachable=0    failed=0    skipped=17   rescued=0    ignored=0   
+--
++
+Notice that the end of the playbook execution log displays "changed=0" to indicate none of the tasks made any change to the system.
++
+If you read the playbook execution log, you'll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn't set the variabes which control such tasks. 
++
+Also notice that the SELinux role takes care of installing dependencies, such as SELinux and Python RPM packages.
+
+3. Review and run the playbook which allows the Apache Web Server to connect to remote databases.
++
+3.1. The only change, compared to the previous playbook, is setting an additional variable:
++
+[source,subs="verbatim"]
+--
+...
+- name: Configure SELinux for a PHP web app which connects to MySQL
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+    selinux_booleans:
+      - {name: 'httpd_can_network_connect_db', state: 'on'}
+...
+--
++
+3.2. Ensure the boolean is off, so you can observe the playbook changing it back to on:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo setsebool httpd_can_network_connect_db off*
+--
++
+3.3. Run the `quotes.yaml` playbook:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ansible-playbook quotes.yaml*
+...
+--
++
+And observe on its output that the boolean is turned on:
++
+[source,subs="verbatim"]
+--
+...
+TASK [rhel-system-roles.selinux : Set SELinux booleans] *************************************************************************************************************
+changed: [localhost] => (item={'name': 'httpd_can_network_connect_db', 'state': 'on'})
+...
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=9    changed=1    unreachable=0    failed=0    skipped=16   rescued=0    ignored=0
+--
++
+Notice, in the end of the playbook execution log, it displays "changed=1" because it made a single change to the system.
++
+3.4. Check that the boolean was indded turned on:
++
+[source,subs="verbatim,quotes"]
+--
+$ *getsebool httpd_can_network_connect_db*
+httpd_can_network_connect_db --> on
+--
+
+4. Review and run the playbook which allows the Apache Web Server to run with a non-standard configuration.
++
+4.1. The only change, compared to the previous playbooks, is again on its variables:
++
+[source,subs="verbatim"]
+--
+...
+- name: Configure SELinux for non-standard httpd configuration
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+    selinux_fcontexts:
+      - {target: '/var/website(/.*)?', setype: 'httpd_sys_content_t', ftype: 'a'}
+    selinux_restore_dirs:
+      - /var/website
+    selinux_ports:
+      - {ports: '30000', proto: 'tcp', setype: 'http_port_t', state: 'present'}
+...
+--
++
+4.3. Run the `website.yaml` playbook:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ansible-playbook website.yaml*
+...
+--
+4.4. None of those playbooks install their respective applications and web sites, so if you try in a system which was not configured by previous activities, you will get errors similar to:
++
+[source,subs="verbatim"]
+--
+...
+TASK [rhel-system-roles.selinux : Set SELinux file contexts] ********************************************************************************************************
+changed: [localhost] => (item={'target': '/var/website(/.*)?', 'setype': 'httpd_sys_content_t', 'ftype': 'a'})
+
+TASK [rhel-system-roles.selinux : Restore SELinux labels on filesystem tree] ****************************************************************************************
+failed: [localhost] (item=/var/website) => {"ansible_loop_var": "item", "changed": false, "cmd": ["/sbin/restorecon", "-R", "-F", "-v", "-T", "0", "/var/website"], "delta": "0:00:00.006776", "end": "2024-07-23 15:00:23.562778", "item": "/var/website", "msg": "non-zero return code", "rc": 255, "start": "2024-07-23 15:00:23.556002", "stderr": "/sbin/restorecon: lstat(/var/website) failed: No such file or directory", "stderr_lines": ["/sbin/restorecon: lstat(/var/website) failed: No such file or directory"], "stdout": "", "stdout_lines": []}
+
+TASK [Handle errors] ************************************************************************************************************************************************
+fatal: [localhost]: FAILED! => {"changed": false, "msg": "role failed"}
+
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=8    changed=1    unreachable=0    failed=1    skipped=11   rescued=1    ignored=0 
+--
++
+Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed sucessfully.
+
+== Next Steps
+
+The examples here are starting points so you can include SELinux configuration in your automation workflows for configuring servers and deploying applications.
+
+Now that we already learned how to configure SELinux and interpret AVC errors, we are ready to create our own custom policies in the next chapter.

@@ -18,6 +18,12 @@ WARNING: Pending Review
 
 Lorem Ipsum
 
+https://access.redhat.com/articles/3050101[RHEL System Roles] -- There's an selinux system role. :-)
+
+The system role uses the colection... right? Exactly which collection?
+
+
+
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
 https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
