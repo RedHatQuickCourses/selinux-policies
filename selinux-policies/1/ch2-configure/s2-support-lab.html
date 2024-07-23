@@ -105,6 +105,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-ansible-lab.html">Lab: Automating SELinux Configuration</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -380,11 +383,14 @@ Relabeled /var/www/html/quotes.php from unconfined_u:object_r:user_home_t:s0 to 
 </div>
 </div>
 <div class="paragraph">
-<p>4.3. Click the link to the "random quote", or visit it using the <code>curl</code> command. You shoud get an empty response, which is a sign of trouble, besides a sign of a badly designed application, without any error reporting:</p>
+<p>4.3. Click the link to the "random quote", or visit it using the <code>curl</code> command. You should get what looks, from a web browser, like an empty page, but which is actually a truncated response. This is a sign of trouble, besides a sign of a badly designed application which does not perform any error handling:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl http://127.0.0.1/quotes.php</strong></code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl http://127.0.0.1/quotes.php</strong>
+&lt;html&gt;
+&lt;body&gt;
+&lt;h1&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">

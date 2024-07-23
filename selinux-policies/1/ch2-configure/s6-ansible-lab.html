@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Automating SELinux Configuration :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s5-multihost.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s7-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s8-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-support-lab.html">Lab: Supporting SElinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshooting SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s6-ansible-lab.html">Lab: Automating SELinux Configuration</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s6-ansible-lab.html">Lab: Automating SELinux Configuration</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Automating SELinux Configuration</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Automate the configuration of SELinux to support a web server with non-standard configurations and a PHP application which connects to a database.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELinux enabled and enforcing, using the targeted policy.</p>
+</li>
+<li>
+<p>The <code>setools-console</code> package.</p>
+</li>
+<li>
+<p>The <code>policycoreutils-python-utils</code> package.</p>
+</li>
+<li>
+<p>The <code>httpd</code> package.</p>
+</li>
+<li>
+<p>The <code>mysql-server</code> package.</p>
+</li>
+<li>
+<p>The <code>git</code> client.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Because Ansibe is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it&#8217;s better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.</p>
+<div class="paragraph">
+<p>1.1. Install the Ansible core and system roles pacakages.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf -y install rhel-system-roles ansible-core</strong>
+...
+Complete!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. If you didn&#8217;t clone the course samples repository in a previous activity, clone it now and enter the <code>playbooks</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git</strong>
+...
+Resolving deltas: 100% (25/25), done.
+$ <strong>cd selinux-policies-samples/quotes</strong>
+$ <strong>ls</strong>
+enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Examine and run the <code>enforce-targeted.yaml</code> playbook, which you can use as a starting point for your own custom playbooks.</p>
+<div class="paragraph">
+<p>2.1. There&#8217;s a single play which defines a couple variables required by he SELinux system role.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+- name: Enforce the targeted policy
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+
+  tasks:
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.2. A single task includes and runs the SELinux system role and it persforms all changes required by variables with the <code>selinux_</code> preffix.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+  tasks:
+    - name: Configure SELinux
+      block:
+        - name: Include selinux role
+          include_role:
+            name: rhel-system-roles.selinux
+      rescue:
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended for remove execution by Ansible Automation Platform or Red Hat Insights.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+        # Fail if failed for a different reason than selinux_reboot_required.
+        - name: Handle errors
+          fail:
+            msg: "role failed"
+          when: not selinux_reboot_required
+
+        - name: Restart managed host
+          reboot
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic reboot and reconnection to resume playbook execution only works with remote execution.</p>
+</div>
+<div class="paragraph">
+<p>2.4. Run the playbook, which should do nothing on a properly configured RHEL machine:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ansible-playbook enforce-targeted.yaml</strong>
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here are the important parts of the playbook execution log:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+PLAY [Enforce the targeted policy] **********************************************************************************************************************************
+...
+TASK [rhel-system-roles.selinux : Set permanent SELinux state if enabled] *******************************************************************************************
+ok: [localhost]
+
+TASK [rhel-system-roles.selinux : Set permanent SELinux state if disabled] ******************************************************************************************
+skipping: [localhost]
+
+TASK [rhel-system-roles.selinux : Set selinux_reboot_required] ******************************************************************************************************
+ok: [localhost]
+...
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=8    changed=0    unreachable=0    failed=0    skipped=17   rescued=0    ignored=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the end of the playbook execution log displays "changed=0" to indicate none of the tasks made any change to the system.</p>
+</div>
+<div class="paragraph">
+<p>If you read the playbook execution log, you&#8217;ll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn&#8217;t set the variabes which control such tasks.</p>
+</div>
+<div class="paragraph">
+<p>Also notice that the SELinux role takes care of installing dependencies, such as SELinux and Python RPM packages.</p>
+</div>
+</li>
+<li>
+<p>Review and run the playbook which allows the Apache Web Server to connect to remote databases.</p>
+<div class="paragraph">
+<p>3.1. The only change, compared to the previous playbook, is setting an additional variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+- name: Configure SELinux for a PHP web app which connects to MySQL
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+    selinux_booleans:
+      - {name: 'httpd_can_network_connect_db', state: 'on'}
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.2. Ensure the boolean is off, so you can observe the playbook changing it back to on:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo setsebool httpd_can_network_connect_db off</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Run the <code>quotes.yaml</code> playbook:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ansible-playbook quotes.yaml</strong>
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And observe on its output that the boolean is turned on:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+TASK [rhel-system-roles.selinux : Set SELinux booleans] *************************************************************************************************************
+changed: [localhost] =&gt; (item={'name': 'httpd_can_network_connect_db', 'state': 'on'})
+...
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=9    changed=1    unreachable=0    failed=0    skipped=16   rescued=0    ignored=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice, in the end of the playbook execution log, it displays "changed=1" because it made a single change to the system.</p>
+</div>
+<div class="paragraph">
+<p>3.4. Check that the boolean was indded turned on:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>getsebool httpd_can_network_connect_db</strong>
+httpd_can_network_connect_db --&gt; on</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Review and run the playbook which allows the Apache Web Server to run with a non-standard configuration.</p>
+<div class="paragraph">
+<p>4.1. The only change, compared to the previous playbooks, is again on its variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+- name: Configure SELinux for non-standard httpd configuration
+  hosts: localhost
+  vars:
+    selinux_policy: targeted
+    selinux_state: enforcing
+    selinux_fcontexts:
+      - {target: '/var/website(/.*)?', setype: 'httpd_sys_content_t', ftype: 'a'}
+    selinux_restore_dirs:
+      - /var/website
+    selinux_ports:
+      - {ports: '30000', proto: 'tcp', setype: 'http_port_t', state: 'present'}
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.3. Run the <code>website.yaml</code> playbook:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ansible-playbook website.yaml</strong>
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.4. None of those playbooks install their respective applications and web sites, so if you try in a system which was not configured by previous activities, you will get errors similar to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+TASK [rhel-system-roles.selinux : Set SELinux file contexts] ********************************************************************************************************
+changed: [localhost] =&gt; (item={'target': '/var/website(/.*)?', 'setype': 'httpd_sys_content_t', 'ftype': 'a'})
+
+TASK [rhel-system-roles.selinux : Restore SELinux labels on filesystem tree] ****************************************************************************************
+failed: [localhost] (item=/var/website) =&gt; {"ansible_loop_var": "item", "changed": false, "cmd": ["/sbin/restorecon", "-R", "-F", "-v", "-T", "0", "/var/website"], "delta": "0:00:00.006776", "end": "2024-07-23 15:00:23.562778", "item": "/var/website", "msg": "non-zero return code", "rc": 255, "start": "2024-07-23 15:00:23.556002", "stderr": "/sbin/restorecon: lstat(/var/website) failed: No such file or directory", "stderr_lines": ["/sbin/restorecon: lstat(/var/website) failed: No such file or directory"], "stdout": "", "stdout_lines": []}
+
+TASK [Handle errors] ************************************************************************************************************************************************
+fatal: [localhost]: FAILED! =&gt; {"changed": false, "msg": "role failed"}
+
+PLAY RECAP **********************************************************************************************************************************************************
+localhost                  : ok=8    changed=1    unreachable=0    failed=1    skipped=11   rescued=1    ignored=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed sucessfully.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The examples here are starting points so you can include SELinux configuration in your automation workflows for configuring servers and deploying applications.</p>
+</div>
+<div class="paragraph">
+<p>Now that we already learned how to configure SELinux and interpret AVC errors, we are ready to create our own custom policies in the next chapter.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s5-multihost.html">Consistent SElinux settings</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
