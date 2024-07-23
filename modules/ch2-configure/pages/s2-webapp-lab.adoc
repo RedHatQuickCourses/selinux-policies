@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Supporting SElinux
+= Lab: Configure SElinux for a Web Application
 
 _Estimated reading time: *{time_estimate} minutes*._
 
@@ -52,7 +52,7 @@ mysql-server-8.0.32-1.el9_2.x86_64
 +
 [source,subs="verbatim,quotes"]
 --
-$ *sudo yum -y install php php-cli php-mysqlnd*
+$ *sudo dnf -y install php php-cli php-mysqlnd*
 ...
 Complete!
 --

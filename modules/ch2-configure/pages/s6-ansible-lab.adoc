@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Automating SELinux Configuration
+= Lab: Automate SELinux Configuration
 
 _Estimated reading time: *{time_estimate} minutes*._
 

@@ -1,6 +1,6 @@
 * xref:index.adoc[]
 ** xref:s1-support.adoc[]
-** xref:s2-support-lab.adoc[]
+** xref:s2-webapp-lab.adoc[]
 ** xref:s3-avc.adoc[]
 ** xref:s4-troubleshoot-lab.adoc[]
 ** xref:s5-multihost.adoc[]

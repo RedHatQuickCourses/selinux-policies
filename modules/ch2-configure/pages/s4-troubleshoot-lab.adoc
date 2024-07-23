@@ -1,12 +1,12 @@
 :time_estimate: 5
 
-= Lab: Troubleshooting SELinux policies
+= Lab: Troubleshoot SELinux policies
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Run an Apache Web Server with changes to its default configuration under the targeted policy from RHEL.
+Run an Apache Web Server with changes to its default configuration under the targeted policy set from RHEL.
 
 WARNING: Pending Review
 
@@ -205,7 +205,7 @@ $ *sudo ausearch -m AVC -x /usr/sbin/httpd > avc.log*
 +
 [source,subs="verbatim,quotes"]
 --
-$ *yum -y install setroubleshoot-server*
+$ *dnf -y install setroubleshoot-server*
 Complete!
 --
 +
@@ -280,7 +280,7 @@ You could use the `seinfo`, `sesearch`, and `semanage` commands, which we alread
 +
 [source,subs="verbatim,quotes"]
 --
-$ *yum -y install selinux-policy docs*
+$ *dnf -y install selinux-policy docs*
 ...
 Complete!
 $ *man httpd_selinux*
