@@ -5,3 +5,4 @@
 ** xref:s4-troubleshoot-lab.adoc[]
 ** xref:s5-multihost.adoc[]
 ** xref:s6-ansible-lab.adoc[]
+** xref:s7-summary.adoc[]
