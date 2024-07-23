@@ -186,13 +186,13 @@ Pending Review
 <h2 id="_selinux_audit_messages"><a class="anchor" href="#_selinux_audit_messages"></a>SELinux Audit Messages</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, these are a lot of messages in any RHEL server, even with light load.</p>
+<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, these could be a lot of messages related to SELinux in a typical RHEL machine, even with light load.</p>
 </div>
 <div class="paragraph">
-<p>If the audit daemon is running (as it is default and recommended in most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analisys.</p>
+<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analisys.</p>
 </div>
 <div class="paragraph">
-<p>Most sysadmins are interested in permission denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named Access Vector Cache, which builds a database of allow rules keyed by domain and resource contexts to improve performance.</p>
+<p>Most sysadmins are interested in permission denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named <strong>Access Vector Cache</strong>, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.</p>
 </div>
 <div class="paragraph">
 <p>The standard Linux audit log search tool (<code>ausearch</code>) provides built-in filters for SELinux events, including AVC errors. Anyway, any SELinux event contains lots of information, which makes them hard to read:</p>
@@ -200,16 +200,16 @@ Pending Review
 <div class="ulist">
 <ul>
 <li>
-<p>Domain and resource contexts labes</p>
+<p>Domain and resource contexts labels;</p>
 </li>
 <li>
-<p>Domain and resoruce identifiers, such as uid, pid, file system device, file inode, and network port</p>
+<p>Domain and resource identifiers, such as uid, pid, file system device, file inode, and network port;</p>
 </li>
 <li>
-<p>Additional information on domains and resouces, such as user name, file name, and executable file name</p>
+<p>Additional information on domains and resources, such as user name, file name, and executable file name;</p>
 </li>
 <li>
-<p>AVC check results and text log message</p>
+<p>AVC check results and log message.</p>
 </li>
 </ul>
 </div>
@@ -223,21 +223,53 @@ Pending Review
 </div>
 </blockquote>
 </div>
-<div class="sect2">
-<h3 id="_the_selinux_audit_tools_find_a_better_title"><a class="anchor" href="#_the_selinux_audit_tools_find_a_better_title"></a>The SELinux Audit Tools [FIND A BETTER TITLE]</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_selinux_audit_alert_and_troubleshoot_tools"><a class="anchor" href="#_the_selinux_audit_alert_and_troubleshoot_tools"></a>The SELinux Audit, Alert, and Troubleshoot Tools</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>policycoreutils-python-utils</code> package provides the <code>audit2why</code> command which helps interpreting AVC erros from SELinux. It also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
+<p>There are two tools, included wit RHEL, that help you interpret AVC errors.</p>
 </div>
 <div class="paragraph">
-<p>The <code>audit2why</code> command and its suite of commands take AVC messages as text, so you feed them with AVC messages stored anywhere or pipe them directly from the <code>ausearch</code> command.</p>
+<p>The first tool comes from the <code>policycoreutils-python-utils</code> package and the <code>audit2why</code> command. It also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
 </div>
 <div class="paragraph">
-<p>Lorem Ipsum
-== Next Steps</p>
+<p>The <code>audit2why</code> command and its suite of commands take AVC messages from standard input, so you feed them with AVC messages stored in a file or pipe to them directly from the <code>ausearch</code> command.</p>
 </div>
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>The second tool comes from the <code>setroubleshoot-server</code> package and the <code>sealert</code> command, which takes AVC messages from a file and offers a number of suggestions on how to resolve the AVC error, based on a number of included plugins.</p>
 </div>
+<div class="paragraph">
+<p>While the <code>audit2why</code> command offers a single suggestion for fixing an AVC error, the <code>sealert</code> command offers multiple suggestions. But any of them could be bad for your particular scenario. Sometimes those tools get confused ny the large number of rules and contexts in a typical RHEL machine.</p>
+</div>
+<div class="paragraph">
+<p>You must be able to read and interpret the AVC message and relate it to its target application: why is the application trying something which was denied by SELinux? If the application was supposed to try that something, is there any way of allowing it without increasing the potential attack surface too much?</p>
+</div>
+<div class="paragraph">
+<p>You could always extend your SELinux policies with rules that allow an application to do anything. Before you do that, you must ask: should I?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_policy_introspection_and_documentation"><a class="anchor" href="#_policy_introspection_and_documentation"></a>Policy Introspection and Documentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As we already seen in previous activities, you can introspect the loaded SELinux rules using commands such as <code>sesearch</code> and <code>semanage</code>. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn&#8217;t guarantee you will understand the intent behind of a given policy element.</p>
+</div>
+<div class="paragraph">
+<p>It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each if its policy elements.</p>
+</div>
+<div class="paragraph">
+<p>RHEL provides the <code>selinux-policy-doc</code> package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs are on a single package.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, them this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. And the next chapter focuses on writing custom policy modules.</p>
 </div>
 </div>
 </div>
