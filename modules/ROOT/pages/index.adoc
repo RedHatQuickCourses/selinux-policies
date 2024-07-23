@@ -26,7 +26,10 @@ The direct links to course chapters above are valid only for Red Hat employees. 
 * https://rol.redhat.com/rol/app/courses/rh415-9.2/pages/ch08[RH415 Chapter 8]
 * https://rol.redhat.com/rol/app/courses/rh342-8.4/pages/ch09[RH342 Chapter 9]
 
-If you're not new to SELinux but need a refresher on it's day-to-day administration, please review the https://developers.redhat.com/courses/enhance-red-hat-enterprise-linux-selinux[Enhance RHEL with SELinux] tutorial by https://developers.redhat.com/learn[Red Hat Developers].
+If you're not new to SELinux but need a refresher on it's day-to-day administration, please review:
+
+* The https://developers.redhat.com/courses/enhance-red-hat-enterprise-linux-selinux[Enhance RHEL with SELinux] tutorial by https://developers.redhat.com/learn[Red Hat Developers].
+* The https://opensource.com/article/18/7/sysadmin-guide-selinux[The Sysadmin Guide to SELinux] by Alex Callejas
 
 If you need an overview of SELinux, please review the following conceptual introduction:
 
