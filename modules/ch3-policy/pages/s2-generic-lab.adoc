@@ -10,6 +10,8 @@ Generate a policy module that runs a compiled application as a permissive domain
 
 WARNING: Pending Review
 
+IMPORTANT: All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+
 == Before you Begin
 
 You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
@@ -21,7 +23,6 @@ You need a RHEL machine to which you have the root password or unrestricted sudo
 * The `gcc-c++`, `make`, and `libcurl-devel` packages.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
-
 
 == Instructions
 
@@ -211,8 +212,9 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp*
 
 == Next Steps
 
-The next activities review AVC errors from the test application, one by one, and add policy roles to fix them, until the test application runs without AVC errors.
+The next activities review AVC errors from the test application, one by one, and add policy rules to fix them, until the test application runs without AVC errors.
 
+[ DESCRIBE THE NEXT AVC? ]
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
