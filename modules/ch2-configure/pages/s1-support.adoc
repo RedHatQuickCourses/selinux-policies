@@ -80,6 +80,8 @@ Whenever you find something that looks like an issue with SELinux, follow these 
 
 11. If you put a confined domain or a system in permissive mode, restore it to enforcing mode.
 
+At any of the steps above, you may get sufficient information for establishing a root cause and propose a resolution. If the resolution doesn't work, restart from step zero, until you are satisfied you resolved the issue.
+
 == Next Steps
 
 We will perform two activities where you troubleshoot and fix SELinux issues. In between those activities, we will learn how to interpret SELinux errors, especially AVC errors.
