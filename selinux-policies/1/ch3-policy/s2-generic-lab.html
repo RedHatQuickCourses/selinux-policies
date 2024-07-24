@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lab: Create a Generic SELinux Policy Module :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s1-generate.html">
+    <link rel="next" href="s4-pid-file-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -126,6 +127,9 @@
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-pid-file-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -191,6 +195,18 @@
 </td>
 <td class="content">
 Pending Review
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it&#8217;s certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
 </td>
 </tr>
 </table>
@@ -446,7 +462,10 @@ allow testapp_t testapp_var_run_t:file { append create getattr ioctl link lock o
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next activities review AVC errors from the test application, one by one, and add policy roles to fix them, until the test application runs without AVC errors.</p>
+<p>The next activities review AVC errors from the test application, one by one, and add policy rules to fix them, until the test application runs without AVC errors.</p>
+</div>
+<div class="paragraph">
+<p>[ DESCRIBE THE NEXT AVC? ]</p>
 </div>
 </div>
 </div>
@@ -460,6 +479,7 @@ allow testapp_t testapp_var_run_t:file { append create getattr ioctl link lock o
 </div>
 <nav class="pagination">
   <span class="prev"><a href="s1-generate.html">Create a Custom SELinux Policy</a></span>
+  <span class="next"><a href="s4-pid-file-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a></span>
 </nav>
 </article>
   </div>

@@ -3,9 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Create a Custom SELinux Policy :: Writing Targeted Policies for SELinux on RHEL</title>
-    <link rel="prev" href="index.html">
-    <link rel="next" href="s2-generic-lab.html">
+    <title>Lab: Reference Interfaces From a Custom SELinux Policy Module :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-generic-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -121,13 +120,13 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="index.html">Extending SELinux Policies</a>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s1-generate.html">Create a Custom SELinux Policy</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s4-pid-file-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
   </li>
 </ul>
@@ -164,7 +163,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Extending SELinux Policies</a></li>
-    <li><a href="s1-generate.html">Create a Custom SELinux Policy</a></li>
+    <li><a href="s4-pid-file-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a></li>
   </ul>
 </nav>
 </div>
@@ -173,7 +172,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Create a Custom SELinux Policy</h1>
+<h1 class="page">Lab: Reference Interfaces From a Custom SELinux Policy Module</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -183,7 +182,7 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Understand the process of creating a custom SELinux policy module using the tools from RHEL.</p>
+<p>Resolve AVC errors from a custom policy module by referring to existing interfaces.</p>
 </dd>
 </dl>
 </div>
@@ -199,35 +198,108 @@ Pending Review
 </tr>
 </table>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it&#8217;s certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELinux enabled and enforcing, using the targeted policy.</p>
+</li>
+<li>
+<p>The <code>setools-console</code> package.</p>
+</li>
+<li>
+<p>The <code>policycoreutils-python-utils</code> package.</p>
+</li>
+<li>
+<p>The <code>selinux-policy-devel</code> package.</p>
+</li>
+<li>
+<p>The <code>rpm-build</code> package.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>This activity is a continuation of the <a href="s2-generic-lab.html" class="xref page">previous activity</a>. It requires the third-party application already installed as a system service and with a custom policy which runs the application in a permissive domain.</p>
+<div class="paragraph">
+<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl is-active testapp</strong>
+inactive
+$ <strong>sudo systemctl start testapp</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. Find the PID of the test application service and check its running in a permissive domain:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl show --property MainPID --value testapp</strong>
+39521
+$ <strong>ps -Z 39521</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:testapp_t:s0    39521 ?        S      0:00 /usr/local/sbin/testapp -d
+$ <strong>sudo semanage permissive -l | grep testapp_t</strong>
+testapp_t</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.3. If you need, enter the directory with the custom policy module from the previous activity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd selinux-testapp</strong>
+$ <strong>ls</strong>
+noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Review the first AVC error from the third-pary applicaiton.</p>
+<div class="paragraph">
+<p>2.1. Lorem ipsum</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --just-one</strong>
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
 <p>Lorem Ipsum</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_the_test_application"><a class="anchor" href="#_the_test_application"></a>The Test Application</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Connecting on port 80 tcp on lukas-vrabec.com
-Logging messages into journal
-Creating pid file
-Reading /proc/meminfo</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_policy_source_files"><a class="anchor" href="#_policy_source_files"></a>Policy Source Files</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>testapp.fc file contains SELinux security context for all service objects (files, dirs, lnk_files, sockets, &#8230;&#8203; )
-testapp.te file contains rules for testapp_t domain
-testapp.if file contains interfaces to access testapp_t types
-testapp.sh bash script for compiling and installing SELinux policy for testapp service</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -235,19 +307,23 @@ testapp.sh bash script for compiling and installing SELinux policy for testapp s
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>The next activities continue reviewing AVC additional errors from the test application, one by one, and adding policy rules to fix them, until the test application runs without AVC errors.</p>
+</div>
+<div class="paragraph">
+<p>[ DESCRIBE THE NEXT AVC? ]</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>TBD</p>
+</div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="index.html">Extending SELinux Policies</a></span>
-  <span class="next"><a href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a></span>
+  <span class="prev"><a href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a></span>
 </nav>
 </article>
   </div>
