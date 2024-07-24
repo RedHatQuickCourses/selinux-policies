@@ -183,16 +183,66 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_title"><a class="anchor" href="#_title"></a>Title</h2>
+<h2 id="_the_need_to_automate_selinux_configuration"><a class="anchor" href="#_the_need_to_automate_selinux_configuration"></a>The Need to Automate SELinux Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem Ipsum</p>
+<p>Configuring SELinux in one RHEL machine is not hard nor very time consuming, but you usually have to configure SELinux in multiple machines, and also ensure those machines stay configured the way you wish over time.</p>
 </div>
 <div class="paragraph">
-<p><a href="https://access.redhat.com/articles/3050101">RHEL System Roles</a>&#8201;&#8212;&#8201;There&#8217;s an selinux system role. :-)</p>
+<p>Even if your SELinux configuration seem to be specific to a given application, that application is probably deployed into multiple machines from:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Development, testing and production environments;</p>
+</li>
+<li>
+<p>Disaster recovery sites;</p>
+</li>
+<li>
+<p>Multiple branch offices;</p>
+</li>
+<li>
+<p>Different cloud provider regions;</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The system role uses the colection&#8230;&#8203; right? Exactly which collection?</p>
+<p>And the list could go on.</p>
+</div>
+<div class="paragraph">
+<p>The solution is automation, and Red Hat uses <a href="https://www.redhat.com/en/technologies/management/ansible">Ansible</a> to automate multile products, including RHEL. This course does not teach the fundamentals of Ansible, but it provides working examples on which you can build upon for your real world environments.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_selinux_system_role_from_rhel"><a class="anchor" href="#_the_selinux_system_role_from_rhel"></a>The SELinux System Role from RHEL</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Red Hat Enterprise Linux (RHEL) provides a number of Ansible roles for common system administration tasks, such as installing packages and managing firewall settings. These are named <a href="https://access.redhat.com/articles/3050101">RHEL System Roles</a> and belong to a single RPM package named <code>rhel-system-roles</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/automating_system_administration_by_using_rhel_system_roles/index#introduction-to-the-selinux-system-role_configuring-selinux-using-system-roles">SELinux System Role</a> performs common SELinux administration tasks, from enabling SELinux to loading policy modules.</p>
+</div>
+<div class="paragraph">
+<p>Like other system roles, the SELinux system role require that a playbook sets a number of variables, them performs actions based on the values of those variables. If a variable is unset, them the role does nothing.</p>
+</div>
+<div class="paragraph">
+<p>You can find a list of all variables from the SELinux system role and their purposes on the sample files from the system roles RPM package itself or on the upstrem <a href="https://galaxy.ansible.com/ui/standalone/roles/linux-system-roles/selinux/documentation/">Linux System Roles</a> Ansibe collection.</p>
+</div>
+<div class="paragraph">
+<p>The SELinux system roles and other RHEL system role can be used by themselves, in narrow purpose playbooks, or in larger playbooks which perform all tasks required to deploy and configure an application.</p>
+</div>
+<div class="paragraph">
+<p>In fact, the <a href="https://www.redhat.com/en/blog/using-system-tags-enable-extended-security-hardening-recommendations">Red Hat Insights Security Advisor</a> service uses RHEL system roles in its remediation playbooks to increase security of systems it finds with SELinux disabled or in permissive move, if you enable Red Hat Insights extended security hardening.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will wrap up this chapter with working examples of Ansible playbooks which configure SELinux for the two previous use cases of a PHP application and an Apache web server with non-standard settigs. Then we start the final chapter of this course by creating a custom policy module for a compiled application.</p>
 </div>
 </div>
 </div>
