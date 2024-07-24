@@ -39,6 +39,7 @@ $ *cd selinux-policies-samples/quotes*
 $ *ls*
 db.sql  hello.php  index.html  quotes.php
 --
++
 1.2. Verify if the prequisite Apache Web Server and MySQL database server packages are installed. It should be fine if you have different versions of those packages. If they are not, please install them:
 +
 [source,subs="verbatim,quotes"]
@@ -48,6 +49,7 @@ httpd-2.4.57-5.el9.x86_64
 $ *rpm -q mysql-server*
 mysql-server-8.0.32-1.el9_2.x86_64
 --
++
 1.3. Install the PHP scripting language, its CLI utility, and its MySQL database driver, as prerequisites of the quotes web site:
 +
 [source,subs="verbatim,quotes"]
@@ -57,7 +59,7 @@ $ *sudo dnf -y install php php-cli php-mysqlnd*
 Complete!
 --
 +
-1.5. Start the Apache Web Server and the MySQL database server:
+1.4. Start the Apache Web Server and the MySQL database server:
 +
 [source,subs="verbatim,quotes"]
 --

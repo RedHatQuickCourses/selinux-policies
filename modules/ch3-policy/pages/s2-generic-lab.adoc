@@ -1,0 +1,50 @@
+:time_estimate: 5
+
+= Lab: Generate a Generic SElinux Policy Module
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Generate a policy module that runs a compiled application as a permissive domain in confined mode.
+
+WARNING: Pending Review
+
+== Before you Begin
+
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+
+* SELinux enabled and enforcing, using the targeted policy.
+* The `setools-console` package.
+* The `policycoreutils-python-utils` package.
+* The `git` client.
+* C++ dev tools and curl library
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+
+== Instructions
+
+1. Download the sample application sources and compile it, if you didn't do it already in a xref::ch1-need/s7-confined-lab[previous activity].
++
+1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `testapp` diretory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git*
+...
+Resolving deltas: 100% (25/25), done.
+$ *cd selinux-policies-samples/testapp*
+$ *ls*
+PENDING OUTPUT -- REFER TO PREVIOUS ACTIVITY FROM CH1
+--
++
+1.2. Compile the test application:
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q httpd*
+httpd-2.4.57-5.el9.x86_64
+$ *rpm -q mysql-server*
+mysql-server-8.0.32-1.el9_2.x86_64
+--

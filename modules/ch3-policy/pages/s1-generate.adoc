@@ -1,0 +1,23 @@
+:time_estimate: 5
+
+= Create a Custom SELinux Policy
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Understand the process of creating a custom SELinux policy module using the tools from RHEL.
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+
+== Next Steps
+
+Lorem Ipsum
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
