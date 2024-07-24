@@ -107,6 +107,8 @@ $ *git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git*
 ...
 Resolving deltas: 100% (60/60), done.
 $ *cd selinux-policies-samples/testapp*
+$ *ls*
+Makefile  testapp.c  testapp.service
 --
 3.3. Compile and install the test application as a Systemd service:
 +
