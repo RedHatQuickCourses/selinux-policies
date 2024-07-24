@@ -120,6 +120,7 @@ $ *sudo make install*
 install -m 0755 testapp /usr/local/sbin
 install -m 0644 testapp.service /usr/lib/systemd/system/
 --
++
 3.4. Return to your home directory and start the test application:
 +
 [source,subs="verbatim,quotes"]
@@ -127,6 +128,7 @@ install -m 0644 testapp.service /usr/lib/systemd/system/
 $ *cd*
 $ *sudo systemctl start testapp*
 --
++
 3.5. Find the PID of the test application service and check it runs unconfined:
 +
 [source,subs="verbatim,quotes"]

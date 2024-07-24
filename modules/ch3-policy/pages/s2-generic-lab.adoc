@@ -18,14 +18,14 @@ You need a RHEL machine to which you have the root password or unrestricted sudo
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `git` client.
-* C++ dev tools and curl library
+* The `gcc-c++`, `make`, and `libcurl-devel` packages.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
 
 == Instructions
 
-1. Download the sample application sources and compile it, if you didn't do it already in a xref::ch1-need/s7-confined-lab[previous activity].
+1. Install a third-party application, if you didn't do it already in a xref:ch1-need:s7-confined-lab.adoc[previous activity].
 +
 1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `testapp` diretory.
 +
@@ -36,15 +36,49 @@ $ *git clone https://github.com/RedHatQuickCourses/selinux-policies-samples.git*
 Resolving deltas: 100% (25/25), done.
 $ *cd selinux-policies-samples/testapp*
 $ *ls*
-PENDING OUTPUT -- REFER TO PREVIOUS ACTIVITY FROM CH1
+Makefile  testapp.c  testapp.service
 --
 +
-1.2. Compile the test application:
+1.2. Compile and install the test application:
 +
 [source,subs="verbatim,quotes"]
 --
-$ *rpm -q httpd*
-httpd-2.4.57-5.el9.x86_64
-$ *rpm -q mysql-server*
-mysql-server-8.0.32-1.el9_2.x86_64
+$ *make*
+g++ -std=c++11 -g -o testapp testapp.c -lcurl
+$ *sudo make install*
+install -m 0755 testapp /usr/local/sbin
+install -m 0644 testapp.service /usr/lib/systemd/system/
 --
++
+1.3. Return to your home directory and start the test application:
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *sudo systemctl start testapp*
+--
++
+1.4. Find the PID of the test application service and check it runs unconfined:
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl show --property MainPID --value testapp*
+37507
+$ *ps -Z 37507*
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/testapp -d
+--
+
+2. Generate a generic policy to run the application confined but in permissive mode.
+
+Lorem Ipsum
+
+== Next Steps
+
+Lorem Ipsum
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+TBD
+
