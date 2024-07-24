@@ -125,7 +125,7 @@
     <a class="nav-link" href="s1-generate.html">Create a Custom SELinux Policy</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-generic-lab.html">Lab: Generate a Generic SElinux Policy Module</a>
+    <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
   </li>
 </ul>
   </li>
@@ -207,6 +207,28 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
+<h2 id="_the_test_application"><a class="anchor" href="#_the_test_application"></a>The Test Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Connecting on port 80 tcp on lukas-vrabec.com
+Logging messages into journal
+Creating pid file
+Reading /proc/meminfo</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_policy_source_files"><a class="anchor" href="#_policy_source_files"></a>Policy Source Files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>testapp.fc file contains SELinux security context for all service objects (files, dirs, lnk_files, sockets, &#8230;&#8203; )
+testapp.te file contains rules for testapp_t domain
+testapp.if file contains interfaces to access testapp_t types
+testapp.sh bash script for compiling and installing SELinux policy for testapp service</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -222,7 +244,7 @@ Pending Review
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Extending SELinux Policies</a></span>
-  <span class="next"><a href="s2-generic-lab.html">Lab: Generate a Generic SElinux Policy Module</a></span>
+  <span class="next"><a href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a></span>
 </nav>
 </article>
   </div>
