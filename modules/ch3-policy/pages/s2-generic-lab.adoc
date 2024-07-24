@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Generate a Generic SElinux Policy Module
+= Lab: Create a Generic SELinux Policy Module
 
 _Estimated reading time: *{time_estimate} minutes*._
 
@@ -25,7 +25,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
-1. Install a third-party application, if you didn't do it already in a xref:ch1-need:s7-confined-lab.adoc[previous activity].
+1. Install the sample third-party application, if you didn't do it already in a xref:ch1-need:s7-confined-lab.adoc[previous activity].
 +
 1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `testapp` diretory.
 +
@@ -57,8 +57,18 @@ install -m 0644 testapp.service /usr/lib/systemd/system/
 $ *cd*
 $ *sudo systemctl start testapp*
 --
+
+2. Ensure the third-party application is unconfined.
 +
-1.4. Find the PID of the test application service and check it runs unconfined:
+2.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl is-active testapp*
+active
+--
++
+2.2. Find the PID of the test application service and check its running with the unconfined domain type:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -69,13 +79,139 @@ LABEL                               PID TTY      STAT   TIME COMMAND
 system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/testapp -d
 --
 
-2. Generate a generic policy to run the application confined but in permissive mode.
+3. Generate a generic policy module that runs the application confined but in permissive mode.
++
+3.1. Install the SELinux policy and RPM package development tools.
++
+[source,subs="verbatim,quotes"]
+--
+$ *dnf install -y selinux-policy-devel rpm-build*
+...
+Complete!
+--
++
+3.2. Create a new directory for the policy and generate a starter policy from the third-party application executable:
++
+[source,subs="verbatim,quotes"]
+--
+$ *mkdir selinux-testapp*
+$ *cd selinux-testapp*
+$ *sepolicy generate --init /usr/local/sbin/testapp*
+Created the following files:
+/home/student/selinux-testapp/testapp.te # Type Enforcement file
+/home/student/selinux-testapp/testapp.if # Interface file
+/home/student/selinux-testapp/testapp.fc # File Contexts file
+/home/student/selinux-testapp/testapp_selinux.spec # Spec file
+/home/student/selinux-testapp/testapp.sh # Setup Script
+--
++
+3.3. Compile and load the starter policy using the generated script:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ./testapp.sh*
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+rm tmp/testapp.mod tmp/testapp.mod.fc
++ /usr/sbin/semodule -i testapp.pp
++ sepolicy manpage -p . -d testapp_t
+./testapp_selinux.8
++ /sbin/restorecon -F -R -v /usr/local/sbin/testapp
++ /sbin/restorecon -F -R -v /var/run/testapp.pid
+...
++ rpmbuild --define '_sourcedir /home/student/selinux-testapp'
+...
+Wrote: /home/student/selinux-testapp/testapp_selinux-1.0-1.el9.src.rpm
++ exit 0
+--
++
+Notice that the script already relabels files as required by the policy rules.
++
+3.4. Check that the script generated new files, especially a binary policy module with extension `.pp` and an RPM package:
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls*
+noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp
+$ *ls noarch*
+testapp_selinux-1.0-1.el9.noarch.rpm
+--
 
-Lorem Ipsum
+4. Restart the third-party application and verify it now runs in a permissive domain:
++
+4.1. Restart the test application service to ensure its process runs in the new confined domain:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl restart testapp*
+--
++
+4.2. Find the PID of the test application service and check its new domain type:
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl show --property MainPID --value testapp*
+7966
+$ *ps -Z 7966*
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:testapp_t:s0     7966 ?        S      0:00 /usr/local/sbin/testapp -d
+--
++
+4.3. Confirm that the new domain type is a permissive domain:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo semanage permissive -l*
+
+Builtin Permissive Types 
+
+mptcpd_t
+testapp_t
+rshim_t
+...
+--
+
+5. Verify that the loaded policy now contains policies from the custom policy module:
++
+5.1. Check that there's a domain transition rule from Systemd to the new confined domain type:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sesearch -T -s init_t -t testapp_exec_t*
+type_transition init_t testapp_exec_t:process testapp_t;
+$ *sesearch --allow -s init_t -t testapp_t -c process -p transition*
+allow initrc_domain daemon:process transition;
+--
++
+5.2. Check that the new domain type inherits many allow rules from its default attributes, such as access to temporary files, and that the policy also includes some custom allow rules for a new resource type and for its POD file:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sesearch --allow -s testapp_t -c file*
+...
+allow domain tmpfile:file { append getattr ioctl lock read };
+allow domain usermodehelper_t:file { getattr ioctl lock open read };
+allow domain usr_t:file map;
+allow testapp_t testapp_exec_t:file { entrypoint execute getattr ioctl lock map open read };
+allow testapp_t testapp_t:file { append getattr ioctl lock open read write };
+allow testapp_t testapp_var_run_t:file { append create getattr ioctl link lock open read rename setattr unlink watch watch_reads write };
+--
++
+5.3. Check that, despite all of these allow rules, the test application still generates many AVC errors. Do not try to interpret those errors right now.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp*
+...
+--
+
+6. Take your time to review the generated policy source files: `testapp.if`, `testapp.fc`, and `testapp.te`. Do you see anything which you didn't expect?
 
 == Next Steps
 
-Lorem Ipsum
+The next activities review AVC errors from the test application, one by one, and add policy roles to fix them, until the test application runs without AVC errors.
 
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION

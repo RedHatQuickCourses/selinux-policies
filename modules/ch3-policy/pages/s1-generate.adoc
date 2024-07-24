@@ -14,6 +14,20 @@ WARNING: Pending Review
 
 Lorem Ipsum
 
+== The Test Application
+
+Connecting on port 80 tcp on lukas-vrabec.com
+Logging messages into journal
+Creating pid file
+Reading /proc/meminfo
+
+
+== Policy Source Files
+
+testapp.fc file contains SELinux security context for all service objects (files, dirs, lnk_files, sockets, ... )
+testapp.te file contains rules for testapp_t domain
+testapp.if file contains interfaces to access testapp_t types
+testapp.sh bash script for compiling and installing SELinux policy for testapp service
 
 == Next Steps
 
