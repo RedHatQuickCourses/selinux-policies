@@ -1,4 +1,6 @@
 * xref:index.adoc[]
 ** xref:s1-generate.adoc[]
 ** xref:s2-generic-lab.adoc[]
-** xref:s4-pid-file-lab.adoc[]
+** xref:s4-files-lab.adoc[]
+** xref:s6-network-lab.adoc[]
+** xref:s8-finish-lab.adoc[]

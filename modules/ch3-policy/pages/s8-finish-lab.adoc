@@ -1,0 +1,173 @@
+:time_estimate: 5
+
+= Lab: Configure a Custom SELinux Policy Module for a Confined Domain
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Resolve the latest AVC errors from a custom policy module and ensure that it works in enforcing mode.
+
+WARNING: Pending Review
+
+IMPORTANT: All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+
+== Before you Begin
+
+You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+
+* SELinux enabled and enforcing, using the targeted policy.
+* The `setools-console` package.
+* The `policycoreutils-python-utils` package.
+* The `selinux-policy-devel` package.
+* The `rpm-build` package.
+
+These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
+
+
+== Instructions
+
+1. This activity is a continuation of the xref:s8-network-lab.adoc[previous activity]. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows network connections to remote HTTP servers and TLS certificate validation.
++
+1.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl is-active testapp*
+inactive
+$ *sudo systemctl start testapp*
+--
++
+1.2. Find the PID of the test application service and check its running in a permissive domain:
++
+[source,subs="verbatim,quotes"]
+--
+$ *systemctl show --property MainPID --value testapp*
+39521
+$ *ps -Z 39521*
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:testapp_t:s0    39521 ?        S      0:00 /usr/local/sbin/testapp -d
+$ *sudo semanage permissive -l | grep testapp_t*
+testapp_t
+--
++
+1.3. If you need, enter the directory with the custom policy module from the previous activity:
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd selinux-testapp*
+$ *ls*
+noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp
+--
+
+
+8. Next AVC: resolv.conf
++
+8.1. Lorem Ipsum
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one*
+----
+time->Thu Jul 25 20:01:13 2024
+type=PROCTITLE msg=audit(1721937673.666:665): proctitle=2F7573722F6C6F63616C2F7362696E2F74657374617070002D64
+type=SYSCALL msg=audit(1721937673.666:665): arch=c000003e syscall=262 success=yes exit=0 a0=ffffff9c a1=7f9e947bbab9 a2=7f9e93cda340 a3=0 items=0 ppid=1 pid=6537 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="testapp" exe="/usr/local/sbin/testapp" subj=system_u:system_r:testapp_t:s0 key=(null)
+type=AVC msg=audit(1721937673.666:665): avc:  denied  { getattr } for  pid=6537 comm="testapp" path="/etc/resolv.conf" dev="vda4" ino=67109244 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:net_conf_t:s0 tclass=file permissive=1
+--
++
+Say something
++
+8.2. Find an interface. 
++
+[source,subs="verbatim,quotes"]
+--
+$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+...
+--
++
+8.3. Interface
+--
+sysnet_read_config(testapp_t)
+--
+
+9. Restart and check
++
+--
+ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c resolv.conf
+<no matches>
+0
+--
++ Notice the "no matches". Repeat without the grep to be sure. We're almost done!
+
+10. Remove permissive mode, restart and final check for no AVCs.
++
+10.1. Delete from `testapp.te`:
++
+[source,subs="verbatim"]
+--
+permissive testapp_t;
+--
++
+10.2. Restart
++
+10.3. Lorem Ipsum
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME*
+<no matches>
+--
++
+Say something
++
+Check it is not permissive anymore
+
+99. Lorem Ipsum
+
+== Next Steps
+
+The next activities continue reviewing AVC additional errors from the test application, one by one, and adding policy rules to fix them, until the test application runs without AVC errors.
+
+[ DESCRIBE THE NEXT AVC? ]
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
+
+Testapp scenario (slides #159-170)
+Generate a starter custom policy (slides #171-176)
+Domain transition to custom type (slides #177-179)
+From AVCs to policy rules (slides #180-197)
+
+https://redhatgov.io/workshops/selinux_policy/exercise2.2/
+
+https://play.instruqt.com/rhel/invite/adj7n5qdsl2y
+https://github.com/rhel-labs/instruqt/tree/master/selinux-policy
+
+I got a /proc AVC, like the NPS workshop
+slides #183 and instruqt 05-selinux-policy2 got a pid file AVC but afterards they get a proc AVC -- two AVCs on same activity
+
+Why I don't get the pid file AVC?
+
+AVCs from slides:
+- pid file #183 -- multiple edits and custom type? #184
+- /proc #186 -- interface
+- connect to http port #189 -- interface
+- resolv.conf #191 -- interface
+All rules use interfaces!
+
+slides save all AVCs to a file and interprets them from the file instead of audt2allow
+ausearch -m AVC -ts recent > ~/avc_file
+
+AVCs from NPS workshop: (+ not in slides)
+- /proc exercise2.2 -- interface
+- connect to http port exercise2.3 -- interface (nice checking potential alternatives)
++ sockets exercise2.3 -- audit2allow (just for a variation compared to interfaces? no)
+- resolv.conf exercise2.4 -- interface
++ SSL certs exercise2.4 -- interface
+
+AVCs from instruqt (+ not in slides)
+- pid file 05-selinux-policy2 -- interface + allow from audit2allow and generic var type 
+- /proc 05-selinux-policy2 -- manual manually
++ SSL certs 06-selinux-policy3 - manual interface, warning about mismatch with audit2allow
+- connect to http port 06-selinux-policy3 -- interface form audit2allow
++ sockets 06-selinux-policy3 -- allow from audit2allow
+- resolv.conf 07-selinux-policy4 -- interface from audit2allow
