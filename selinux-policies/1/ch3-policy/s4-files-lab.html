@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Reference Interfaces From a Custom SELinux Policy Module :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-generic-lab.html">
+    <link rel="next" href="s6-network-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../ch1-need/s2-intro-quiz-answers.html">Answers to the Quiz</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s7-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s8-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Extending SELinux Policies</a></li>
+    <li><a href="s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Reference Interfaces From a Custom SELinux Policy Module</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Resolve AVC errors from a custom policy module, caused by accessing system files, by referring to existing interfaces.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it&#8217;s certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SELinux enabled and enforcing, using the targeted policy.</p>
+</li>
+<li>
+<p>The <code>setools-console</code> package.</p>
+</li>
+<li>
+<p>The <code>policycoreutils-python-utils</code> package.</p>
+</li>
+<li>
+<p>The <code>selinux-policy-devel</code> package.</p>
+</li>
+<li>
+<p>The <code>rpm-build</code> package.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>This activity is a continuation of the <a href="s2-generic-lab.html" class="xref page">previous activity</a>. It requires that the third-party application be already installed as a system service and with a custom policy that runs the application in a permissive domain.</p>
+<div class="paragraph">
+<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl is-active testapp</strong>
+inactive
+$ <strong>sudo systemctl start testapp</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. Find the PID of the test application service and check its running in a permissive domain:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl show --property MainPID --value testapp</strong>
+39521
+$ <strong>ps -Z 39521</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+system_u:system_r:testapp_t:s0    39521 ?        S      0:00 /usr/local/sbin/testapp -d
+$ <strong>sudo semanage permissive -l | grep testapp_t</strong>
+testapp_t</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.3. If you need, enter the directory with the custom policy module from the previous activity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd selinux-testapp</strong>
+$ <strong>ls</strong>
+noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Review the first AVC error from the third-pary application.</p>
+<div class="paragraph">
+<p>2.1. Analyse the first AVC error from the application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --just-one</strong>
+time-&gt;Wed Jul 24 19:30:18 2024
+type=PROCTITLE msg=audit(1721849418.111:368): proctitle=2F7573722F6C6F63616C2F7362696E2F74657374617070002D64
+type=SYSCALL msg=audit(1721849418.111:368): arch=c000003e syscall=257 success=yes exit=4 a0=ffffff9c a1=4033f3 a2=0 a3=0 items=0 ppid=1 pid=7870 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="testapp" exe="/usr/local/sbin/testapp" subj=system_u:system_r:testapp_t:s0 key=(null)
+type=AVC msg=audit(1721849418.111:368): avc:  denied  { open } for  pid=7870 comm="testapp" path="/proc/meminfo" dev="proc" ino=4026532024 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
+type=AVC msg=audit(1721849418.111:368): avc:  denied  { read } for  pid=7870 comm="testapp" name="meminfo" dev="proc" ino=4026532024 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The AVC is related to reading form the <code>/proc/meminfo</code> virtual file. This might be suspicious for the test application, which does nothing that requires system information, but would be common for daemons which auto-tune to allocate more or less memory depending on the total availabe in the system. Anyway, it is harmless from a security perspective.</p>
+</div>
+<div class="paragraph">
+<p>2.2. Get a suggestion to fix the AVC using an interface:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --just-one | audit2allow -R</strong>
+
+require {
+        type testapp_t;
+}
+
+#============= testapp_t ==============
+kernel_read_proc_files(testapp_t)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Your autogenerated policy module already contains all require statements from <code>audit2allow</code>, you only need the reference to the interface at the end of the output.</p>
+</div>
+<div class="paragraph">
+<p>2.3. Find the source file which defines that interface and its comments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>find /usr/share/selinux/devel/include -name "</strong>.if" -exec grep -l kernel_read_proc_files {} \;*
+/usr/share/selinux/devel/include/kernel/kernel.if</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.4. Open the file from the previous <code>find</code> command and search for the interface suggested by the <code>audit2allow</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+########################################
+## &lt;summary&gt;
+##      Read generic files in /proc.
+## &lt;/summary&gt;
+## &lt;param name="domain"&gt;
+##      &lt;summary&gt;
+##      Domain allowed access.
+##      &lt;/summary&gt;
+## &lt;/param&gt;
+#
+interface(`kernel_read_proc_files',`
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This one looks like it allows more than we need. The <code>/proc</code> file system might enable access to sensitive information from other processes. Maybe there&#8217;s another interface, on the same file, which allow access only to harmless informative files such as <code>/proc/meminfo</code>?</p>
+</div>
+<div class="paragraph">
+<p>2.5. Scroll down the file until you find this other interface, which seems to be exactly what we need:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+########################################
+## &lt;summary&gt;
+##      Allows caller to read system state information in /proc.
+## &lt;/summary&gt;
+## &lt;desc&gt;
+##      &lt;p&gt;
+##      Allow the specified domain to read general system
+##      state information from the proc filesystem (/proc).
+##      &lt;/p&gt;
+##      &lt;p&gt;
+##      Generally it should be safe to allow this access.  Some
+##      example files that can be read based on this interface:
+##      &lt;/p&gt;
+##      &lt;ul&gt;
+##              &lt;li&gt;/proc/cpuinfo&lt;/li&gt;
+##              &lt;li&gt;/proc/meminfo&lt;/li&gt;
+##              &lt;li&gt;/proc/uptime&lt;/li&gt;
+##      &lt;/ul&gt;
+##      &lt;p&gt;
+##      This does not allow access to sysctl entries (/proc/sys/*)
+##      nor process state information (/proc/pid).
+##      &lt;/p&gt;
+## &lt;/desc&gt;
+## &lt;param name="domain"&gt;
+##      &lt;summary&gt;
+##      Domain allowed access.
+##      &lt;/summary&gt;
+## &lt;/param&gt;
+## &lt;infoflow type="read" weight="10"/&gt;
+## &lt;rolecap/&gt;
+#
+interface(`kernel_read_system_state',`
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.6. Get an alternative suggestion to fix the AVC using allow statements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --just-one | audit2allow -N</strong>
+
+
+#============= testapp_t ==============
+allow testapp_t proc_t:file { open read };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you check which files under the <code>/proc</code> directory have the <code>proc_t</code> type, you will see this is probably fine and equivalent to the second interface. But we recommend using interfaces as much as you can.</p>
+</div>
+</li>
+<li>
+<p>Update and reload the custom policy.</p>
+<div class="paragraph">
+<p>3.1. Add a referente do the interface to the end of the <code>testapp.te</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.2. Recompile and reload the policy</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">sudo ./testapp.sh
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Restart the test application service, this time recording a timestamp so you can distinguish AVCs from before and after restarting.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Check that there are no more AVCs related to the <code>/proc</code> folder:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c /proc</strong>
+0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Review the next AVC error from the third-party application.</p>
+<div class="paragraph">
+<p>4.1. You should see an AVC related to reading files which provide the system-wide trusted CA certificates:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one</strong>
+time-&gt;Thu Jul 25 19:24:11 2024
+type=PROCTITLE msg=audit(1721935451.740:344): proctitle=2F7573722F6C6F63616C2F7362696E2F74657374617070002D64
+type=PATH msg=audit(1721935451.740:344): item=0 name="/etc/pki/tls/openssl.cnf" inode=13396 dev=fc:04 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:cert_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+type=CWD msg=audit(1721935451.740:344): cwd="/"
+type=SYSCALL msg=audit(1721935451.740:344): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=2280750 a2=0 a3=0 items=1 ppid=5271 pid=5272 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="testapp" exe="/usr/local/sbin/testapp" subj=system_u:system_r:testapp_t:s0 key=(null)
+type=AVC msg=audit(1721935451.740:344): avc:  denied  { open } for  pid=5272 comm="testapp" path="/etc/pki/tls/openssl.cnf" dev="vda4" ino=13396 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
+type=AVC msg=audit(1721935451.740:344): avc:  denied  { read } for  pid=5272 comm="testapp" name="openssl.cnf" dev="vda4" ino=13396 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=file permissive=1
+type=AVC msg=audit(1721935451.740:344): avc:  denied  { search } for  pid=5272 comm="testapp" name="pki" dev="vda4" ino=16922485 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because the test application uses HTTPS to access the weather forecast service, it needs the CA certificates from the internet Public Key Infrastructure (PKI).</p>
+</div>
+<div class="paragraph">
+<p>4.2. Find an interface that match the AVC error:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+...
+#============= testapp_t ==============
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such reviews, but just use the suggestions from the <code>audit2allow</code> command.</p>
+</div>
+<div class="paragraph">
+<p>4.3. Add references to the two interfaces to the end of the <code>testapp.te</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the last change fixed AVCs related to TLS certificates.</p>
+<div class="paragraph">
+<p>5.1. Reload and recompile the custom policy. You should get a warning that you are using a deprecated interface.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"><strong>sudo ./testapp.sh</strong>
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+testapp.te:40: Warning: miscfiles_read_certs() has been deprecated, please use miscfiles_read_generic_certs() instead.
+Creating targeted testapp.pp policy package
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. Change your policy to not use the deprecated interface anymore:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_generic_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.3. Rebuild and reload the custom policy module, again. Ensure that, this time, you get no warnings.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ./testapp.sh</strong>
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.4. Reload the test application service, recording a timestamp, and check if there are any remaining AVC error related to PKI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ TIME=$(date +%T) ; sudo systemctl restart testapp
+$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
+0</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The custom policy is not complete yet. The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on network access.</p>
+</div>
+<div class="paragraph">
+<p>[ DESCRIBE THE NEXT AVC? ]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Testapp scenario (slides #159-170)
+Generate a starter custom policy (slides #171-176)
+Domain transition to custom type (slides #177-179)
+From AVCs to policy rules (slides #180-197)</p>
+</div>
+<div class="paragraph">
+<p><a href="https://redhatgov.io/workshops/selinux_policy/exercise2.2/" class="bare">https://redhatgov.io/workshops/selinux_policy/exercise2.2/</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://play.instruqt.com/rhel/invite/adj7n5qdsl2y" class="bare">https://play.instruqt.com/rhel/invite/adj7n5qdsl2y</a>
+<a href="https://github.com/rhel-labs/instruqt/tree/master/selinux-policy" class="bare">https://github.com/rhel-labs/instruqt/tree/master/selinux-policy</a></p>
+</div>
+<div class="paragraph">
+<p>I got a /proc AVC, like the NPS workshop
+slides #183 and instruqt 05-selinux-policy2 got a pid file AVC but afterards they get a proc AVC&#8201;&#8212;&#8201;two AVCs on same activity</p>
+</div>
+<div class="paragraph">
+<p>Why I don&#8217;t get the pid file AVC?</p>
+</div>
+<div class="paragraph">
+<p>AVCs from slides:
+- pid file #183&#8201;&#8212;&#8201;multiple edits and custom type? #184
+- /proc #186&#8201;&#8212;&#8201;interface
+- connect to http port #189&#8201;&#8212;&#8201;interface
+- resolv.conf #191&#8201;&#8212;&#8201;interface
+All rules use interfaces!</p>
+</div>
+<div class="paragraph">
+<p>slides save all AVCs to a file and interprets them from the file instead of audt2allow
+ausearch -m AVC -ts recent &gt; ~/avc_file</p>
+</div>
+<div class="paragraph">
+<p>AVCs from NPS workshop: (+ not in slides)
+- /proc exercise2.2&#8201;&#8212;&#8201;interface
+- connect to http port exercise2.3&#8201;&#8212;&#8201;interface (nice checking potential alternatives)
++ sockets exercise2.3&#8201;&#8212;&#8201;audit2allow (just for a variation compared to interfaces? no)
+- resolv.conf exercise2.4&#8201;&#8212;&#8201;interface
++ SSL certs exercise2.4&#8201;&#8212;&#8201;interface</p>
+</div>
+<div class="paragraph">
+<p>AVCs from instruqt (+ not in slides)
+- pid file 05-selinux-policy2&#8201;&#8212;&#8201;interface + allow from audit2allow and generic var type
+- /proc 05-selinux-policy2&#8201;&#8212;&#8201;manual manually
++ SSL certs 06-selinux-policy3 - manual interface, warning about mismatch with audit2allow
+- connect to http port 06-selinux-policy3&#8201;&#8212;&#8201;interface form audit2allow
++ sockets 06-selinux-policy3&#8201;&#8212;&#8201;allow from audit2allow
+- resolv.conf 07-selinux-policy4&#8201;&#8212;&#8201;interface from audit2allow</p>
+</div>
+<div class="paragraph">
+<p>Install selinux-policy-devel to get policy interface files (and all sources?)</p>
+</div>
+<div class="paragraph">
+<p>cd /usr/share/selinux/devel/include
+find . -type f -name "*.if" -exec grep -H '/proc' {} \; | grep "system state information"
+./kernel/kernel.if:##	Allows caller to read system state information in /proc.</p>
+</div>
+<div class="paragraph">
+<p>manually add to testapp.te
+kernel_read_system_state(testapp_t)</p>
+</div>
+<div class="paragraph">
+<p>keep entries (or just interfaces?) in alphabetical order</p>
+</div>
+<div class="paragraph">
+<p>restart the service and chek if the AVC relatd to meminfo still exists</p>
+</div>
+<div class="paragraph">
+<p>sudo ausearch -m AVC -ts recent | grep meminfo | wc -l</p>
+</div>
+<div class="paragraph">
+<p>maybe use a timestamp to limit ausearch? "recent" is too imprecise. like the instruqt
+# All AVCs from the last run
+TIME=<code>date +%T</code>;export TIME; sudo systemctl restart testapp; sudo ausearch --message AVC --start $TIME</p>
+</div>
+<div class="paragraph">
+<p>remove /var/run/testapp.pid on restart to get correct label</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a></span>
+  <span class="next"><a href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
