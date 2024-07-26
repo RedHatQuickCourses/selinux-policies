@@ -60,9 +60,9 @@ $ *ls*
 noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp
 --
 
-6. Next AVC: sockets
+2. Review the next AVC error of the third-party application, which is the first error with the current incomplete policy.
 +
-6.1. Lorem Ipsum
+2.1. The AVC error relates to accessing UDP sockets:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -74,13 +74,13 @@ type=SYSCALL msg=audit(1721936082.493:455): arch=c000003e syscall=41 success=yes
 type=AVC msg=audit(1721936082.493:455): avc:  denied  { create } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 --
 +
-Say something
+You may find it surprising that the test application requires UDP sockets because it uses only HTTP, which uses TCP sockets. But all HTTP clients also perform DNS searches and these use the UDP protocol. 
 +
-6.2. Find an interface.
+2.2. Find an interface that match the AVC error:
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R*
 ...
 #============= testapp_t ==============
 allow testapp_t self:udp_socket create;
@@ -88,24 +88,24 @@ allow testapp_t self:udp_socket create;
 +
 It finds no interface, thus it shows allow statements.
 +
-6.3. The previous rule feels insufficient: what about reading and writing UDO sockets? In fact, there are AVCs on those operations too:
+2.3. The previous rule is insufficient: what about reading and writing UDO sockets? We would need allow statements for those operations too:
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep udp
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep udp*
 type=AVC msg=audit(1721936082.493:455): avc:  denied  { create } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 type=AVC msg=audit(1721936082.494:456): avc:  denied  { setopt } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 type=AVC msg=audit(1721936082.494:457): avc:  denied  { connect } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 type=AVC msg=audit(1721936082.494:458): avc:  denied  { getattr } for  pid=5639 comm="testapp" path="socket:[65312]" dev="sockfs" ino=65312 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 --
 +
-Could grep for "tclass=tcp_socket" for a more precise output.
+You could could grep for "tclass=tcp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.
 +
-6.4. What about TCP sockets?
+2.4. As there isn't an interface for UDP socket access, probably there isn't one for TCP sockets either, and we know HTTP clients, such as the test application, require TCP sockets:
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep tcp
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep tcp*
 type=AVC msg=audit(1721936082.495:459): avc:  denied  { create } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 type=AVC msg=audit(1721936082.495:460): avc:  denied  { setopt } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 type=AVC msg=audit(1721936082.495:461): avc:  denied  { name_connect } for  pid=5639 comm="testapp" dest=443 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:http_port_t:s0 tclass=tcp_socket permissive=1
@@ -114,22 +114,68 @@ type=AVC msg=audit(1721936082.621:464): avc:  denied  { getopt } for  pid=5639 c
 type=AVC msg=audit(1721936082.621:465): avc:  denied  { getattr } for  pid=5639 comm="testapp" laddr=172.25.250.9 lport=59958 faddr=5.9.243.187 fport=443 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 --
 +
-Say something about HTTP connections and DNS queries
-+
-6.5. All at once:
+2.5. Generate audit rules for all AVC erros related to UDP and TCP sockets:
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -E 'tcp|udp' | audit2allow -R
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -E 'tcp|udp' | audit2allow -R*
 ...
 allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
 allow testapp_t self:udp_socket { connect create getattr setopt };
 corenet_tcp_connect_http_port(testapp_t)
 --
 +
-Notice it adds an interface for HTTP connections.
+Notice that the output includes an interface for HTTP connections. As advised in the previous activity, you should review the commennts from all interfaces you use in the `/usr/share/selinux/devel/include/` directory.
++
+2.6. In the interest of time, just review the allow rules from the `corenet_tcp_connect_http_port` interface and assess if it grants too many permissions: 
++
+[source,subs="verbatim,quotes"]
+--
+$ *macro-expander "corenet_tcp_connect_http_port(testapp_t)"*
+allow testapp_t http_port_t:tcp_socket name_connect;
+--
++
+Notice the interface only allows one operation (`name_connect`), only to TCP ports of type `http_port_t`.
 
-7. Restart and check
+3. Update the policy module and verify if it fixed all AVCs related to UDP and TCP sockets.
++
+3.1. Add the allow statments and interface referente from the previous steps to the end of the `testapp.te` file:
++
+[source,subs="verbatim"]
+--
+...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)
+
+# Before this line, all rules come from the previous activity
+
+allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
+allow testapp_t self:udp_socket { connect create getattr setopt };
+corenet_tcp_connect_http_port(testapp_t)
+--
++
+3.2. Build and reload the policy:
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo ./testapp.sh*
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0
+--
++
+3.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors related to UDP and TCP sockets:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -138,7 +184,6 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 'tc
 0
 --
 
-99. Lorem Ipsum
 
 == Next Steps
 

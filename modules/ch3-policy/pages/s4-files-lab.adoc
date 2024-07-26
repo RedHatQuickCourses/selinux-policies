@@ -161,7 +161,22 @@ interface(`kernel_read_system_state',`
 ...
 --
 +
-2.6. Get an alternative suggestion to fix the AVC using allow statements:
+2.6. Find what the `kernel_read_system_state` interface would allow. Because the interface references an attribute, you must generate the output in CIL format, and then perform a search for referentes to the attribute.
++
+[source,subs="verbatim,quotes"]
+--
+$ *macro-expander "kernel_read_system_state(testapp_t)"*
+$ *macro-expander -c "kernel_read_system_state(testapp_t)"*
+(typeattributeset kernel_system_state_reader (testapp_t ))
+$ *sesearch --allow -ds -s kernel_system_state_reader*
+allow kernel_system_state_reader proc_t:dir { ioctl lock read };
+allow kernel_system_state_reader proc_t:file { getattr ioctl lock open read };
+--
++
+The output shows it allows only reading files and directories of type `proc_t`.
+If you check which files under the `/proc` directory have the `proc_t` type, you will see they provide non-sensitie information about the system.
++
+2.7. Get an alternative suggestion to fix the AVC using allow statements:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -172,7 +187,7 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --just-one | audit2allow -N*
 allow testapp_t proc_t:file { open read };
 --
 +
-If you check which files under the `/proc` directory have the `proc_t` type, you will see this is probably fine and equivalent to the second interface. But we recommend using interfaces as much as you can.
+This is a subset of the rules from the interface. You know that, to read a file, a process has to read its parent directory, so the missing rules probably come from other AVCs that the test application also produces and we didn't review yet. Using the interface would solve those other AVCs too.
 
 3. Update and reload the custom policy.
 +
@@ -205,7 +220,7 @@ sudo ./testapp.sh
 --
 $ *TIME=$(date +%T) ; sudo systemctl restart testapp*
 --
-3.3. Check that there are no more AVCs related to the `/proc` folder:
+3.3. Check that there are no more AVCs related to the `/proc` directory:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -243,7 +258,7 @@ miscfiles_read_certs(testapp_t)
 miscfiles_search_generic_cert_dirs(testapp_t)
 --
 +
-We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such reviews, but just use the suggestions from the `audit2allow` command.
+We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such tasks, but just use the suggestions from the `audit2allow` command.
 +
 4.3. Add references to the two interfaces to the end of the `testapp.te` file:
 +
@@ -264,7 +279,7 @@ miscfiles_search_generic_cert_dirs(testapp_t)
 
 5. Verify that the last change fixed AVCs related to TLS certificates.
 +
-5.1. Reload and recompile the custom policy. You should get a warning that you are using a deprecated interface.
+5.1. Rebuild and reload the custom policy. You should get a warning that you are using a deprecated interface.
 +
 [source,subs="verbatim,quotes"]
 --
