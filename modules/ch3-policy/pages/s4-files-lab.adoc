@@ -38,7 +38,7 @@ inactive
 $ *sudo systemctl start testapp*
 --
 +
-1.2. Find the PID of the test application service and check its running in a permissive domain:
+1.2. Find the PID of the test application service and check that its running in a permissive domain:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -247,7 +247,7 @@ type=AVC msg=audit(1721935451.740:344): avc:  denied  { search } for  pid=5272 c
 +
 Because the test application uses HTTPS to access the weather forecast service, it needs the CA certificates from the internet Public Key Infrastructure (PKI).
 +
-4.2. Find an interface that match the AVC error:
+4.2. Find an interface that matches the AVC error:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -337,8 +337,6 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
 
 The custom policy is not complete yet. The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on network access.
 
-
-[ DESCRIBE THE NEXT AVC? ]
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 

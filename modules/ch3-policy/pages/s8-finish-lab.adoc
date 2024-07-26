@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Configure a Custom SELinux Policy Module for a Confined Domain
+= Lab: Finish a Custom SELinux Policy Module for a Confined Domain
 
 _Estimated reading time: *{time_estimate} minutes*._
 
@@ -25,22 +25,20 @@ You need a RHEL machine to which you have the root password or unrestricted sudo
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
 
-// Merge this final AVC with the previous lab, as it is also related to networking, and move the final test to the packaging/rdistributing activity? Or make the last activity just a review quiz?
-
 == Instructions
 
-1. This activity is a continuation of the xref:s8-network-lab.adoc[previous activity]. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows network connections to remote HTTP servers and TLS certificate validation.
+1. This activity is a continuation of the xref:s6-network-lab.adoc[previous activity]. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows network connections to remote HTTP servers and access to system files.
 +
-1.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it.
+1.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it. Remember to record the timestap so you can filter audit events.
 +
 [source,subs="verbatim,quotes"]
 --
 $ *systemctl is-active testapp*
 inactive
-$ *sudo systemctl start testapp*
+$ *TIME=$(date +%T) ; sudo systemctl restart testapp*
 --
 +
-1.2. Find the PID of the test application service and check its running in a permissive domain:
+1.2. Find the PID of the test application service and check that its running in a permissive domain:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -49,8 +47,8 @@ $ *systemctl show --property MainPID --value testapp*
 $ *ps -Z 39521*
 LABEL                               PID TTY      STAT   TIME COMMAND
 system_u:system_r:testapp_t:s0    39521 ?        S      0:00 /usr/local/sbin/testapp -d
-$ *sudo semanage permissive -l | grep testapp_t*
-testapp_t
+$ *sudo semanage permissive -l | grep -c testapp_t*
+1
 --
 +
 1.3. If you need, enter the directory with the custom policy module from the previous activity:
@@ -62,10 +60,9 @@ $ *ls*
 noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp
 --
 
-
-8. Next AVC: resolv.conf
+2. Review what should be the latest AVC error from the third-party application.
 +
-8.1. Lorem Ipsum
+2.1. The AVC error relates to another system configuration file:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -77,60 +74,139 @@ type=SYSCALL msg=audit(1721937673.666:665): arch=c000003e syscall=262 success=ye
 type=AVC msg=audit(1721937673.666:665): avc:  denied  { getattr } for  pid=6537 comm="testapp" path="/etc/resolv.conf" dev="vda4" ino=67109244 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:net_conf_t:s0 tclass=file permissive=1
 --
 +
-Say something
+Did you know that, in Linux, it's not the operating system, but it's user applications, that perform DNS searches? All those details are hidden from developers by library code.
 +
-8.2. Find an interface. 
+2.2. Find an interface that matches the AVC error:
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R*
 ...
+#============= testapp_t ==============
+sysnet_read_config(testapp_t)
 --
 +
-8.3. Interface
+Remember that you shold review the comments on the source of this interface and also expand it to review all allow statements it generates. In the interest of time, let's move on, knowing this is the expected interfaces for network clients that perform DNS queries.
++
+2.3. Add the interface to the end of the `testapp.te` file:
++
+[source,subs="verbatim"]
 --
+...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)
+
+allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
+allow testapp_t self:udp_socket { connect create getattr setopt };
+corenet_tcp_connect_http_port(testapp_t)
+
+# Before this line, all rules come from the previous activities
+
 sysnet_read_config(testapp_t)
 --
 
-9. Restart and check
+3. Verify that the updated policy module fixes all remaining AVC errors from the third-party application.
 +
+3.1. Build and reload the policy module:
++
+[source,subs="verbatim,quotes"]
 --
- sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c resolv.conf
+$ *sudo ./testapp.sh*
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0
+--
++
+3.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors related to UDP and TCP sockets:
++
+[source,subs="verbatim,quotes"]
+--
+$ *TIME=$(date +%T) ; sudo systemctl restart testapp*
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c resolv.conf*
 <no matches>
 0
 --
-+ Notice the "no matches". Repeat without the grep to be sure. We're almost done!
++ 
+Notice the string "no matches" in the previous output. It means that the `ausearch` command found no audit events matching the search criteria. There was nothing for the `grep` command to search in.
 
-10. Remove permissive mode, restart and final check for no AVCs.
+4. Remove the permissive flag and perform a final check for no remaining AVCs.
 +
-10.1. Delete from `testapp.te`:
+4.1. Delete the following line from the `testapp.te` file:
 +
 [source,subs="verbatim"]
 --
 permissive testapp_t;
 --
 +
-10.2. Restart
-+
-10.3. Lorem Ipsum
+4.2. Build and reload the policy module one last time:
 +
 [source,subs="verbatim,quotes"]
 --
+$ *sudo ./testapp.sh*
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0
+--
++
+4.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors:
++
+[source,subs="verbatim,quotes"]
+--
+$ *TIME=$(date +%T) ; sudo systemctl restart testapp*
 $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME*
 <no matches>
 --
 +
-Say something
+4.4. Ensure the test application service is not running in a permissive domain anymore:
 +
-Check it is not permissive anymore
+[source,subs="verbatim,quotes"]
+--
+$ *sudo semanage permissive -l | grep -c testapp_t*
+0
+--
++
+Good work! Now the third-party applicatins runs fully confined by SELinux.
 
-99. Lorem Ipsum
+5. Review the generated RPM package containing the policy module, for redistribution to other machines running the third-party application.
++
+5.1. The autogenerated script `testapp.sh` already includes commands to build RPM packages and source RPM packages. We are interested in the RPM package:
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls noarch*
+testapp_selinux-1.0-1.el9.noarch.rpm
+--
++
+5.2. Review the contents of the generated RPM pacage:
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -ql -p noarch/testapp_selinux-1.0-1.el9.noarch.rpm*
+/usr/share/man/man8/testapp_selinux.8.gz
+/usr/share/selinux/devel/include/contrib/testapp.if
+/usr/share/selinux/packages/testapp.pp
+--
++
+Notice that it includes the binary policy module, its interface definition file (in case it provides reusable interfaces for other modules), and an autogenereted manual page which is not very useful as-is but could be if you add comments to your interface file.
 
 == Next Steps
 
-The next activities continue reviewing AVC additional errors from the test application, one by one, and adding policy rules to fix them, until the test application runs without AVC errors.
+This is the final activity of this course. For a real-world application you would require more interations, as you exercise different features of the application and review the AVCs it generates, but you would still follow this same process and grow your policy module incrementally,
 
-[ DESCRIBE THE NEXT AVC? ]
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
 
