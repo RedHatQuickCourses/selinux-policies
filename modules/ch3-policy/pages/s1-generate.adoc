@@ -83,6 +83,8 @@ The `sepolicy generate` command also generates a build script, named `command.sh
 * Packages the binary policy module and its interface file in an RPM package.
 * Packages the policy source files in an SRPM package.
 
+At each iteration of the policy creation process, you run the build script again to rebuild and reload you custom policy module, and them restarts your application to check for new AVC errors.
+
 == The Test Application
 
 The third-party application we use in the next few activities is the same one we used in a xref:ch1-need:s7-confined-lab.adoc[previous activity], named `testapp` and it is designed to run either as a system service or as an interactive application.
