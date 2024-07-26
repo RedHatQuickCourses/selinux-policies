@@ -191,7 +191,7 @@ $ *ls noarch*
 testapp_selinux-1.0-1.el9.noarch.rpm
 --
 +
-5.2. Review the contents of the generated RPM pacage:
+5.2. Review the contents of the generated RPM package:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -202,6 +202,26 @@ $ *rpm -ql -p noarch/testapp_selinux-1.0-1.el9.noarch.rpm*
 --
 +
 Notice that it includes the binary policy module, its interface definition file (in case it provides reusable interfaces for other modules), and an autogenereted manual page which is not very useful as-is but could be if you add comments to your interface file.
++
+5.2. Review the scriptlets of the generated RPM package:
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q --scripts -p noarch/testapp_selinux-1.0-1.el9.noarch.rpm *
+postinstall scriptlet (using /bin/sh):
+semodule -n -i /usr/share/selinux/packages/testapp.pp
+if /usr/sbin/selinuxenabled ; then
+    /usr/sbin/load_policy
+    
+restorecon -R /usr/local/sbin/testapp; 
+restorecon -R /var/run/testapp.pid;
+
+fi;
+exit 0
+...
+--
++
+The postuninstall scriplet was omitted from the previous output, but it just reverses the effects of the postinstall scriptlet: it unloads the binary policy module and relabels all file affected by it.
 
 == Next Steps
 
