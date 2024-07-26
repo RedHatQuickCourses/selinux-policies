@@ -6,18 +6,47 @@ _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Understand the challenges of manual creation of SELinux cusotm policy modules
+Understand the challenges of manual creation of SELinux custom policy modules
 
 WARNING: Pending Review
 
-== Title
+== On The Viability Of Creating Policies Manually
 
-Lorem Ipsum
+In theory, if you know what an application does, and know the SELinux policy language very well, you could write an entire policy module from scratch. Tools such as the `sepolicy` and `audit2allow` commans are optional helpers.
 
+There is extensive documentation on the sytax of policy statements and other syntax element of policy modules, and a large collection of examples from the targeted policy module from RHEL and the upsteam SELinux project.
+
+Some policies were indeed created manually, because they were among the first, they were created before there were helper tools, or because their complexity required exotic features. This is just not something we recommend to the average policy author because it is time-consumng and error-phrone.
+
+For more sophisticated applications, especially for system components and server applications which are expected to provide interfaces for other applications, you will need deeper knowledge of SELinux policy syntax than this course provides and the SELinux communinity, https://www.redhat.com/en/services/consulting[Red Hat Consulting services], and the https://connect.redhat.com/en/programs[Red Hat Partner Programs] can help you if you need.
+
+Here the intent is just to set realistic expectations on how much you can accomplish without deeper knowledge and experience with SELinux policies and why Red Hat recommends the semi-automated iterative process.
+
+== Can You Really Tell All That Your Application Does?
+
+SELinux policies act on a very low level, at the Linux Kernel system calls level. This is good because it enables them to affect anything an application does, because the Linux Kernel is the ultimate gateway between application process and files, networks, devices, and other processes. But it means that SELinux policy work at a much lower granularity than most high-level programming languages do.
+
+Application developers are used to write statements which may require multiple Linux system calls, thus one statement may require multiple resource operations. 
+
+Furthermore, application code frequently relies on library code, which may hide lots of interactions with multiple kernel objects and system files. Sometimes those applications perform heavy introspection on the system and this generats unexpected AVC errors, as in a developer really had no idea the library would perform such operations on normal usage.
+
+And, given the recent thread of supply chain attacks, which compromise open source (and also propritary) code repository with common libraries polluted with malware, you should exercise extra care when assessing if your applications are supposed to perform those operations from an AVC error. Are you running the real library, or a compromised clone of it?
+
+== A Stategy of Grouping AVC Errors
+
+Given that most applications perform multiple operations on the same kernel object or class of objects, and frequently those operations are required to be performend in a specific sequence, you should analyse your AVC errors grouped by resource instance or resource type.
+
+It is expected that the output of the `audit2allow` command, if it returns an interface, will resolve not only the one AVC error you feed into it, but other AVCs related to the sme resource.
+
+But if the `audit2allow` command outputs individual allow rules, it's a good idea to group AVC errors and process them at once, so you can assess the complete rule set.
+
+If you need, you can work by always grouping AVC errors, instead of analysing them one-by-one, like we did in the previous activity. The `audit2allow` command is smart enough to not output duplicate rules and references to interfaces. It will output a minimise set of rule statements for the set of AVC erros you feed it.
+
+Just remember that, if it includes interfaces in the output, those may not be the least permissive interfaces available.
 
 == Next Steps
 
-Lorem Ipsum
+The next activity continues building our custom SELinux policy module by analysing AVC errors related to network access and adding both references to interfaces and allow statements to the type enforcement file.
 
 
 == FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
