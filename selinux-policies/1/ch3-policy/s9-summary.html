@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Summary :: Writing Targeted Policies for SELinux on RHEL</title>
-    <link rel="prev" href="s6-ansible-lab.html">
-    <link rel="next" href="../ch3-policy/index.html">
+    <link rel="prev" href="s8-finish-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -88,28 +87,28 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">SELinux Management</a>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SElinux settings</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s7-summary.html">Summary</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
   </li>
 </ul>
   </li>
@@ -119,25 +118,25 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+    <a class="nav-link" href="index.html">Extending SELinux Policies</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+    <a class="nav-link" href="s1-generate.html">Create a Custom SELinux Policy</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+    <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+    <a class="nav-link" href="s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+    <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s9-summary.html">Summary</a>
   </li>
 </ul>
   </li>
@@ -172,8 +171,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
-    <li><a href="index.html">SELinux Management</a></li>
-    <li><a href="s7-summary.html">Summary</a></li>
+    <li><a href="index.html">Extending SELinux Policies</a></li>
+    <li><a href="s9-summary.html">Summary</a></li>
   </ul>
 </nav>
 </div>
@@ -189,28 +188,24 @@
 <div class="ulist">
 <ul>
 <li>
-<p>You can configure the targeted policy set from RHEL, by setting file contexts, booleans, and resource labels, to match configurations changes in system services.</p>
+<p>RHEL provides the <code>sepolicy generate</code> command to generate SELinux policy modules for different kinds of applications, such as executable files.</p>
 </li>
 <li>
-<p>SELinux booleans enable RHEL to provide a very restrictive default policy for its confined services while enabling system administrators to relax the policies to selectively enable optional features of a system service.</p>
+<p>Autogenerated policy modules set the application domain to the permissive mode, so you can load the module and run the application to generate AVC errors, which you can filter by application domain or executable file, and assess which policy rules to add to te policy.</p>
 </li>
 <li>
-<p>AVC errors from SELinux include a lot of information, such as the domain and resource contexts, process ids, user ids, and file paths.</p>
+<p>RHEL provides the <code>audit2allow</code> command which is smart enough to suggest either policy interfaces, when they exist, or sandalone allow statements. But it stops at the first match so it may suggest an interface which grant more access than you need.</p>
 </li>
 <li>
-<p>The <code>audit2why</code> and <code>sealert</code> tools help with interpreting AVC erros and suggest actions to fix the error, if you want to allow an application to perform the task which was denied by SELinux.</p>
+<p>Always review the RHEL interface files in the <code>/usr/share/selinux/devel/include/</code> directory for comments on interfaces, and also use the <code>macro-expander</code> command to review the allow statements they generate.</p>
 </li>
 <li>
-<p>You shouldn&#8217;t blindly trust the suggestions from the SELinux tools. You should make a decision of either configuring the policies from RHEL or creating a new custom policy.</p>
-</li>
-<li>
-<p>The SELinux system role facilitates applying consistent settings to RHEL machines regarding file contexts, booleans, and ensuring SELinux is enforcing policies.</p>
+<p>Creating SELinux policy modules with <code>sepolicy</code> and <code>audit2allow</code> is an interactive process which requires exercising all features of the target application so it generates AVC erros in the audit log.</p>
 </li>
 </ul>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a></span>
-  <span class="next"><a href="../ch3-policy/index.html">Extending SELinux Policies</a></span>
+  <span class="prev"><a href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a></span>
 </nav>
 </article>
   </div>
