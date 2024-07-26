@@ -401,7 +401,24 @@ interface(`kernel_read_system_state',`
 </div>
 </div>
 <div class="paragraph">
-<p>2.6. Get an alternative suggestion to fix the AVC using allow statements:</p>
+<p>2.6. Find what the <code>kernel_read_system_state</code> interface would allow. Because the interface references an attribute, you must generate the output in CIL format, and then perform a search for referentes to the attribute.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>macro-expander "kernel_read_system_state(testapp_t)"</strong>
+$ <strong>macro-expander -c "kernel_read_system_state(testapp_t)"</strong>
+(typeattributeset kernel_system_state_reader (testapp_t ))
+$ <strong>sesearch --allow -ds -s kernel_system_state_reader</strong>
+allow kernel_system_state_reader proc_t:dir { ioctl lock read };
+allow kernel_system_state_reader proc_t:file { getattr ioctl lock open read };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output shows it allows only reading files and directories of type <code>proc_t</code>.
+If you check which files under the <code>/proc</code> directory have the <code>proc_t</code> type, you will see they provide non-sensitie information about the system.</p>
+</div>
+<div class="paragraph">
+<p>2.7. Get an alternative suggestion to fix the AVC using allow statements:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -413,7 +430,7 @@ allow testapp_t proc_t:file { open read };</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you check which files under the <code>/proc</code> directory have the <code>proc_t</code> type, you will see this is probably fine and equivalent to the second interface. But we recommend using interfaces as much as you can.</p>
+<p>This is a subset of the rules from the interface. You know that, to read a file, a process has to read its parent directory, so the missing rules probably come from other AVCs that the test application also produces and we didn&#8217;t review yet. Using the interface would solve those other AVCs too.</p>
 </div>
 </li>
 <li>
@@ -452,7 +469,7 @@ kernel_read_system_state(testapp_t)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>3.3. Check that there are no more AVCs related to the <code>/proc</code> folder:</p>
+<p>3.3. Check that there are no more AVCs related to the <code>/proc</code> directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -495,7 +512,7 @@ miscfiles_search_generic_cert_dirs(testapp_t)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such reviews, but just use the suggestions from the <code>audit2allow</code> command.</p>
+<p>We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such tasks, but just use the suggestions from the <code>audit2allow</code> command.</p>
 </div>
 <div class="paragraph">
 <p>4.3. Add references to the two interfaces to the end of the <code>testapp.te</code> file:</p>
@@ -519,7 +536,7 @@ miscfiles_search_generic_cert_dirs(testapp_t)</code></pre>
 <li>
 <p>Verify that the last change fixed AVCs related to TLS certificates.</p>
 <div class="paragraph">
-<p>5.1. Reload and recompile the custom policy. You should get a warning that you are using a deprecated interface.</p>
+<p>5.1. Rebuild and reload the custom policy. You should get a warning that you are using a deprecated interface.</p>
 </div>
 <div class="listingblock">
 <div class="content">

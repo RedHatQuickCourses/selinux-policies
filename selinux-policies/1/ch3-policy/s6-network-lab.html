@@ -292,9 +292,9 @@ noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_seli
 </div>
 </li>
 <li>
-<p>Next AVC: sockets</p>
+<p>Review the next AVC error of the third-party application, which is the first error with the current incomplete policy.</p>
 <div class="paragraph">
-<p>6.1. Lorem Ipsum</p>
+<p>2.1. The AVC error relates to accessing UDP sockets:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -307,14 +307,14 @@ type=AVC msg=audit(1721936082.493:455): avc:  denied  { create } for  pid=5639 c
 </div>
 </div>
 <div class="paragraph">
-<p>Say something</p>
+<p>You may find it surprising that the test application requires UDP sockets because it uses only HTTP, which uses TCP sockets. But all HTTP clients also perform DNS searches and these use the UDP protocol.</p>
 </div>
 <div class="paragraph">
-<p>6.2. Find an interface.</p>
+<p>2.2. Find an interface that match the AVC error:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R</strong>
 ...
 #============= testapp_t ==============
 allow testapp_t self:udp_socket create;</code></pre>
@@ -324,11 +324,11 @@ allow testapp_t self:udp_socket create;</code></pre>
 <p>It finds no interface, thus it shows allow statements.</p>
 </div>
 <div class="paragraph">
-<p>6.3. The previous rule feels insufficient: what about reading and writing UDO sockets? In fact, there are AVCs on those operations too:</p>
+<p>2.3. The previous rule is insufficient: what about reading and writing UDO sockets? We would need allow statements for those operations too:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep udp
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep udp</strong>
 type=AVC msg=audit(1721936082.493:455): avc:  denied  { create } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 type=AVC msg=audit(1721936082.494:456): avc:  denied  { setopt } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 type=AVC msg=audit(1721936082.494:457): avc:  denied  { connect } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
@@ -336,14 +336,14 @@ type=AVC msg=audit(1721936082.494:458): avc:  denied  { getattr } for  pid=5639 
 </div>
 </div>
 <div class="paragraph">
-<p>Could grep for "tclass=tcp_socket" for a more precise output.</p>
+<p>You could could grep for "tclass=tcp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.</p>
 </div>
 <div class="paragraph">
-<p>6.4. What about TCP sockets?</p>
+<p>2.4. As there isn&#8217;t an interface for UDP socket access, probably there isn&#8217;t one for TCP sockets either, and we know HTTP clients, such as the test application, require TCP sockets:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep tcp
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep tcp</strong>
 type=AVC msg=audit(1721936082.495:459): avc:  denied  { create } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 type=AVC msg=audit(1721936082.495:460): avc:  denied  { setopt } for  pid=5639 comm="testapp" scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 type=AVC msg=audit(1721936082.495:461): avc:  denied  { name_connect } for  pid=5639 comm="testapp" dest=443 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:http_port_t:s0 tclass=tcp_socket permissive=1
@@ -353,14 +353,11 @@ type=AVC msg=audit(1721936082.621:465): avc:  denied  { getattr } for  pid=5639 
 </div>
 </div>
 <div class="paragraph">
-<p>Say something about HTTP connections and DNS queries</p>
-</div>
-<div class="paragraph">
-<p>6.5. All at once:</p>
+<p>2.5. Generate audit rules for all AVC erros related to UDP and TCP sockets:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -E 'tcp|udp' | audit2allow -R
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -E 'tcp|udp' | audit2allow -R</strong>
 ...
 allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
 allow testapp_t self:udp_socket { connect create getattr setopt };
@@ -368,11 +365,64 @@ corenet_tcp_connect_http_port(testapp_t)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice it adds an interface for HTTP connections.</p>
+<p>Notice that the output includes an interface for HTTP connections. As advised in the previous activity, you should review the commennts from all interfaces you use in the <code>/usr/share/selinux/devel/include/</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>2.6. In the interest of time, just review the allow rules from the <code>corenet_tcp_connect_http_port</code> interface and assess if it grants too many permissions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>macro-expander "corenet_tcp_connect_http_port(testapp_t)"</strong>
+allow testapp_t http_port_t:tcp_socket name_connect;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the interface only allows one operation (<code>name_connect</code>), only to TCP ports of type <code>http_port_t</code>.</p>
 </div>
 </li>
 <li>
-<p>Restart and check</p>
+<p>Update the policy module and verify if it fixed all AVCs related to UDP and TCP sockets.</p>
+<div class="paragraph">
+<p>3.1. Add the allow statments and interface referente from the previous steps to the end of the <code>testapp.te</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)
+
+# Before this line, all rules come from the previous activity
+
+allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
+allow testapp_t self:udp_socket { connect create getattr setopt };
+corenet_tcp_connect_http_port(testapp_t)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.2. Build and reload the policy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ./testapp.sh</strong>
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors related to UDP and TCP sockets:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ TIME=$(date +%T) ; sudo systemctl restart testapp
@@ -380,9 +430,6 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 'tc
 0</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>Lorem Ipsum</p>
 </li>
 </ol>
 </div>
