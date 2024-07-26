@@ -11,3 +11,5 @@ In this chapter, you learned:
 * The `audit2why` and `sealert` tools help with interpreting AVC erros and suggest actions to fix the error, if you want to allow an application to perform the task which was denied by SELinux.
 
 * You shouldn't blindly trust the suggestions from the SELinux tools. You should make a decision of either configuring the policies from RHEL or creating a new custom policy.
+
+* The SELinux system role facilitates applying consistent settings to RHEL machines regarding file contexts, booleans, and ensuring SELinux is enforcing policies.
