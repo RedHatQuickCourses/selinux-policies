@@ -4,3 +4,4 @@
 ** xref:s4-files-lab.adoc[]
 ** xref:s6-network-lab.adoc[]
 ** xref:s8-finish-lab.adoc[]
+** xref:s9-summary.adoc[]
