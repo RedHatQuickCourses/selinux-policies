@@ -1,0 +1,23 @@
+:time_estimate: 5
+
+= Reference SELinux Interfaces
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Understand the use of SELinux policy inerfaces to extend the targeted policy set from RHEL.
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+
+== Next Steps
+
+Lorem Ipsum
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION

@@ -1,0 +1,23 @@
+:time_estimate: 5
+
+= Manual or Automatic Policy Creation
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+
+Understand the challenges of manual creation of SELinux cusotm policy modules
+
+WARNING: Pending Review
+
+== Title
+
+Lorem Ipsum
+
+
+== Next Steps
+
+Lorem Ipsum
+
+
+== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
