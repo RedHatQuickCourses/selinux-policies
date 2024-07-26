@@ -2,6 +2,8 @@
 
 This is a course about developing SELinux policies for IT professionals who already know the basics of enabling and managing SELinux.
 
+Sample applications and configuration files are in the [selinux-policies-samples](https://github.com/RedHatQuickCourses/selinux-policies-samples) repository.
+
 The course design docs are available to Red Hat employees only:
 
 * [Initial course design](https://docs.google.com/document/d/1qgrnuUE1lGyi59H_odk9B8DxWKvoLT5oOKiOjDIPVb4/edit?usp=sharing)
