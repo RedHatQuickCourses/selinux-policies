@@ -134,7 +134,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a>
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
   </li>
 </ul>
   </li>
@@ -257,17 +257,17 @@ All ativities in this chapter require the results of the previous activities. Yo
 <li>
 <p>This activity is a continuation of the <a href="s4-files-lab.html" class="xref page">previous activity</a>. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows access to system files.</p>
 <div class="paragraph">
-<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it.</p>
+<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it. Remember to record the timestap so you can filter audit events.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl is-active testapp</strong>
 inactive
-$ <strong>sudo systemctl start testapp</strong></code></pre>
+$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>1.2. Find the PID of the test application service and check its running in a permissive domain:</p>
+<p>1.2. Find the PID of the test application service and check that its running in a permissive domain:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -310,7 +310,7 @@ type=AVC msg=audit(1721936082.493:455): avc:  denied  { create } for  pid=5639 c
 <p>You may find it surprising that the test application requires UDP sockets because it uses only HTTP, which uses TCP sockets. But all HTTP clients also perform DNS searches and these use the UDP protocol.</p>
 </div>
 <div class="paragraph">
-<p>2.2. Find an interface that match the AVC error:</p>
+<p>2.2. Find an interface that matches the AVC error:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -399,7 +399,7 @@ kernel_read_system_state(testapp_t)
 miscfiles_read_certs(testapp_t)
 miscfiles_search_generic_cert_dirs(testapp_t)
 
-# Before this line, all rules come from the previous activity
+# Before this line, all rules come from the previous activities
 
 allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
 allow testapp_t self:udp_socket { connect create getattr setopt };
@@ -407,7 +407,7 @@ corenet_tcp_connect_http_port(testapp_t)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>3.2. Build and reload the policy:</p>
+<p>3.2. Build and reload the policy module:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -425,8 +425,8 @@ Creating targeted testapp.pp policy package
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ TIME=$(date +%T) ; sudo systemctl restart testapp
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 'tcp|udp'
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong>
+$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 'tcp|udp'</strong>
 0</code></pre>
 </div>
 </div>
@@ -439,7 +439,7 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 'tc
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next activities reviews the reaining AVC errors from the test application, and adds policy rules to fix them, so we can successfully run the test application in confined mode.</p>
+<p>The next activities reviews the remaining AVC errors from the test application, and adds policy rules to fix them, so we can successfully run the test application in confined mode.</p>
 </div>
 </div>
 </div>
@@ -499,7 +499,7 @@ ausearch -m AVC -ts recent &gt; ~/avc_file</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a></span>
-  <span class="next"><a href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a></span>
+  <span class="next"><a href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a></span>
 </nav>
 </article>
   </div>

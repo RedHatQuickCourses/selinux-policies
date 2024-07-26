@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab: Configure a Custom SELinux Policy Module for a Confined Domain :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Lab: Finish a Custom SELinux Policy Module for a Confined Domain :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s6-network-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
@@ -133,7 +133,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a>
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
   </li>
 </ul>
   </li>
@@ -169,7 +169,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">Extending SELinux Policies</a></li>
-    <li><a href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a></li>
+    <li><a href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a></li>
   </ul>
 </nav>
 </div>
@@ -178,7 +178,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</h1>
+<h1 class="page">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -254,19 +254,19 @@ All ativities in this chapter require the results of the previous activities. Yo
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>This activity is a continuation of the <a href="#s8-network-lab.adoc" class="xref unresolved">previous activity</a>. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows network connections to remote HTTP servers and TLS certificate validation.</p>
+<p>This activity is a continuation of the <a href="s6-network-lab.html" class="xref page">previous activity</a>. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows network connections to remote HTTP servers and access to system files.</p>
 <div class="paragraph">
-<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it.</p>
+<p>1.1. Check that the test application service is still active. It will terminate when it&#8217;s done retrieving the weather from all cities, and in that case you need to restart it. Remember to record the timestap so you can filter audit events.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>systemctl is-active testapp</strong>
 inactive
-$ <strong>sudo systemctl start testapp</strong></code></pre>
+$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>1.2. Find the PID of the test application service and check its running in a permissive domain:</p>
+<p>1.2. Find the PID of the test application service and check that its running in a permissive domain:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -275,8 +275,8 @@ $ <strong>sudo systemctl start testapp</strong></code></pre>
 $ <strong>ps -Z 39521</strong>
 LABEL                               PID TTY      STAT   TIME COMMAND
 system_u:system_r:testapp_t:s0    39521 ?        S      0:00 /usr/local/sbin/testapp -d
-$ <strong>sudo semanage permissive -l | grep testapp_t</strong>
-testapp_t</code></pre>
+$ <strong>sudo semanage permissive -l | grep -c testapp_t</strong>
+1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -291,9 +291,9 @@ noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_seli
 </div>
 </li>
 <li>
-<p>Next AVC: resolv.conf</p>
+<p>Review what should be the latest AVC error from the third-party application.</p>
 <div class="paragraph">
-<p>8.1. Lorem Ipsum</p>
+<p>2.1. The AVC error relates to another system configuration file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -306,53 +306,84 @@ type=AVC msg=audit(1721937673.666:665): avc:  denied  { getattr } for  pid=6537 
 </div>
 </div>
 <div class="paragraph">
-<p>Say something</p>
+<p>Did you know that, in Linux, it&#8217;s not the operating system, but it&#8217;s user applications, that perform DNS searches? All those details are hidden from developers by library code.</p>
 </div>
 <div class="paragraph">
-<p>8.2. Find an interface.</p>
+<p>2.2. Find an interface that matches the AVC error:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
-...</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R</strong>
+...
+#============= testapp_t ==============
+sysnet_read_config(testapp_t)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>8.3. Interface</p>
+<p>Remember that you shold review the comments on the source of this interface and also expand it to review all allow statements it generates. In the interest of time, let&#8217;s move on, knowing this is the expected interfaces for network clients that perform DNS queries.</p>
+</div>
+<div class="paragraph">
+<p>2.3. Add the interface to the end of the <code>testapp.te</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">...
+logging_send_syslog_msg(testapp_t)
+
+miscfiles_read_localization(testapp_t)
+
+# Before this line, all rules were auto-generated
+
+kernel_read_system_state(testapp_t)
+
+miscfiles_read_certs(testapp_t)
+miscfiles_search_generic_cert_dirs(testapp_t)
+
+allow testapp_t self:tcp_socket { connect create getattr getopt setopt };
+allow testapp_t self:udp_socket { connect create getattr setopt };
+corenet_tcp_connect_http_port(testapp_t)
+
+# Before this line, all rules come from the previous activities
+
+sysnet_read_config(testapp_t)</code></pre>
+</div>
 </div>
 </li>
-</ol>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>sysnet_read_config(testapp_t)</p>
-</div>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
 <li>
-<p>Restart and check</p>
-<div class="openblock">
+<p>Verify that the updated policy module fixes all remaining AVC errors from the third-party application.</p>
+<div class="paragraph">
+<p>3.1. Build and reload the policy module:</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<div class="literalblock">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ./testapp.sh</strong>
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors related to UDP and TCP sockets:</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre> sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c resolv.conf
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong>
+$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c resolv.conf</strong>
 &lt;no matches&gt;
-0</pre>
-</div>
-</div>
+0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>+ Notice the "no matches". Repeat without the grep to be sure. We&#8217;re almost done!</p>
+<p>Notice the string "no matches" in the previous output. It means that the <code>ausearch</code> command found no audit events matching the search criteria. There was nothing for the <code>grep</code> command to search in.</p>
 </div>
 </li>
 <li>
-<p>Remove permissive mode, restart and final check for no AVCs.</p>
+<p>Remove the permissive flag and perform a final check for no remaining AVCs.</p>
 <div class="paragraph">
-<p>10.1. Delete from <code>testapp.te</code>:</p>
+<p>4.1. Delete the following line from the <code>testapp.te</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -360,26 +391,67 @@ type=AVC msg=audit(1721937673.666:665): avc:  denied  { getattr } for  pid=6537 
 </div>
 </div>
 <div class="paragraph">
-<p>10.2. Restart</p>
-</div>
-<div class="paragraph">
-<p>10.3. Lorem Ipsum</p>
+<p>4.2. Build and reload the policy module one last time:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME</strong>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ./testapp.sh</strong>
+Building and Loading Policy
++ make -f /usr/share/selinux/devel/Makefile testapp.pp
+Compiling targeted testapp module
+Creating targeted testapp.pp policy package
+...
++ exit 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.3. Restart the test application, recording a timer so you can filter AVC errors from before and after the operation, and check that there are no more AVC errors:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong>
+$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME</strong>
 &lt;no matches&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Say something</p>
+<p>4.4. Ensure the test application service is not running in a permissive domain anymore:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage permissive -l | grep -c testapp_t</strong>
+0</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Check it is not permissive anymore</p>
+<p>Good work! Now the third-party applicatins runs fully confined by SELinux.</p>
 </div>
 </li>
 <li>
-<p>Lorem Ipsum</p>
+<p>Review the generated RPM package containing the policy module, for redistribution to other machines running the third-party application.</p>
+<div class="paragraph">
+<p>5.1. The autogenerated script <code>testapp.sh</code> already includes commands to build RPM packages and source RPM packages. We are interested in the RPM package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls noarch</strong>
+testapp_selinux-1.0-1.el9.noarch.rpm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. Review the contents of the generated RPM pacage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -ql -p noarch/testapp_selinux-1.0-1.el9.noarch.rpm</strong>
+/usr/share/man/man8/testapp_selinux.8.gz
+/usr/share/selinux/devel/include/contrib/testapp.if
+/usr/share/selinux/packages/testapp.pp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that it includes the binary policy module, its interface definition file (in case it provides reusable interfaces for other modules), and an autogenereted manual page which is not very useful as-is but could be if you add comments to your interface file.</p>
+</div>
 </li>
 </ol>
 </div>
@@ -389,10 +461,7 @@ type=AVC msg=audit(1721937673.666:665): avc:  denied  { getattr } for  pid=6537 
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next activities continue reviewing AVC additional errors from the test application, one by one, and adding policy rules to fix them, until the test application runs without AVC errors.</p>
-</div>
-<div class="paragraph">
-<p>[ DESCRIBE THE NEXT AVC? ]</p>
+<p>This is the final activity of this course. For a real-world application you would require more interations, as you exercise different features of the application and review the AVCs it generates, but you would still follow this same process and grow your policy module incrementally,</p>
 </div>
 </div>
 </div>

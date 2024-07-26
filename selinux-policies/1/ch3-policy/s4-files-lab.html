@@ -134,7 +134,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s8-finish-lab.html">Lab: Configure a Custom SELinux Policy Module for a Confined Domain</a>
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
   </li>
 </ul>
   </li>
@@ -267,7 +267,7 @@ $ <strong>sudo systemctl start testapp</strong></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>1.2. Find the PID of the test application service and check its running in a permissive domain:</p>
+<p>1.2. Find the PID of the test application service and check that its running in a permissive domain:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -500,7 +500,7 @@ type=AVC msg=audit(1721935451.740:344): avc:  denied  { search } for  pid=5272 c
 <p>Because the test application uses HTTPS to access the weather forecast service, it needs the CA certificates from the internet Public Key Infrastructure (PKI).</p>
 </div>
 <div class="paragraph">
-<p>4.2. Find an interface that match the AVC error:</p>
+<p>4.2. Find an interface that matches the AVC error:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -602,9 +602,6 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
 <div class="sectionbody">
 <div class="paragraph">
 <p>The custom policy is not complete yet. The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on network access.</p>
-</div>
-<div class="paragraph">
-<p>[ DESCRIBE THE NEXT AVC? ]</p>
 </div>
 </div>
 </div>
