@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Why You Should Care About SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="index.html">
-    <link rel="next" href="s2-intro-quiz.html">
+    <link rel="next" href="s2-setup-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -54,31 +54,22 @@
     <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="s2-intro-quiz-answers.html">Answers to the Quiz</a>
-  </li>
-</ul>
+    <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s4-labels.html">SELinux Policies, Labels, and Contexts</a>
+    <a class="nav-link" href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s6-rhel.html">How Red Hat Protects System Services With SELinux on RHEL</a>
+    <a class="nav-link" href="s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s7-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s8-summary.html">Summary</a>
+    <a class="nav-link" href="s7-summary.html">Summary</a>
   </li>
 </ul>
   </li>
@@ -195,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>9 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -223,7 +214,7 @@ Pending Review
 <h2 id="_do_not_disable_selinux"><a class="anchor" href="#_do_not_disable_selinux"></a>Do Not Disable SELinux!</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common workloads. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn&#8217;t good advice!</p>
+<p>SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common applications. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn&#8217;t good advice!</p>
 </div>
 <div class="paragraph">
 <p>Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There&#8217;s very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this course with SELinux enabled and in enforcing mode!</p>
@@ -252,7 +243,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <h2 id="_what_is_selinux"><a class="anchor" href="#_what_is_selinux"></a>What is SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Skipping the <a href="https://en.wikipedia.org/wiki/Security-Enhanced_Linux#History">history</a> <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/5/html/deployment_guide/rhlcommon-appendix-0005">lesson</a>, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the proccess.</p>
+<p>Skipping the <a href="https://en.wikipedia.org/wiki/Security-Enhanced_Linux#History">history</a> <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/5/html/deployment_guide/rhlcommon-appendix-0005">lesson</a>, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the process.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -263,10 +254,10 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <p>SELinux <strong>policies</strong> control access to any <strong>object</strong> managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy do not allow access, them access is denied.</p>
 </div>
 <div class="paragraph">
-<p>Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is acessible to other users, like they could do with file system permissions. SELinux policies are mandatory. They are not optional, or discretionary. This what they mean when they say SELinux is a Mandatory Access Control (MAC) technology, instead of a Discretionary Access Control (DAC) technilogy such as POSIX file permissions.</p>
+<p>Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is accessible to other users, like they could do with file system permissions.</p>
 </div>
 <div class="paragraph">
-<p>SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and Seccomp. These mecanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access. POSIX file permissions are not gone either. They all should be used together to enforce a good security posture.</p>
+<p>SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and Seccomp. These mechanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access. POSIX file permissions are not gone either. They all should be used together to enforce a good security posture.</p>
 </div>
 </div>
 </div>
@@ -274,7 +265,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <h2 id="_why_using_selinux"><a class="anchor" href="#_why_using_selinux"></a>Why Using SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The biggest benefit of SELinux is <a href="https://access.redhat.com/solutions/7032454">protecting systems from zero-day vulnerabilities</a>. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to force an application to perform any task the application wouldn&#8217;t normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.</p>
+<p>The biggest benefit of SELinux is <a href="https://access.redhat.com/solutions/7032454">protecting systems from zero-day vulnerabilities</a>. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to lure an application to perform any task the application wouldn&#8217;t normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -295,10 +286,10 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 </ul>
 </div>
 <div class="paragraph">
-<p>To be effective, SELinux relies on the availability of air-tight security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.</p>
+<p>To be effective, SELinux relies on the availability of security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.</p>
 </div>
 <div class="paragraph">
-<p>Notice that SELinux cannot prevent an application from doing things it&#8217;s supposed to do. For example, an SQL injection vulerability in a web application would allow an application to access other data it already has access to but end users shouldn&#8217;t see. SELinux wouldn&#8217;t prevent such a scenario: it ether allows the application access to the remote database server or doesn&#8217;t.</p>
+<p>Notice that SELinux cannot prevent an application from doing things it&#8217;s supposed to do. For example, an SQL injection vulnerability in a web application would allow an application to access other data it already has access to but end users shouldn&#8217;t see. SELinux wouldn&#8217;t prevent such a scenario: it ether allows the application access to the remote database server or doesn&#8217;t.</p>
 </div>
 </div>
 </div>
@@ -314,7 +305,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 </div>
 </div>
 <div class="paragraph">
-<p>Red Hat is not the only vendor that recommends enabling and configuring SELinux. As an example, see some <a href="https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/">advice from DataDog</a>.</p>
+<p>Red Hat is not the only vendor that recommends enabling and configuring SELinux. For example, see some <a href="https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/">advice from DataDog</a>.</p>
 </div>
 <div class="paragraph">
 <p>Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, and instead leave the burden on their customers.</p>
@@ -329,16 +320,16 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <p>Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer&#8217;s environment, but they still encourage their customers to use SELinux for additional security. For example, IBM already provided <a href="https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux">sample SELinux policies for DB2</a> way before IBM acquired Red Hat.</p>
 </div>
 <div class="paragraph">
-<p>Some vendors who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example SAP supports running <a href="https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102">SAP Hana with SElinux</a>. By the way, you can find members of the SAP community who guide their fellow users on <a href="https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463">how to create SELinux policies to protect SAP applications</a>.</p>
+<p>Some vendors who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example SAP supports running <a href="https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102">SAP Hana with SELinux</a>. By the way, you can find members of the SAP community who guide their fellow users on <a href="https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463">how to create SELinux policies to protect SAP applications</a>.</p>
 </div>
 <div class="paragraph">
 <p>Even without a policy designed specifically for that application, it&#8217;s still much better having SELinux policies that protect everything else in a server than disabling SELinux</p>
 </div>
 <div class="paragraph">
-<p>If your organization has an internal software development group, ideally that group provides SELinux policies alongisde their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, filesystem permissions, and other requirements for deploying their application.</p>
+<p>If your organization has an internal software development group, ideally that group provides SELinux policies alongside their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, file system permissions, and other requirements for deploying their application.</p>
 </div>
 <div class="paragraph">
-<p>If they don&#8217;t, then the system administrator resposible fo securing the deployment must work with them to create such a policy.</p>
+<p>If they don&#8217;t, then the system administrator responsible for securing the deployment must work with them to create such a policy.</p>
 </div>
 </div>
 </div>
@@ -349,7 +340,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <p>All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming not scripting knowledge to create and validate SELinux policies.</p>
 </div>
 <div class="paragraph">
-<p>Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn&#8217;t mean access to the application&#8217;s source code and understanding of its internal implementation details. It means understanding of what an aplication does, to the level you are able to answer questions such as:</p>
+<p>Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn&#8217;t mean access to the application&#8217;s source code and understanding of its internal implementation details. It means understanding of what an application does, to the level you are able to answer questions such as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -365,7 +356,7 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 </ul>
 </div>
 <div class="paragraph">
-<p>In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not pemissive enough) without good knowledge about the target application.</p>
+<p>In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not permissive enough) without good knowledge about the target application.</p>
 </div>
 </div>
 </div>
@@ -376,13 +367,13 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <p>Most software are configurable with different paths for data files, log files, and network ports for incoming connections. Access to these paths, ports, and other kernel objects must be allowed by SELinux.</p>
 </div>
 <div class="paragraph">
-<p>Of course, no preexisting policy can anticipate all variations of file paths, network ports, and other configuration details that a user could choose, for all possible deployment scenarios of an application. If an SELinux policy is designed over rigid configuration assumptions, it forces uses to use the software under those assumptions only.</p>
+<p>Of course, no preexisting policy can anticipate all variations of file paths, network ports, and other configuration details that a user could choose, for all possible deployment scenarios of an application. If an SELinux policy is designed over rigid configuration assumptions, it forces users to operate the application under those assumptions only.</p>
 </div>
 <div class="paragraph">
-<p>SELinux provides many ways you can design a policy to be maleable and yet ensure an application cannot be abused by exploring known and unknown bugs. We will learn about those mechanisms later in this course.</p>
+<p>SELinux provides a few ways you can design a policy to be malleable and yet ensure an application cannot be abused by exploring known and unknown bugs. We will learn about those mechanisms later in this course.</p>
 </div>
 <div class="paragraph">
-<p>In the worst case scenario, system administrators can configure an application to run in <strong>permissive mode</strong>. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable ot exploits, but the remaining of the system will still be protected.</p>
+<p>In the worst case scenario, system administrators can configure an application to run in <strong>permissive mode</strong>. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable to exploits, but the remaining of the system will still be protected.</p>
 </div>
 <div class="paragraph">
 <p>In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.</p>
@@ -396,71 +387,13 @@ All organizations should to run all their RHEL machines and VMs, and also all th
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You will now check your understanding of the concepts just presented and verify that you have a test machine with SELinux enabled and with the recommended default policy set loaded. Later you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
-</div>
-<div class="sect2">
-<h3 id="_proactive_security_slides_4_10"><a class="anchor" href="#_proactive_security_slides_4_10"></a>Proactive security: slides 4-10</h3>
-<div class="paragraph">
-<p>PROACTIVE SECURITY</p>
-</div>
-<div class="paragraph">
-<p>REACTIVE SECURITY</p>
-</div>
-<div class="paragraph">
-<p>Figure with time line of buggy software release, bug discovered, and bug patched.</p>
-</div>
-<div class="paragraph">
-<p>YOUR SYSTEM IS NOT PROTECTED DURING THE WINDOW OF VULNERABILITY!</p>
-</div>
-<div class="paragraph">
-<p>PROACTIVE SECURITY HELPS TO PROTECT YOUR SYSTEM DURING THE WINDOW OF VULNERABILITY!</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_what_is_selinux_slides_11_18"><a class="anchor" href="#_what_is_selinux_slides_11_18"></a>What is SELinux: slides #11-18</h3>
-<div class="paragraph">
-<p>SECURITY ENHANCED LINUX IS A SECURITY MECHANISM BRINGING PROACTIVE SECURITY FOR YOUR SYSTEM.</p>
-</div>
-<div class="paragraph">
-<p>TECHNOLOGY FOR PROCESS ISOLATION TO MITIGATE ATTACKS VIA PRIVILEGE ESCALATION</p>
-</div>
-<div class="paragraph">
-<p>EXPLOIT EXAMPLES WHERE SELINUX HELPED TO PROTECT YOUR SYSTEM</p>
-</div>
-<div class="paragraph">
-<p>DOCKER CVE-2016-9962
-SHELLSHOCK
-<a href="https://access.redhat.com/articles/1212303" class="bare">https://access.redhat.com/articles/1212303</a>
-runc - Malicious container escape
-<a href="https://access.redhat.com/security/vulnerabilities/runcescape" class="bare">https://access.redhat.com/security/vulnerabilities/runcescape</a>
-CVE-2024-21626
-<a href="https://access.redhat.com/security/cve/cve-2024-21626" class="bare">https://access.redhat.com/security/cve/cve-2024-21626</a></p>
-</div>
-<div class="paragraph">
-<p>TRADITIONAL LINUX SECURITY</p>
-</div>
-<div class="paragraph">
-<p>File permission bits</p>
-</div>
-<div class="paragraph">
-<p>PROBLEMS
-ROOT BYPASSING THIS SECURITY
-SETUID BIT</p>
-</div>
+<p>The first activity of this course verifies that you have a test machine with SELinux enabled and with the default policy set loaded. Later you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Review of SELinux</a></span>
-  <span class="next"><a href="s2-intro-quiz.html">Quiz: Do you need a custom SELinux policy?</a></span>
+  <span class="next"><a href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a></span>
 </nav>
 </article>
   </div>
