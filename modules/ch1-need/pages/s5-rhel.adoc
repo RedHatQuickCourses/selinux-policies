@@ -1,6 +1,6 @@
-:time_estimate: 5
+:time_estimate: 14
 
-= How Red Hat Protects System Services With SELinux on RHEL
+= How Red Hat Protects System Services on RHEL With SELinux
 
 _Estimated reading time: *{time_estimate} minutes*._
 
@@ -8,13 +8,13 @@ Objective::
 
 Understand how Red Hat uses SELinux policies within its products.
 
-WARNING: Work In Progress
+WARNING: Pending Review
 
-== SElinux Policy Sets in Red Hat Enterprise Linux
+== SELinux Policy Sets in Red Hat Enterprise Linux
 
 The SELinux policies in RHEL are based on upstream policies from the SELinux project and extensions from the open source community, for example policies for PostgreSQL and MySQL, plus customizations by Red Hat.
 
-Red Hat Enterprise Linux (RHEL) defaults to the *targeted* policy set. That policy aims to protect system services while not interfering with interactive users and third-paty applications you deploy on RHEL servers.
+Red Hat Enterprise Linux (RHEL) defaults to the *targeted* policy set. That policy aims to protect system services while not interfering with interactive users and third-party applications you deploy on RHEL servers.
 
 Red Hat Enterprise Linux also provides the *mls* policy set as a starting point for customers with strict information security requirements.
 
@@ -24,13 +24,13 @@ This course focus on the targeted policy set, but this section also provides som
 
 == Modular SELinux Policies with RHEL
 
-RHEL uses modular SELinux policies. Like kernel modules which provide device drivers, network protocols, and file systems, SELinux policy modules can be loaded and unloded by a system administrator.
+RHEL uses modular SELinux policies. Like kernel modules which provide device drivers, network protocols, and file systems, SELinux policy modules can be loaded and unloaded by a system administrator.
 
 image::s6-rhel-fig-1.svg[]
 
 RHEL provides the base policy sets (targeted or mls) as RPM packages and additional policy modules in packages named after the system service they protect. Most policy modules from RHEL are tested only with the targeted policy set and require customization to work with the mls policy set.
 
-The use of policy modules by RHEL enables an internative process for developing custom policies:
+The use of policy modules by RHEL enables an iterative process for developing custom policies:
 
 1. Create or change policy sources
 2. Compile a new or updated policy module
@@ -38,9 +38,11 @@ The use of policy modules by RHEL enables an internative process for developing 
 4. Check if the policy grants and denies access to resources as intended
 5. Go back to 1 until you're satisfied with the custom policy.
 
+Before you can work on creating and testing custom policies, you must understand how Red Hat designed its targeted policy set, because your custom policy effectively works as an extension to the Red Hat policies and cannot conflict with them.
+
 == The RHEL targeted policy
 
-Before you can work on creating and testing custom policies, you must undersand how Red Hat designed its targeted policy set, because your custom policy effectively works as an extension to the Red Hat policies and cannot conflict with them.
+The targeted policy set in RHEL is based the concepts if confined and unconfined domains.
 
 === Confined Contexts
 
@@ -53,7 +55,7 @@ Policies in RHEL are also designed to be flexible regarding the configuration of
 
 Later this course will provide details on how to perform those operators, so you can configure SELinux to match your application settings without creating a custom policy.
 
-=== Default Users and Roles
+=== Default SELinux Users and Roles
 
 The targeted policy in RHEL assigns most confined domain to the same SELinux and role, and does the same for most resources allowed to confined domains. This way you can focus on just the domain and resource type when checking most targeted policy rules.
 
@@ -69,13 +71,13 @@ ____
 `system_u:object_r`
 ____
 
-The only domains which get different SELinux users and roles are the uconfined domains.
+The only domains which get different SELinux users and roles are the unconfined domains.
 
 === Unconfined Domains and Users
 
 When Red Hat introduced SELinux as a standard feature of RHEL, there was the challenge of making adoption less painful. Increased security usually meet resistance from users which would prefer to disable the new security setting to perform their work quickly.
 
-RHEL minimizes usabilty issues with the concept of *unconfined domains*. They are processes assigned with a domain type that is allowed to do pretty much everything: acessing user files, opening network connections, and so on.
+RHEL minimizes usability issues with the concept of *unconfined domains*. They are processes assigned with a domain type that is allowed to do pretty much everything: accessing user files, opening network connections, and so on.
 
 Unconfined domains are NOT special for SELinux: they are still subject to the same policies as all other domains in the system. They are just allowed access to a lot of resource types.
 
@@ -97,7 +99,7 @@ ____
 Unconfined processes may not be acceptable for some high-security organizations, such as those involved with national defense. For these organizations, RHEL offers two alternatives:
 
 1. Enabling confined uses with the targeted policy set
-2. Switching to the msl policy set
+2. Switching to the mls policy set
 
 === Confined Users
 
@@ -109,7 +111,7 @@ You can also use predefined SELinux users to restrict users to something similar
 
 Confined users run processes using different domain types. Now the different types for commands such as `passwd` and password files in the previous activity make sense: They must be allowed to different types of confined users because all users must be able to change their own passwords.
 
-Confied users log in with a lower privilege SELinux role. When a confined user needs to perform privileged operations such as system administration tasks, they must use the `sudo` command to explicltly change their role, or rely on a domain transition role which automatically changes the role of a new process.
+Confined users log in with a lower privilege SELinux role. When a confined user needs to perform privileged operations such as system administration tasks, they must use the `sudo` command to explicitly change their role, or rely on a domain transition role which automatically changes the role of a new process.
 
 This course does not teach how to manage confined users nor how to create custom roles for custom confined uses. You can find more information on the subject in the Knowledge Base article https://access.redhat.com/articles/3263671[How to set up a system with SELinux confined users] and in the https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index#managing-confined-and-unconfined-users_using-selinux[RHEL 9 product documentation].
 
@@ -117,22 +119,22 @@ This course does not teach how to manage confined users nor how to create custom
 
 The *mls* policy set from RHEL is a baseline for implementing information security based on the Multi Level Security (MLS) principles. It is not really usable as-is and requires custom policies and workflows specific for the user's organization.
 
-MLS is a concept from the defense and intelligence community. It is an approach to handle different sensitivity levels of information, for example classified and top secret, and different clearance levels of users. Sentitivy and clearance levels use the same names, the only difference is that the first apply to information and the second apply to users and applications.
+MLS is a concept from the defense and intelligence community. It is an approach to handle different sensitivity levels of information, for example classified and top secret, and different clearance levels of users. Sensitivity and clearance levels use the same classifications, the only difference is that the first apply to information and the second apply to users and applications.
 
-A user from a given clearance level can access information from the same sensitivy level and bellow. Assuming that top secret is a higher level than confidential, a user with top level clearance can access information with both top level and confidencial clearance. But a user with confidential clearance cannot access information of top level sensitivity.
+A user from a given clearance level can access information from the same sensitivity level and bellow. Assuming that top secret is a higher level than confidential, a user with top level clearance can access information with both top level and confidential clearance. But a user with confidential clearance cannot access information of top level sensitivity.
 
 To avoid information leakage, information cannot be stored with a sensitivity level lower than the user clearance level. Continuing on the previous example, a user with top level clearance cannot store information with confidential clearance.
 
 To implement MLS in practice, you must create workflows for controlled transfer of information between levels and you need a policy which allows some users and applications to make the transfer.
 
-As an example of the need to transfer information between senstivity and clearance levels, consider an intelligence agency which finds out about a terrorist base or another military target. The intelligence operatives and military commanders would have clearance level for that information, but it must be sent somehow to a strike team that just follow orders to hit the target and has a much lower clearance level.
+As an example of the need to transfer information between sensitivity and clearance levels, consider an intelligence agency which finds out about a terrorist base or another military target. The intelligence operatives and military commanders would have clearance level for that information, but it must be sent somehow to a strike team that just follow orders to hit the target and has a much lower clearance level.
 
 Implementing MLS requires dealing with many challenges related to desktop and web applications which are not designed to work under such strict information security rules. 
 In fact, if you enable the mls policy from RHEL, you cannot boot into graphical mode.
 
-Aditional challenges come from remote servers, such as file servers, mail servers, and database servers, which are not designed to label and enforce MLS security. Sometimes you can work around such challenges by using compartimentalized networks, where each network and all devices attched to them arededicated to only one clearance level. And special gateway systems dedicated to transfer information between those compartimentalized networks and their different sensitivity levels.
+Additional challenges come from remote servers, such as file servers, mail servers, and database servers, which are not designed to label and enforce MLS security. Sometimes you can work around such challenges by using compartmentalized networks, where each network and all devices attached to them are dedicated to only one clearance level. And special gateway systems dedicated to transfer information between those compartmentalized networks and their different sensitivity levels.
 
-This course does not teach how to design and create policies for MLS. But the related concept of MCS is very important to RHEL, containes, and virtual machines. For now, suffices to say that the targeted policy assigns all contexts the same sensitivity and clearance level: `s0`, wich is the lowest level.
+This course does not teach how to design and create policies for MLS. But the related concept of MCS is very important to how RHEL secures containers and virtual machines. For now, suffices to say that the targeted policy assigns all contexts the same sensitivity and clearance level: `s0`, which is the lowest level.
 
 For more information on using the mls policy set, refer to the https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index#using-multi-level-security-mls_using-selinux[RHEL 9 product documentation].
 
@@ -140,15 +142,15 @@ For more information on using the mls policy set, refer to the https://docs.redh
 
 Multi Category Security (MCS) is also a concept from the intelligence and defense community. It was originally part of the framework for implementing MLS but it is useful by itself on RHEL using the targeted policy set.
 
-MCS comes from the need to compartimentalize information on a need-to-know basis. Intelligence and military operatives should only have access to the information related to their current assignment, and nothing else. Operatives with top secret clearance doesn't have access to top secret (or confidential) information not related to their assignment.
+MCS comes from the need to compartmentalize information on a need-to-know basis. Intelligence and military operatives should only have access to the information related to their current assignment, and nothing else. Operatives with top secret clearance doesn't have access to top secret (or confidential) information not related to their assignment.
 
-To implement MCS in practice, you need a workflow for assigning categories to resoures and domains. You also need custom policies which assign categories to SELinux users and roles, and allow users to transition between different roles, so they can access resources from different categories. And you need applications and networks designed to work with multiple categories, or to compartimentalize networks and systems on the basis of categories, in addition to levels.
+To implement MCS in practice, you need a workflow for assigning categories to resources and domains. You also need custom policies which assign categories to SELinux users and roles, and allow users to transition between different roles, so they can access resources from different categories. And you need applications and networks designed to work with multiple categories, or to compartmentalize networks and systems on the basis of categories, in addition to levels.
 
 This course does not teach how to design and create policies for MCS. But MCS is applied by a number of Red Hat products to manage containers and virtual machines. For now, suffices to say that the targeted policy defines 1024 categories, from `c0` to `c1023` but no context is assigned to any category, by default.
 
 === Textual Names for MLS levels and MCS categories
 
-Working with MCS levels and MCS categories using ther numbers is not user-friendly. RHEL includes the MCS translation service (https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/assembly_using-multi-category-security-mcs-for-data-confidentiality_using-selinux#proc_defining-category-labels-in-mcs_assembly_using-multi-category-security-mcs-for-data-confidentiality[mcstrans]) and related utilities to manage a mapping from the level and category number to textual names.
+Working with MCS levels and MCS categories using their numbers is not user-friendly. RHEL includes the MCS translation service (https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_selinux/assembly_using-multi-category-security-mcs-for-data-confidentiality_using-selinux#proc_defining-category-labels-in-mcs_assembly_using-multi-category-security-mcs-for-data-confidentiality[mcstrans]) and related utilities to manage a mapping from the level and category number to textual names.
 
 Because this course does not focus on policies using MLS and MCS labels, we do not provide more details on the usage of the MCS translation service.
 
@@ -160,15 +162,15 @@ Even if containers stay on their own namespaces and run as unprivileged users, t
 
 Podman on RHEL runs all containers using the same context type of `container_t` and defines a number of different resource types for container ephemeral storage and volumes. Containers have no access to host files, unless those files are set to the correct context type.
 
-The container domain and resource types protect container hosts and intractive users from containers, but do not protect containers from each other. For example, it would be possible for a container to explore a path traversal vulnerability to access the ephemeral storage of other containers.
+The container domain and resource types protect container hosts and interactive users from containers, but do not protect containers from each other. For example, it would be possible for a container to explore a path traversal vulnerability to access the ephemeral storage of other containers.
 
-RHEL further protects containers by using MCS categories to compartimentalize containers from each other. Each container is assigned two random categories, and podman automatically labels the ephemeral storage and volumes from containers to the same two categories.
+RHEL further protects containers by using MCS categories to compartmentalize containers from each other. Each container is assigned two random categories, and podman automatically labels the ephemeral storage and volumes from containers to the same two categories.
 
 The higher and lower category numbers are reserved for non-containerized processes, so you may see `c0.c1023` in the end of context label of interactive processes.
 
 These defaults from RHEL are good for containers that do not share persistent storage and that listen to no network connections. For distributed applications which run as containers started by Systemd, you are advised to create a custom SELinux policy which sets a fixed pair of categories and labels the volumes and network ports accordingly. RHEL includes a tool named Udica for automatically generating such policies.
 
-This course does not teach how to customize SELinux policies for containes, but there's an https://developers.redhat.com/courses/securing-containers-with-selinux[Udica tutorial] by Red Hat Developers.
+This course does not teach how to customize SELinux policies for containers, but there's an https://developers.redhat.com/courses/securing-containers-with-selinux[Udica tutorial] by Red Hat Developers.
 
 === Virtual Machine Security with MCS on RHEL
 
@@ -180,63 +182,12 @@ Unlike containers, which could access host files and devices directly, and thus 
 
 == SELinux With Other Red Hat Products
 
-Red Hat OpenShift, Red Hat OpenStack, and Red Hat Virtualization all employ a similar approach than podman and libvirt for protecting containers, pods, and virtual machines using MCS categories. Most of the times you just let these platforms do the hard work for you and enjoy increased security, as compared to their community upstreams with default minimal settings.
+Red Hat OpenShift, Red Hat OpenStack, and Red Hat Virtualization all employ a similar approach than podman and libvirt for protecting containers, pods, and virtual machines using MCS categories. Most of the times you just let these platforms do the hard work for you and enjoy increased security, as compared to their community upstream with default minimal settings.
 
 While it is possible to configure explicit context types and categories for your containers and VMs, there's rarely a need for doing so. Most scenarios do not come from end user applications, but from infrastructure services such as networking and storage providers, which run as extensions to the platform.
 
-Botton line is: if you are the administrators of OpeShift and OpenStack clusters, you shouldn't mess with the SELinux policies of your cluster nodes, unless required by a vendor of a certified platform extension.
+Bottom line is: if you are the administrators of OpenShift and OpenStack clusters, you shouldn't mess with the SELinux policies of your cluster nodes, unless required by a vendor of a certified platform extension.
 
 == Next Steps
 
 Now that we know about how RHEL implements SELinux, we can take a deeper drive of the targeted policy and explore how it protects Red Hat system services, to get more practice with reading and interpreting SELinux policies and become ready to create our own custom policies.
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
-
-=== Targeted policies and types: slides #53-57
-
-IN RHEL9 WE SHIP THE TARGETED SELINUX POLICY BY DEFAULT
-
-WE MOSTLY CARE ONLY ABOUT TYPES
-
-SELINUX ALLOW RULE SYNTAX WITH TYPES
-
-ALLOW TYPE1 TYPE2:OBJECT_CLASS PERMISSION;
-
-ALLOW HTTPD_T HTTPD_LOG_T:FILE READ;
-
-=== Type transitions for domains/processes and resources (slides #58-66)
-
-DOMAIN TRANSITION RULES
-
-TYPE_TRANSITION TYPE1 TYPE2:PROCESS NEW_DOMAIN;
-
-TYPE_TRANSITION INIT_T HTTPD_EXEC_T:PROCESS HTTPD_T;
-
-FILE TRANSITION RULES
-
-TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE;
-
-TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T;
-
-FILE NAME TRANSITION RULES
-
-TYPE_TRANSITION TYPE1 TYPE2:OBJECT_CLASS NEW_TYPE “OBJECT_NAME”;
-
-TYPE_TRANSITION HTTPD_T VAR_LOG_T:FILE HTTPD_LOG_T “HTTP_LOG”;
-
-=== Skip: SELinux modes
-
-=== Skip: SELinux with podman containers: MCS
-
-=== Skip: Udica
-
-=== Multi Level Security MLS: slides #92-93
-
-Multi level security(MLS)
-
-Figure of read down and no write up
-
-Type enforcement allow rule must be present before SELinux considers sensitivity level
-

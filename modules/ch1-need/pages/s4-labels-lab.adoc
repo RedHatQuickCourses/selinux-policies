@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 9
 
 = Lab: Explore Labels and Policy Rules in a RHEL Machine
 
@@ -10,15 +10,13 @@ Objective::
 
 Explore the Labels and SELinux rules included with a default installation of Red Hat Enterprise Linux.
 
-WARNING: Work In Progress
+WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
 
-// You also need internet access to download sample applications and scripts from GitHub.
-
-Ensure that your system has SELinux enabled and in enforcing mode. Review the first activity in this course if you need help with those checks.
+Ensure that your system has SELinux enabled and in enforcing mode. Review the xref:s2-setup-lab.adoc[first activity] in this course if you need help with those checks.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
@@ -170,7 +168,7 @@ $ *seinfo -a file_type -x | grep passwd_file_t*
         passwd_file_t
 --
 
-5. Check that the loaded policy sets default contexts for files under user's home directories and also for password files. You have to use the `semanage` comand instead of the `sesearch` command:
+5. Check that the loaded policy sets default contexts for files under user's home directories and also for password files. You have to use the `semanage` command instead of the `sesearch` command:
 +
 5.1. First check user home directories, with type `user_home_dir_t`, and user's files, with type `user_home_t`:
 +
@@ -216,9 +214,9 @@ $ *sudo semanage fcontext -l | grep passwd_file_t*
 /etc/ptmptmp                                       regular file       system_u:object_r:passwd_file_t:s0
 --
 
-6. Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system servics have access to user's files.
+6. Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system services have access to user's files.
 +
-6.1. Find the context of common system services such as the Secure Shell and Cron deamons.
+6.1. Find the context of common system services such as the Secure Shell and Cron daemons.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -251,7 +249,7 @@ Notice that the Secure Shell daemon has no access to user's files but the Cron d
 +
 The Secure Shell daemon starts with elevated privileges, as the root user, and should be constrained as a potential avenue for security exploits.
 +
-On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to acccess user's files.
+On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to access user's files.
 +
 6.3. But how does the Secure Shell daemon gets the user's list of authorized keys? We already know there's a different resource type for those files:
 +
@@ -276,7 +274,7 @@ $ *sesearch --allow -s init_t -t unconfined_t -c process -p transition*
 allow init_t login_userdomain:process transition;
 --
 +
-7.2. Check that interactice processes can transition to the domain type of the `passwd `command:
+7.2. Check that interactice processes can transition to the domain type of the `passwd` command:
 +
 [source,subs="verbatim,quotes"]
 --

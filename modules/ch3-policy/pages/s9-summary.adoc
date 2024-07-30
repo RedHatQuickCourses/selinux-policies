@@ -11,3 +11,5 @@ In this chapter, you learned:
 * Always review the RHEL interface files in the `/usr/share/selinux/devel/include/` directory for comments on interfaces, and also use the `macro-expander` command to review the allow statements they generate.
 
 * Creating SELinux policy modules with `sepolicy` and `audit2allow` is an interactive process which requires exercising all features of the target application so it generates AVC erros in the audit log.
+
+* The recommended way of redistributing SELinux policy modules for deploying into multiple system is by using RPM packages.

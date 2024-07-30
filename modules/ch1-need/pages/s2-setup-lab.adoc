@@ -1,22 +1,18 @@
-:time_estimate: 5
+:time_estimate: 6
 
 = Lab: Verify the Status of SELinux in a RHEL Machine
 
 _Estimated reading time: *{time_estimate} minutes*._
 
-// This feels like should follow s1, it does not shows labels and contexts :-(
-
 Objective::
 
-Review the fundnamenal SELinux commands to ensure that a RHEL machine has SELinux enabled and in the enforced mode, with the tageted policy set loaded.
+Ensure that a RHEL machine has SELinux enabled and in the enforced mode, with the targeted policy set loaded.
 
 WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages.
-
-// You also need internet access to download sample applications and scripts from GitHub.
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
@@ -26,7 +22,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 // Do I need to do 'restorecon -Rv /' before 'fixfiles -F onboot' ?
 
-1. Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the detault status of all new RHEL deployments:
+1. Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -86,9 +82,9 @@ Memory protection checking:     actual (secure)
 Max kernel policy version:      33
 --
 
-4. If your output shows that at a different policy set is loaded, we recommend that you switch to a different machine to peform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:
+4. If your output shows that at a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:
 +
-4.1. In the fllowing example, the system has the *mls* policy set loaded, but the instructions would be the same for the *minimum* policy set:
+4.1. In the following example, the system has the *mls* policy set loaded, but the instructions would be the same for the *minimum* policy set from previous RHEL releases:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -105,7 +101,7 @@ Memory protection checking:     actual (secure)
 Max kernel policy version:      33
 --
 +
-4.2. Change the SELinux policy set in the  `/etc/selinux/config` file:
+4.2. Change the SELinux policy set in the `/etc/selinux/config` file:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -164,7 +160,7 @@ Most of the time, you will be interested only in the `avc` audit events.
 ...
 --
 
-7. A standard installation of RHEL includes no tool to inspect all about the loaded SELinux policies. You can install the `seinfo` and `sesearch` commands to get visibiity over the policies:
+7. A standard installation of RHEL includes no tool to inspect the loaded SELinux policies. You can install the `seinfo` and `sesearch` commands for that purpose:
 +
 7.1. Install the setools-console package:
 +
@@ -194,7 +190,7 @@ Handle unknown classes:     allow
 ...
 --
 +
-Fortunately, you can write good and useful SELinux policies without knowing about all those constructs. You will focus mostlu on classes, types, allow rules, and type transitions.
+Fortunately, you can write good and useful SELinux policies without knowing about all those constructs. You will focus mostly on classes, types, attributes, allow rules, and type transitions.
 +
 7.3. The `seinfo` command can list the instances of each SELinux policy construct. For example, to list classes:
 +
@@ -228,7 +224,3 @@ Notice that there are thousands of rules in the default targeted policy set prov
 
 Later in this course we'll learn how to filter the results of `sesearch`, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.
 
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-https://redhatgov.io/workshops/selinux_policy/setup/ 
-https://redhatgov.io/workshops/selinux_policy/exercise1.1/ 

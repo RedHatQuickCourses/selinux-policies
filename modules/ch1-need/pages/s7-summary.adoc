@@ -1,0 +1,15 @@
+= Summary
+
+In this chapter, you learned:
+
+* SELinux protects applications from vulnerabilities such as buffer overflows and code injection by ensuring they cannot be tricked into performing tasks they wouldn't normally perform.
+
+* SELinux relies on labels attached to users and processes, called domains, and to kernel objects such as files and network ports, called resources. SELinux rules set permissions of a domain or a resource based on their labels, also called contexts.
+
+* RHEL defaults to the targeted policy set, which uses only the type field of SELinux labels, and distinguishes between confined and unconfined domains. System services are protected as confined domains, under strict policies, while interactive users and third-party applications are protected as unconfined domains, with very permissive policies.
+
+* Containers and virtual machines on RHEL also use the MCS category field of SELinux labels to protect containers and VMs from one another.
+
+* SELinux is effective only if there are policies created specifically for each and all of the running applications. While RHEL provides policies for most of its packages, you need additional policies from third-party vendors and internally developed software.
+
+* The SELinux policies in RHEL are designed to be flexible and you don't need to create custom policies just because you changed the configuration of some of your system services.

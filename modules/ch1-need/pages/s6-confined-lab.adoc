@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 6
 
 = Lab: Explore Confined and Unconfined Processes in RHEL
 
@@ -8,13 +8,13 @@ Objective::
 
 Verify that system services run as confined processes but processes from interactive sessions run unconfined.
 
-WARNING: Work In Progress
+WARNING: Pending Review
 
 // This is very similar to the previous lab, for now there's a lot of concepts and little to actually do
 
 == Before you Start
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
 
 * SELinux enabled and enforcing the targeted policy.
 * The `setools-console` package.
@@ -89,7 +89,7 @@ system_u:system_r:mysqld_t:s0     28698 ?        Ssl    0:00 /usr/libexec/mysqld
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28966 pts/0 S+   0:00 grep --color=auto mysqld
 --
 +
-Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and differnet unconfined processes.
+Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and different unconfined processes.
 
 3. Install a third-party application and check that Systemd runs it unconfined.
 +
@@ -142,7 +142,7 @@ system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/tes
 +
 Notice that, though the test application gets the `unconfined_t` domain context type, it's under the `system_u` SELinux user and `system_r` SELinux role because it was started by Systemd.
 
-4. Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather foreacasts from cities with Red Hat offices.
+4. Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather forecasts from cities with Red Hat offices.
 +
 4.1. Start the test application on your shell and let it running:
 +
@@ -162,15 +162,46 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38858 pts/0 S+   0:00 /usr
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 38892 pts/1 S+   0:00 grep --color=auto testapp
 --
 +
-Notice that the test application runs with an unconfined domain type in both ways, but under different SELinux use and role, deppending on if it was started by Systemd or by an interactive shell.
+Notice that the test application runs with an unconfined domain type in both ways, but under different SELinux use and role, depending on if it was started by Systemd or by an interactive shell.
 +
 4.3. Go back to the previous terminal and kill the test application with Ctrl+C.
+
+5. Start a container and check its MCS categories.
++
+5.1. Start an interactive rootless container based on the Universal Base Image (UBI) and run a vi text editor inside the container:
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman run -it --name shell registry.access.redhat.com/ubi8/ubi*
+...
+Storing signatures
+[root@84ae43c99817 /]# *vi /etc/redhat-release*
+...
+--
++
+Leave the vi editor running. We choose to run an UBI8 container on purpose, to highlight that the RHEL release inside a container may be different than the RHEL release on its host.
++
+5.2. On another terminal, list all processes and observe their MCS categories. Use the vi process to find which of the Bash shell processes belong to the container.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ps ax -Z | grep bash*
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 2686 pts/0 Ss+   0:00 -bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 4969 pts/1 Ss   0:00 -bash
+system_u:system_r:container_t:s0:c108,c599 5122 pts/0 Ss   0:00 /bin/bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 5178 pts/2 Ss   0:00 -bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 5268 pts/2 S+   0:00 grep --color=auto bash
+$ *ps ax -Z | grep 'vi /etc'*
+system_u:system_r:container_t:s0:c108,c599 5265 pts/0 S+   0:00 vi /etc/redhat-release
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 5284 pts/2 S+   0:00 grep --color=auto vi /etc
+--
++
+The vi process runs with categories `c108,c599` ad there's a Bash processes with the same categories. Also notice both processes have the domain type `container_t` so they are NOT unconfined. Now compare with other Bash processes, which run with categories `c0.c1023` and are unconfined.
++
+5.3. Go back to the fist terminal and close the text editor. You can also exit the shell, terminating the container.
+
 
 == Next Steps
 
 Before learning to create custom SELinux policies, we must learn about configuring the SELinux in RHEL so you can address applications that do not require custom policies to be protected by SELinux.
 
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-https://redhatgov.io/workshops/selinux_policy/exercise1.2/ 

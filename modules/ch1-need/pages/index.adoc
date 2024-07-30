@@ -4,7 +4,7 @@ Goal::
 
 Understand the need for custom SELinux targeted policies.
 
-WARNING: Work in Progress
+WARNING: Pending Review
 
 == Introduction
 
