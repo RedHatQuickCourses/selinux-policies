@@ -4,10 +4,10 @@ Goal::
 
 Create a custom SELinux policy module to extend the RHEL targeted policy set for a new confined domain.
 
-WARNING: Work in Progress
+WARNING: Pending Review
 
 == Introduction
 
-This chapter concludes this course by walking though the scenario of creating a new policy module for a compiled application, so it runs as a confined domain from the System Daemon.
+This chapter concludes this course by walking through the scenario of creating a new policy module for a compiled application, so it runs as a confined domain from the System Daemon.
 
 Using the knowledge from previous chapters about interpreting SELinux policy rules and AVC errors, we will follow an interactive workflow to build a policy module in a semi-automated fashion using the tooling provided by Red Hat Enterprise Linux.

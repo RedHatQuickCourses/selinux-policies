@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 9
 
 = Lab: Reference Interfaces From a Custom SELinux Policy Module
 
@@ -10,11 +10,11 @@ Resolve AVC errors from a custom policy module, caused by accessing system files
 
 WARNING: Pending Review
 
-IMPORTANT: All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -60,9 +60,9 @@ $ *ls*
 noarch  testapp.fc  testapp.if  testapp.pp  testapp.sh  testapp.te  testapp_selinux-1.0-1.el9.src.rpm  testapp_selinux.8  testapp_selinux.spec  tmp
 --
 
-2. Review the first AVC error from the third-pary application.
+2. Review the first AVC error from the third-party application.
 +
-2.1. Analyse the first AVC error from the application:
+2.1. Analyze the first AVC error from the application:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -74,7 +74,7 @@ type=AVC msg=audit(1721849418.111:368): avc:  denied  { open } for  pid=7870 com
 type=AVC msg=audit(1721849418.111:368): avc:  denied  { read } for  pid=7870 comm="testapp" name="meminfo" dev="proc" ino=4026532024 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:object_r:proc_t:s0 tclass=file permissive=1
 --
 +
-The AVC is related to reading form the `/proc/meminfo` virtual file. This might be suspicious for the test application, which does nothing that requires system information, but would be common for daemons which auto-tune to allocate more or less memory depending on the total availabe in the system. Anyway, it is harmless from a security perspective.
+The AVC is related to reading form the `/proc/meminfo` virtual file. This might be suspicious for the test application, which does nothing that requires system information, but would be common for daemons which auto-tune to allocate more or less memory depending on the total available in the system. Anyway, it is harmless from a security perspective.
 +
 2.2. Get a suggestion to fix the AVC using an interface:
 +
@@ -161,7 +161,7 @@ interface(`kernel_read_system_state',`
 ...
 --
 +
-2.6. Find what the `kernel_read_system_state` interface would allow. Because the interface references an attribute, you must generate the output in CIL format, and then perform a search for referentes to the attribute.
+2.6. Find what the `kernel_read_system_state` interface would allow. Because the interface references an attribute, you must generate the output in CIL format, and then perform a search for references to the attribute.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -174,7 +174,7 @@ allow kernel_system_state_reader proc_t:file { getattr ioctl lock open read };
 --
 +
 The output shows it allows only reading files and directories of type `proc_t`.
-If you check which files under the `/proc` directory have the `proc_t` type, you will see they provide non-sensitie information about the system.
+If you check which files under the `/proc` directory have the `proc_t` type, you will see they provide non-sensitive information about the system.
 +
 2.7. Get an alternative suggestion to fix the AVC using allow statements:
 +
@@ -191,7 +191,7 @@ This is a subset of the rules from the interface. You know that, to read a file,
 
 3. Update and reload the custom policy.
 +
-3.1. Add a referente do the interface to the end of the `testapp.te` file:
+3.1. Add a reference do the interface to the end of the `testapp.te` file:
 +
 [source,subs="verbatim"]
 --
@@ -209,7 +209,7 @@ kernel_read_system_state(testapp_t)
 +
 [source,subs="verbatim,quotes"]
 --
-sudo ./testapp.sh 
+$ *sudo ./testapp.sh*
 ...
 + exit 0
 --
@@ -258,7 +258,7 @@ miscfiles_read_certs(testapp_t)
 miscfiles_search_generic_cert_dirs(testapp_t)
 --
 +
-We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining ativities will not perform such tasks, but just use the suggestions from the `audit2allow` command.
+We advise you to review the interface file for all interfaces you select, and assess if they are fine or not for your specific needs. In the interest of time, this and the remaining activities will not perform such tasks, but just use the suggestions from the `audit2allow` command.
 +
 4.3. Add references to the two interfaces to the end of the `testapp.te` file:
 +
@@ -335,70 +335,4 @@ $ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
 
 == Next Steps
 
-The custom policy is not complete yet. The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on network access.
-
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-Testapp scenario (slides #159-170)
-Generate a starter custom policy (slides #171-176)
-Domain transition to custom type (slides #177-179)
-From AVCs to policy rules (slides #180-197)
-
-https://redhatgov.io/workshops/selinux_policy/exercise2.2/
-
-https://play.instruqt.com/rhel/invite/adj7n5qdsl2y
-https://github.com/rhel-labs/instruqt/tree/master/selinux-policy
-
-I got a /proc AVC, like the NPS workshop
-slides #183 and instruqt 05-selinux-policy2 got a pid file AVC but afterards they get a proc AVC -- two AVCs on same activity
-
-Why I don't get the pid file AVC?
-
-AVCs from slides:
-- pid file #183 -- multiple edits and custom type? #184
-- /proc #186 -- interface
-- connect to http port #189 -- interface
-- resolv.conf #191 -- interface
-All rules use interfaces!
-
-slides save all AVCs to a file and interprets them from the file instead of audt2allow
-ausearch -m AVC -ts recent > ~/avc_file
-
-AVCs from NPS workshop: (+ not in slides)
-- /proc exercise2.2 -- interface
-- connect to http port exercise2.3 -- interface (nice checking potential alternatives)
-+ sockets exercise2.3 -- audit2allow (just for a variation compared to interfaces? no)
-- resolv.conf exercise2.4 -- interface
-+ SSL certs exercise2.4 -- interface
-
-AVCs from instruqt (+ not in slides)
-- pid file 05-selinux-policy2 -- interface + allow from audit2allow and generic var type 
-- /proc 05-selinux-policy2 -- manual manually
-+ SSL certs 06-selinux-policy3 - manual interface, warning about mismatch with audit2allow
-- connect to http port 06-selinux-policy3 -- interface form audit2allow
-+ sockets 06-selinux-policy3 -- allow from audit2allow
-- resolv.conf 07-selinux-policy4 -- interface from audit2allow
-
-
-Install selinux-policy-devel to get policy interface files (and all sources?)
-
-cd /usr/share/selinux/devel/include
-find . -type f -name "*.if" -exec grep -H '/proc' {} \; | grep "system state information"
-./kernel/kernel.if:##	Allows caller to read system state information in /proc.
-
-manually add to testapp.te
-kernel_read_system_state(testapp_t)
-
-keep entries (or just interfaces?) in alphabetical order
-
-restart the service and chek if the AVC relatd to meminfo still exists
-
-sudo ausearch -m AVC -ts recent | grep meminfo | wc -l
-
-maybe use a timestamp to limit ausearch? "recent" is too imprecise. like the instruqt
-# All AVCs from the last run
-TIME=`date +%T`;export TIME; sudo systemctl restart testapp; sudo ausearch --message AVC --start $TIME
-
-remove /var/run/testapp.pid on restart to get correct label
-
+The custom policy is not complete yet. The next activity continues the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on network access.

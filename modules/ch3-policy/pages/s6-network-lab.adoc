@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 6
 
 = Lab: Allow Network Access to a Confined Domain
 
@@ -6,15 +6,15 @@ _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Resolve AVC errors from a custom policy module, caused by network operations, by referring to existing interfaces.
+Resolve AVC errors from a custom policy module, caused by network operations, by referring to existing interfaces and adding allow statements.
 
 WARNING: Pending Review
 
-IMPORTANT: All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -29,7 +29,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 1. This activity is a continuation of the xref:s4-files-lab.adoc[previous activity]. It requires that the third-party application be already installed as a system service, with a custom policy which runs the application in a permissive domain and allows access to system files.
 +
-1.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it. Remember to record the timestap so you can filter audit events.
+1.1. Check that the test application service is still active. It will terminate when it's done retrieving the weather from all cities, and in that case you need to restart it. Remember to record the timestamp so you can filter audit events.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -88,7 +88,7 @@ allow testapp_t self:udp_socket create;
 +
 It finds no interface, thus it shows allow statements.
 +
-2.3. The previous rule is insufficient: what about reading and writing UDO sockets? We would need allow statements for those operations too:
+2.3. The previous rule is clearly insufficient: what about reading and writing from UDP sockets? We would need allow statements for those operations too:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -99,7 +99,7 @@ type=AVC msg=audit(1721936082.494:457): avc:  denied  { connect } for  pid=5639 
 type=AVC msg=audit(1721936082.494:458): avc:  denied  { getattr } for  pid=5639 comm="testapp" path="socket:[65312]" dev="sockfs" ino=65312 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 --
 +
-You could could grep for "tclass=tcp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.
+You could could grep for "tclass=udp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.
 +
 2.4. As there isn't an interface for UDP socket access, probably there isn't one for TCP sockets either, and we know HTTP clients, such as the test application, require TCP sockets:
 +
@@ -114,7 +114,7 @@ type=AVC msg=audit(1721936082.621:464): avc:  denied  { getopt } for  pid=5639 c
 type=AVC msg=audit(1721936082.621:465): avc:  denied  { getattr } for  pid=5639 comm="testapp" laddr=172.25.250.9 lport=59958 faddr=5.9.243.187 fport=443 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=tcp_socket permissive=1
 --
 +
-2.5. Generate audit rules for all AVC erros related to UDP and TCP sockets:
+2.5. Generate audit rules for all AVC errors related to UDP and TCP sockets:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -125,7 +125,7 @@ allow testapp_t self:udp_socket { connect create getattr setopt };
 corenet_tcp_connect_http_port(testapp_t)
 --
 +
-Notice that the output includes an interface for HTTP connections. As advised in the previous activity, you should review the commennts from all interfaces you use in the `/usr/share/selinux/devel/include/` directory.
+Notice that the output includes an interface for HTTP connections. As advised in the previous activity, you should review the comments in the `/usr/share/selinux/devel/include/` directory for all interfaces you use.
 +
 2.6. In the interest of time, just review the allow rules from the `corenet_tcp_connect_http_port` interface and assess if it grants too many permissions: 
 +
@@ -139,7 +139,7 @@ Notice the interface only allows one operation (`name_connect`), only to TCP por
 
 3. Update the policy module and verify if it fixed all AVCs related to UDP and TCP sockets.
 +
-3.1. Add the allow statments and interface referente from the previous steps to the end of the `testapp.te` file:
+3.1. Add the allow statements and interface references from the previous steps to the end of the `testapp.te` file:
 +
 [source,subs="verbatim"]
 --
@@ -188,46 +188,3 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 't
 == Next Steps
 
 The next activities reviews the remaining AVC errors from the test application, and adds policy rules to fix them, so we can successfully run the test application in confined mode.
-
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-Testapp scenario (slides #159-170)
-Generate a starter custom policy (slides #171-176)
-Domain transition to custom type (slides #177-179)
-From AVCs to policy rules (slides #180-197)
-
-https://redhatgov.io/workshops/selinux_policy/exercise2.2/
-
-https://play.instruqt.com/rhel/invite/adj7n5qdsl2y
-https://github.com/rhel-labs/instruqt/tree/master/selinux-policy
-
-I got a /proc AVC, like the NPS workshop
-slides #183 and instruqt 05-selinux-policy2 got a pid file AVC but afterards they get a proc AVC -- two AVCs on same activity
-
-Why I don't get the pid file AVC?
-
-AVCs from slides:
-- pid file #183 -- multiple edits and custom type? #184
-- /proc #186 -- interface
-- connect to http port #189 -- interface
-- resolv.conf #191 -- interface
-All rules use interfaces!
-
-slides save all AVCs to a file and interprets them from the file instead of audt2allow
-ausearch -m AVC -ts recent > ~/avc_file
-
-AVCs from NPS workshop: (+ not in slides)
-- /proc exercise2.2 -- interface
-- connect to http port exercise2.3 -- interface (nice checking potential alternatives)
-+ sockets exercise2.3 -- audit2allow (just for a variation compared to interfaces? no)
-- resolv.conf exercise2.4 -- interface
-+ SSL certs exercise2.4 -- interface
-
-AVCs from instruqt (+ not in slides)
-- pid file 05-selinux-policy2 -- interface + allow from audit2allow and generic var type 
-- /proc 05-selinux-policy2 -- manual manually
-+ SSL certs 06-selinux-policy3 - manual interface, warning about mismatch with audit2allow
-- connect to http port 06-selinux-policy3 -- interface form audit2allow
-+ sockets 06-selinux-policy3 -- allow from audit2allow
-- resolv.conf 07-selinux-policy4 -- interface from audit2allow

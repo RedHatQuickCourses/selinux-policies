@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 6
 
 = Lab: Create a Generic SELinux Policy Module
 
@@ -10,11 +10,11 @@ Generate a policy module that runs a compiled application as a permissive domain
 
 WARNING: Pending Review
 
-IMPORTANT: All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -27,9 +27,9 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
-1. Install the sample third-party application, if you didn't do it already in a xref:ch1-need:s7-confined-lab.adoc[previous activity].
+1. Install the sample third-party application, if you didn't do it already in a xref:ch1-need:s6-confined-lab.adoc[previous activity].
 +
-1.1. Clone the course samples repository and enter the `testapp` diretory.
+1.1. Clone the course samples repository and enter the `testapp` directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -214,9 +214,4 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp*
 == Next Steps
 
 The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on access to system files.
-
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-TBD
 
