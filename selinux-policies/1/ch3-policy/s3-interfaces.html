@@ -131,7 +131,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s7-redistribute.html">Packaging SELinux Policy Modules</a>
+    <a class="nav-link" href="s7-redistribute.html">Package SELinux Policy Modules</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
@@ -186,13 +186,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>3 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Understand the use of SELinux policy inerfaces to extend the targeted policy set from RHEL.</p>
+<p>Understand the use of SELinux policy interfaces to extend the targeted policy set from RHEL.</p>
 </dd>
 </dl>
 </div>
@@ -214,7 +214,7 @@ Pending Review
 <h2 id="_reusability_of_selinux_policy_rules"><a class="anchor" href="#_reusability_of_selinux_policy_rules"></a>Reusability of SELinux Policy Rules</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The targeted policy set from RHEL was designed with reusability goals. This helps both Red Hat&#8217;s developers and partner or user organizaton&#8217;s developers by enabling them to create shorter policy modules which are easier to maintain.</p>
+<p>The targeted policy set from RHEL was designed with reusability goals. This helps both Red Hat&#8217;s own developers and partner or user organization&#8217;s developers by enabling them to create shorter policy modules which are easier to maintain.</p>
 </div>
 <div class="paragraph">
 <p>Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain compatible with future release of RHEL and the policy changes which may come.</p>
@@ -225,7 +225,7 @@ Pending Review
 <h2 id="_documentation_of_selinux_policy_intefaces"><a class="anchor" href="#_documentation_of_selinux_policy_intefaces"></a>Documentation of SELinux Policy Intefaces</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All available policy modules install a copy of their interface files to the <code>/usr/share/selinux/devel/include</code> directory. Each interface in those files is preceeded by comments, denoted by hash signs (#) and these comments describe the intent, usage, and arguments of each interface.</p>
+<p>All available policy modules install a copy of their interface files to the <code>/usr/share/selinux/devel/include</code> directory. Each interface in those files is preceded by comments, denoted by hash signs (#) and these comments describe the intent, usage, and arguments of each interface.</p>
 </div>
 </div>
 </div>
@@ -236,10 +236,10 @@ Pending Review
 <p>The <code>audit2allow</code> command, with the <code>-R</code> option, tries to find an interface which would resolve the AVC error. If it cannot find any interface, it outputs standalone allow statements.</p>
 </div>
 <div class="paragraph">
-<p>Similar to the <code>audit2why</code> command, the <code>audit2allow</code> command may not suggest the better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it neeeds.</p>
+<p>Similar to the <code>audit2why</code> command, the <code>audit2allow</code> command may not suggest the better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it needs.</p>
 </div>
 <div class="paragraph">
-<p>You can use the suggetion from the <code>audit2allow</code> command as a starting point: review the comments on that interface, and if it looks like it allows too much, seach the same interface file for other similar interfaces which may be more restrictive. It may require some trial-and-error until you find the best interface for your application.</p>
+<p>You can use the suggestion from the <code>audit2allow</code> command as a starting point: review the comments on that interface, and if it looks like it allows too much, scan the same interface file for other similar interfaces which may be more restrictive. It may require some trial-and-error until you find the best interface for your application.</p>
 </div>
 </div>
 </div>
@@ -247,7 +247,7 @@ Pending Review
 <h2 id="_expanding_interfaces_into_allow_statements"><a class="anchor" href="#_expanding_interfaces_into_allow_statements"></a>Expanding Interfaces Into Allow Statements</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If the comments in an interface file are not clear to you, or you wish to double check eactly which permissions you get from an interface, you can use the <code>macro-expand</code> command, from the <code>selinux-policy-devel</code> package, to expand an interface into its policy statements.</p>
+<p>If the comments in an interface file are not clear to you, or you wish to double check exactly which permissions you get from an interface, you can use the <code>macro-expand</code> command, from the <code>selinux-policy-devel</code> package, to expand an interface into its policy statements.</p>
 </div>
 <div class="paragraph">
 <p>You give to the <code>macro-expander</code> a complete reference to an interface, including all arguments. It outputs the list of allow rules that the interface generates.</p>
@@ -263,12 +263,6 @@ Pending Review
 <div class="paragraph">
 <p>The next activity takes the autogenerated policy from the previous activity and improves it with references to interfaces which allow reading system files, and brings our custom policy module one step closer to completion.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 <nav class="pagination">

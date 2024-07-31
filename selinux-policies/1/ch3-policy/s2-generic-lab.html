@@ -131,7 +131,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s7-redistribute.html">Packaging SELinux Policy Modules</a>
+    <a class="nav-link" href="s7-redistribute.html">Package SELinux Policy Modules</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
@@ -186,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>6 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -215,7 +215,7 @@ Pending Review
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-All ativities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it&#8217;s certainly easier. If you must pause between activities, ensure you can contine using the same RHEL machine.
+All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it&#8217;s certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 </td>
 </tr>
 </table>
@@ -226,7 +226,7 @@ All ativities in this chapter require the results of the previous activities. Yo
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -261,9 +261,9 @@ All ativities in this chapter require the results of the previous activities. Yo
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Install the sample third-party application, if you didn&#8217;t do it already in a <a href="#ch1-need:s7-confined-lab.adoc" class="xref unresolved">previous activity</a>.</p>
+<p>Install the sample third-party application, if you didn&#8217;t do it already in a <a href="../ch1-need/s6-confined-lab.html" class="xref page">previous activity</a>.</p>
 <div class="paragraph">
-<p>1.1. Clone the course samples repository and enter the <code>testapp</code> diretory.</p>
+<p>1.1. Clone the course samples repository and enter the <code>testapp</code> directory.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -475,14 +475,6 @@ allow testapp_t testapp_var_run_t:file { append create getattr ioctl link lock o
 <div class="sectionbody">
 <div class="paragraph">
 <p>The next activity starts the process of reviewing AVC errors from the third-party application and adding policy rules to fix these AVC errors, by focusing on access to system files.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>TBD</p>
 </div>
 </div>
 </div>

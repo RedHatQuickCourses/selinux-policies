@@ -131,7 +131,7 @@
     <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s7-redistribute.html">Packaging SELinux Policy Modules</a>
+    <a class="nav-link" href="s7-redistribute.html">Package SELinux Policy Modules</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
@@ -186,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>4 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -214,16 +214,16 @@ Pending Review
 <h2 id="_on_the_viability_of_creating_policies_manually"><a class="anchor" href="#_on_the_viability_of_creating_policies_manually"></a>On The Viability Of Creating Policies Manually</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In theory, if you know what an application does, and know the SELinux policy language very well, you could write an entire policy module from scratch. Tools such as the <code>sepolicy</code> and <code>audit2allow</code> commans are optional helpers.</p>
+<p>In theory, if you know what an application does, and knows the SELinux policy language very well, you could write an entire policy module from scratch. Tools such as the <code>sepolicy</code> and <code>audit2allow</code> commands are optional helpers.</p>
 </div>
 <div class="paragraph">
-<p>There is extensive documentation on the sytax of policy statements and other syntax element of policy modules, and a large collection of examples from the targeted policy module from RHEL and the upsteam SELinux project.</p>
+<p>There is extensive documentation on the syntax of policy statements and other syntax element of policy modules, and a large collection of examples from the targeted policy module from RHEL and the upstream SELinux project.</p>
 </div>
 <div class="paragraph">
-<p>Some policies were indeed created manually, because they were among the first, they were created before there were helper tools, or because their complexity required exotic features. This is just not something we recommend to the average policy author because it is time-consumng and error-phrone.</p>
+<p>Some policies were indeed created manually, because they were among the first, they were created before there were helper tools, or because their complexity required exotic features. This is just not something we recommend to the average policy author because it is time-consuming and error-prone.</p>
 </div>
 <div class="paragraph">
-<p>For more sophisticated applications, especially for system components and server applications which are expected to provide interfaces for other applications, you will need deeper knowledge of SELinux policy syntax than this course provides and the SELinux communinity, <a href="https://www.redhat.com/en/services/consulting">Red Hat Consulting services</a>, and the <a href="https://connect.redhat.com/en/programs">Red Hat Partner Programs</a> can help you if you need.</p>
+<p>For more sophisticated applications, especially for system components and server applications which are expected to provide interfaces for other applications, you will need deeper knowledge of SELinux policy syntax than this course provides. The SELinux community, <a href="https://www.redhat.com/en/services/consulting">Red Hat Consulting services</a>, and the <a href="https://connect.redhat.com/en/programs">Red Hat Partner Programs</a> can help you if you need.</p>
 </div>
 <div class="paragraph">
 <p>Here the intent is just to set realistic expectations on how much you can accomplish without deeper knowledge and experience with SELinux policies and why Red Hat recommends the semi-automated iterative process.</p>
@@ -237,13 +237,13 @@ Pending Review
 <p>SELinux policies act on a very low level, at the Linux Kernel system calls level. This is good because it enables them to affect anything an application does, because the Linux Kernel is the ultimate gateway between application process and files, networks, devices, and other processes. But it means that SELinux policy work at a much lower granularity than most high-level programming languages do.</p>
 </div>
 <div class="paragraph">
-<p>Application developers are used to write statements which may require multiple Linux system calls, thus one statement may require multiple resource operations.</p>
+<p>Application developers are used to write statements which may require multiple Linux system calls, thus one statement may require multiple resource operations and generate a many AVC errors.</p>
 </div>
 <div class="paragraph">
-<p>Furthermore, application code frequently relies on library code, which may hide lots of interactions with multiple kernel objects and system files. Sometimes those applications perform heavy introspection on the system and this generats unexpected AVC errors, as in a developer really had no idea the library would perform such operations on normal usage.</p>
+<p>Furthermore, application code frequently relies on library code, which may encapsulate lots of interactions with multiple kernel objects and system files. Sometimes those applications perform heavy introspection on the system and this generates unexpected AVC errors. Sometimes developers really had no idea the library would perform such operations on normal usage.</p>
 </div>
 <div class="paragraph">
-<p>And, given the recent thread of supply chain attacks, which compromise open source (and also propritary) code repository with common libraries polluted with malware, you should exercise extra care when assessing if your applications are supposed to perform those operations from an AVC error. Are you running the real library, or a compromised clone of it?</p>
+<p>And, given the recent thread of supply chain attacks, which compromise open source (and also proprietary) code repository with clones of common libraries polluted with malware, you should exercise extra care when assessing if your applications are supposed to perform  operations from an AVC error. Are you running the real library, or a compromised clone of it?</p>
 </div>
 </div>
 </div>
@@ -251,16 +251,16 @@ Pending Review
 <h2 id="_a_stategy_of_grouping_avc_errors"><a class="anchor" href="#_a_stategy_of_grouping_avc_errors"></a>A Stategy of Grouping AVC Errors</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Given that most applications perform multiple operations on the same kernel object or class of objects, and frequently those operations are required to be performend in a specific sequence, you should analyse your AVC errors grouped by resource instance or resource type.</p>
+<p>Given that most applications perform multiple operations on the same kernel object or class of objects, and frequently those operations are required to be performed in a specific sequence, you should analyze your AVC errors grouped by resource instance or resource type.</p>
 </div>
 <div class="paragraph">
-<p>It is expected that the output of the <code>audit2allow</code> command, if it returns an interface, will resolve not only the one AVC error you feed into it, but other AVCs related to the sme resource.</p>
+<p>It is expected that the output of the <code>audit2allow</code> command, if it returns an interface, will resolve not only the one AVC error you feed into it, but other AVCs related to the same resource.</p>
 </div>
 <div class="paragraph">
 <p>But if the <code>audit2allow</code> command outputs individual allow rules, it&#8217;s a good idea to group AVC errors and process them at once, so you can assess the complete rule set.</p>
 </div>
 <div class="paragraph">
-<p>If you need, you can work by always grouping AVC errors, instead of analysing them one-by-one, like we did in the previous activity. The <code>audit2allow</code> command is smart enough to not output duplicate rules and references to interfaces. It will output a minimise set of rule statements for the set of AVC erros you feed it.</p>
+<p>If you need, you can work by always grouping AVC errors, instead of analyzing them one-by-one, like we did in the previous activity. The <code>audit2allow</code> command is smart enough to not output duplicate rules nor duplicate references to interfaces. It will output a minimized set of rule statements for the set of AVC errors you feed it.</p>
 </div>
 <div class="paragraph">
 <p>Just remember that, if it includes interfaces in the output, those may not be the least permissive interfaces available.</p>
@@ -271,14 +271,8 @@ Pending Review
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next activity continues building our custom SELinux policy module by analysing AVC errors related to network access and adding both references to interfaces and allow statements to the type enforcement file.</p>
+<p>The next activity continues building our custom SELinux policy module by analyzing AVC errors related to network access and adding both references to interfaces and allow statements to the type enforcement file.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 <nav class="pagination">
