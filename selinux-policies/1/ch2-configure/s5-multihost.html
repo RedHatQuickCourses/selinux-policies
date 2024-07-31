@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Consistent SElinux settings :: Writing Targeted Policies for SELinux on RHEL</title>
+    <title>Consistent SELinux settings :: Writing Targeted Policies for SELinux on RHEL</title>
     <link rel="prev" href="s4-troubleshoot-lab.html">
     <link rel="next" href="s6-ansible-lab.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -85,7 +85,7 @@
     <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
@@ -173,7 +173,7 @@
   <ul>
     <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
     <li><a href="index.html">SELinux Management</a></li>
-    <li><a href="s5-multihost.html">Consistent SElinux settings</a></li>
+    <li><a href="s5-multihost.html">Consistent SELinux settings</a></li>
   </ul>
 </nav>
 </div>
@@ -182,17 +182,17 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Consistent SElinux settings</h1>
+<h1 class="page">Consistent SELinux settings</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>2 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Ensure consistent SELinux settings on multiple servers using Ansible collections.</p>
+<p>Ensure consistent SELinux settings on multiple servers by using Ansible collections.</p>
 </dd>
 </dl>
 </div>
@@ -239,7 +239,7 @@ Pending Review
 <p>And the list could go on.</p>
 </div>
 <div class="paragraph">
-<p>The solution is automation, and Red Hat uses <a href="https://www.redhat.com/en/technologies/management/ansible">Ansible</a> to automate multile products, including RHEL. This course does not teach the fundamentals of Ansible, but it provides working examples on which you can build upon for your real world environments.</p>
+<p>The solution is automation, and Red Hat uses <a href="https://www.redhat.com/en/technologies/management/ansible">Ansible</a> to automate the management of multiple products, including RHEL. This course does not teach the fundamentals of Ansible, but it provides working examples on which you can build upon for your real world environments.</p>
 </div>
 </div>
 </div>
@@ -256,7 +256,7 @@ Pending Review
 <p>Like other system roles, the SELinux system role require that a playbook sets a number of variables, them performs actions based on the values of those variables. If a variable is unset, them the role does nothing.</p>
 </div>
 <div class="paragraph">
-<p>You can find a list of all variables from the SELinux system role and their purposes on the sample files from the system roles RPM package itself or on the upstrem <a href="https://galaxy.ansible.com/ui/standalone/roles/linux-system-roles/selinux/documentation/">Linux System Roles</a> Ansibe collection.</p>
+<p>You can find a list of all variables from the SELinux system role and their purposes on the sample files from the system roles RPM package itself or on the upstream <a href="https://galaxy.ansible.com/ui/standalone/roles/linux-system-roles/selinux/documentation/">Linux System Roles</a> Ansible collection.</p>
 </div>
 <div class="paragraph">
 <p>The SELinux system roles and other RHEL system role can be used by themselves, in narrow purpose playbooks, or in larger playbooks which perform all tasks required to deploy and configure an application.</p>
@@ -270,42 +270,8 @@ Pending Review
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We will wrap up this chapter with working examples of Ansible playbooks which configure SELinux for the two previous use cases of a PHP application and an Apache web server with non-standard settigs. Then we start the final chapter of this course by creating a custom policy module for a compiled application.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
-</div>
-<div class="sect2">
-<h3 id="_ansible_collections_slides_129_133"><a class="anchor" href="#_ansible_collections_slides_129_133"></a>Ansible collections: slides #129-133</h3>
-<div class="paragraph">
-<p>We have properly configured SELinux on one system, what about others?</p>
-</div>
-<div class="paragraph">
-<p>Let’s use ansible to deploy the same configuration to the rest of the servers!</p>
-</div>
-<div class="paragraph">
-<p>use the following Ansible role:
-<a href="https://github.com/linux-system-roles/selinux" class="bare">https://github.com/linux-system-roles/selinux</a></p>
-</div>
-<div class="paragraph">
-<p>Expected Functionality:</p>
-</div>
-<div class="paragraph">
-<p>Set enforcing/permissive
-restorecon portions of filesystem tree
-Set/Get Booleans
-Set/Get file contexts
-Manage logins
-Manage ports</p>
-</div>
-<div class="paragraph">
-<p>Screenshot of a code listing [of which file?]</p>
-</div>
+<p>We will wrap up this chapter with working examples of Ansible playbooks which configure SELinux for the two previous use cases of a PHP application and an Apache web server with non-standard settin
+gs. Then we start the final chapter of this course by creating a custom policy module for a compiled application.</p>
 </div>
 </div>
 </div>

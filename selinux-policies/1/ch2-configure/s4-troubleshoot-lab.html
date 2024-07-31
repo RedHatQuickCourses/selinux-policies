@@ -85,7 +85,7 @@
     <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
@@ -186,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>15 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -214,7 +214,7 @@ Pending Review
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -279,7 +279,7 @@ DocumentRoot "/var/website"
 </div>
 </div>
 <div class="paragraph">
-<p>You can find a copy of the file with all changes already done in the <a href="https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf">sample app</a> repository.</p>
+<p>You can find a copy of the configuration file with all changes already applied in the <a href="https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf">sample applications</a> git repository.</p>
 </div>
 <div class="paragraph">
 <p>1.4. Create a test web site:</p>
@@ -393,7 +393,7 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 <p>Notice that <code>audit2why</code> suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.</p>
 </div>
 <div class="paragraph">
-<p>3.2. If you took too long to review the AVC error, the previous step might return "&lt;no matches&gt;". In this case, you can filter by the application binary, which is also useful when there are AVC erros from multiple processes:</p>
+<p>3.2. If you took too long to review the AVC error, the previous step might return "&lt;no matches&gt;". In this case, you can filter by the application binary, which is also useful when there are AVC errors from multiple processes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -418,13 +418,13 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 <p>In this case, <code>audit2why</code> suggests creating a custom policy module to fix the AVC. Sometimes this can be the right approach, but in this particular case the loaded policy already assigns TCP port 8000 to a different resource type (<code>soundd_port_t</code>). It would be better to avoid interfering with the default policies from RHEL, but if you have to, you could add allow rules so the Apache Web Server has access to more resource types.</p>
 </div>
 <div class="paragraph">
-<p>Feel free to change your Apache Web Server configuration and retry the previous steps to see this differeent suggestion by yourself. Or if you prefer, just proceed to the next step.</p>
+<p>Feel free to change your Apache Web Server configuration and retry the previous steps to see this different suggestion by yourself. Or if you prefer, just proceed to the next step.</p>
 </div>
 </li>
 <li>
 <p>Assess if the suggestion from <code>audit2why</code> was a good one.</p>
 <div class="paragraph">
-<p>4.1. We already know that our Apache Web Server configuration does not require NIS, and that the previous recommendation looks odd. But let&#8217;s check what enabling that boolean entais:</p>
+<p>4.1. We already know that our Apache Web Server configuration does not require NIS, and that the previous recommendation looks odd. But let&#8217;s check what enabling that boolean entails:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -441,7 +441,7 @@ allow nsswitch_domain unreserved_port_t:tcp_socket name_connect; [ nis_enabled ]
 </div>
 <div class="paragraph">
 <p>4.2. Check the range of ports that would be allowed by the boolean.
-It includes a resouce types which grant a large range of TCP ports:</p>
+It includes a resource types which grant a large range of TCP ports:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -450,14 +450,14 @@ unreserved_port_t              tcp      61000-65535, 1024-3276</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>That made <code>audit2why</code> suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports.</p>
+<p>That made <code>audit2why</code> suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.</p>
 </div>
 <div class="paragraph">
-<p>By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is not considered secure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default and you should be careful to not enable them unless there&#8217;s a real need.</p>
+<p>By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is considered insecure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default. You should be careful to not enable them unless there&#8217;s a real need and you provide some mitigation for the increased exposure.</p>
 </div>
 </li>
 <li>
-<p>Because we didn&#8217;t like the suggestion from <code>audit2why</code>, check if the <code>sealert</code> provides a better suggesiton.</p>
+<p>Because we didn&#8217;t like the suggestion from <code>audit2why</code>, check if the <code>sealert</code> provides a better suggestion.</p>
 <div class="paragraph">
 <p>5.1. Save the AVC errors into a text file:</p>
 </div>
@@ -472,11 +472,12 @@ unreserved_port_t              tcp      61000-65535, 1024-3276</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>dnf -y install setroubleshoot-server</strong>
+...
 Complete!</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>5.3. Process the text file with <code>sealert</code>. It gives a long output, with multiple suggestions. Let&#8217;s revew them one by one:</p>
+<p>5.3. Process the text file with <code>sealert</code>. It gives a long output, with multiple suggestions. Let&#8217;s review them one by one:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -505,7 +506,7 @@ Do
 </div>
 </div>
 <div class="paragraph">
-<p>5.5. The second suggestion is enabling the same boolean we got from <code>audit2why</code>, which we do not consider a good suggesiton:</p>
+<p>5.5. The second suggestion is enabling the same boolean we got from <code>audit2why</code>, which we do not consider a good suggestion:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -558,14 +559,15 @@ allow this access for now by executing:
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>dnf -y install selinux-policy docs</strong>
 ...
 Complete!
-$ <strong>man httpd_selinux</strong></code></pre>
+$ <strong>man httpd_selinux</strong>
+...</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.</p>
 </div>
 <div class="paragraph">
-<p>6.2. From the man page, the follwing resource type seems to be the one we need:</p>
+<p>6.2. From the man page, the following resource type seems to be the one we need:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -588,7 +590,7 @@ http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
 </div>
 </div>
 <div class="paragraph">
-<p>6.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:</p>
+<p>6.5. Label the 30000 TCP port with the correct SELinux context:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -609,7 +611,7 @@ http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 844
 <li>
 <p>Try again starting the Apache Web Server and check if there are more AVC errors.</p>
 <div class="paragraph">
-<p>7.1. Start Apache Web and verify it sucessfully listen for connections on the new port:</p>
+<p>7.1. Start Apache Web and verify it successfully listen for connections on the new port:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -633,7 +635,7 @@ LISTEN 0      511                <strong>:30000            *:</strong>    users:
 </div>
 </div>
 <div class="paragraph">
-<p>7.3. You are sure the <code>httpd</code> daemon should have access to the <code>/var/website/index.html</code> file, right?</p>
+<p>7.3. You are sure the <code>httpd</code> daemon has file access permissions to the <code>/var/website/index.html</code> file, right?</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -642,7 +644,7 @@ LISTEN 0      511                <strong>:30000            *:</strong>    users:
 </div>
 </div>
 <div class="paragraph">
-<p>7.4. Verify if there are new AVC errors. You shold see "denied" entry which refers to a <code>path</code> of <code>/var/website/index.html</code></p>
+<p>7.4. Verify if there are new AVC errors. You should see "denied" entry which refers to a <code>path</code> of <code>/var/website/index.html</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -672,7 +674,7 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
 </div>
 </div>
 <div class="paragraph">
-<p>It suggests generating a policy module, which would allow the <code>httpd_t</code> domain type access to the <code>var_t</code> resource type. It is a best practice to avoiding adding to the policy, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.</p>
+<p>It suggests generating a policy module, which would allow the <code>httpd_t</code> domain type access to the <code>var_t</code> resource type. It is a best practice to avoiding adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.</p>
 </div>
 <div class="paragraph">
 <p>7.6. Check the advice from <code>sealert</code>:</p>
@@ -751,145 +753,9 @@ $ <strong>curl http://127.0.0.1:30000/index.html</strong>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
-</div>
-<div class="sect2">
-<h3 id="_custom_httpd_config_slides_105_122"><a class="anchor" href="#_custom_httpd_config_slides_105_122"></a>Custom httpd config: slides #105-122</h3>
-<div class="paragraph">
-<p>TROUBLESHOOTING EXISTING POLICY</p>
-</div>
-<div class="paragraph">
-<p>MISLABELED SYSTEM I.E LABELS ON OBJECTS ARE WRONG</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># restorecon -Rv /</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># fixfiles onboot
-# reboot</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>SELINUX MODIFICATIONS OF THE DISTRO POLICY VIA SELINUX USERSPACE TOOLING</p>
-</div>
-<div class="paragraph">
-<p>SOMETIMES IT’S NOT NECESSARY TO CREATE CUSTOM SELINUX POLICY, LOCAL MODIFICATION CAN FIX IT.</p>
-</div>
-<div class="paragraph">
-<p>APACHE HTTP SERVER WITH CHANGES IN THE DEFAULT CONFIGURATION</p>
-</div>
-<div class="paragraph">
-<p>httpd service configured to listen on tcp port 3131 instead of port 80
-document root will be /var/test_www/ instead of /var/www/</p>
-</div>
-<div class="paragraph">
-<p>Change in /etc/httpd/conf/httpd.conf</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># sed -i 's_Listen 80_Listen 3131_' /etc/httpd/conf/httpd.conf
-# sed -i 's_DocumentRoot "/var/www/html"<em>DocumentRoot "/var/test\_www/html"</em>' /etc/httpd/conf/httpd.conf
-# sed -i 's_&lt;Directory "/var/www/html"&gt;_&lt;Directory "/var/test_www/html"&gt;_' /etc/httpd/conf/httpd.conf</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">APPLY CHANGES IN THE CONFIGURATION AND SEARCH FOR AVC DENIALS
-
-# systemctl restart httpd
-# ausearch -m AVC -ts recent</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>httpd service trying to bind on port 3131 instead of 80, this should be changed in SELinux policy</p>
-</div>
-<div class="paragraph">
-<p>type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># semanage port -l | grep 80
-http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
-
-# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
-Found 1 semantic av rules:
-  allow httpd_t http_port_t : tcp_socket name_bind ;
-
-# semanage port -a -t http_port_t -p tcp 3131
-# semanage port -l | grep http_port_t
-http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># systemctl restart httpd
-# wget localhost:3131/index.html</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>httpd service DocumentRoot is in /var/test_www/html and this directory has wrong label</p>
-</div>
-<div class="paragraph">
-<p>type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># matchpathcon /var/test_www/html/index.html
-/var/test_www/html/index.html    system_u:object_r:var_t:s0
-
-# matchpathcon /var/www/html/index.html
-/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
-
-# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
-# restorecon -Rv /var/</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># semanage fcontext -l | grep httpd_sys_content_t | grep www
-var/www(/.<strong>)?            all files
-system_u:object_r:httpd_sys_content_t:s0
-/var/test_www(/.</strong>)?    all files
-system_u:object_r:httpd_sys_content_t:s0
-....
-....</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>HTTPD SERVICE SELINUX DENIALS ARE FIXED WITHOUT WRITING CUSTOM POLICY!</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_skip_local_policies_using_cil"><a class="anchor" href="#_skip_local_policies_using_cil"></a>Skip: Local policies using CIL</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_skip_packaging_policies_as_rpms"><a class="anchor" href="#_skip_packaging_policies_as_rpms"></a>Skip: Packaging policies as RPMs</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_skip_ansible_collections"><a class="anchor" href="#_skip_ansible_collections"></a>Skip: Ansible collections</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_skip_selinux_news"><a class="anchor" href="#_skip_selinux_news"></a>Skip: SELinux News</h3>
-
-</div>
-</div>
-</div>
 <nav class="pagination">
   <span class="prev"><a href="s3-avc.html">Interpreting AVC messages</a></span>
-  <span class="next"><a href="s5-multihost.html">Consistent SElinux settings</a></span>
+  <span class="next"><a href="s5-multihost.html">Consistent SELinux settings</a></span>
 </nav>
 </article>
   </div>

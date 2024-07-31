@@ -85,7 +85,7 @@
     <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
@@ -214,21 +214,21 @@ Pending Review
 <h2 id="_common_issues_with_selinux"><a class="anchor" href="#_common_issues_with_selinux"></a>Common Issues With SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As you learned in the previous chapter, the SELinux targeted policy in RHEL was designed to protect system services included with RHEL and not interfere with interactive users nor with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
+<p>As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users nor with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
 </div>
 <div class="paragraph">
 <p>You also learned that, if you add a third-party application to a RHEL server, it&#8217;s better that you, its developer, or its vendor provides a custom policy module to protect that third-party application. But you don&#8217;t have to: it is recommended but optional.</p>
 </div>
 <div class="paragraph">
-<p>Why people stil struggle with runing Linux servers with SELinux enabled and in enforcing mode? Most of the times, it&#8217;s because they did one of those common things:</p>
+<p>Why do people sometimes struggle with running Linux servers with SELinux enabled and in enforcing mode? Most of the times, it&#8217;s because they did one of those common things:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Moved files around, so their SELinux context do not match the policy rules anymore.</p>
+<p>Moved files around, and their SELinux context do not match the policy rules anymore.</p>
 </li>
 <li>
-<p>Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, so the SELinux context of those files was lost.</p>
+<p>Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, and the SELinux context of those files was lost.</p>
 </li>
 <li>
 <p>Configured a system server to listen on a non-standard network port, and that port is not labeled to match the policy rules.</p>
@@ -237,12 +237,12 @@ Pending Review
 <p>Configured a system server to read or write to different data and log directories, and those directories do not have labels which match the policy rules.</p>
 </li>
 <li>
-<p>Enabled an optional feature of a system service that is potentialy dangerouns so it&#8217;s not allowed by default policy rules.</p>
+<p>Enabled an optional feature of a system service that is potentially dangerous and it&#8217;s not allowed by default policy rules.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>You resolve most of those isues by setting files and directories to the correct SELinux context, and the latest issue you resolve by setting an SELinux boolean.</p>
+<p>You resolve most of those issues by setting files and directories to the correct SELinux context, and the latest issue you resolve by setting SELinux booleans.</p>
 </div>
 </div>
 </div>
@@ -250,10 +250,10 @@ Pending Review
 <h2 id="_labeling_files_with_a_new_context"><a class="anchor" href="#_labeling_files_with_a_new_context"></a>Labeling Files With a New Context</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not adivised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
+<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not advised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
 </div>
 <div class="paragraph">
-<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
+<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages and labels the <code>/var/www/html</code> directory accordingly. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
 </div>
 </div>
 </div>
@@ -264,7 +264,7 @@ Pending Review
 <p>To label other classes of kernel objects, which cannot store the labels in extended attributes, you must use the <code>semanage</code> command. For example, use <code>semanage port</code> to label TCP and UDP ports.</p>
 </div>
 <div class="paragraph">
-<p>For example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
+<p>As a concrete example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
 </div>
 </div>
 </div>
@@ -272,7 +272,7 @@ Pending Review
 <h2 id="_setting_selinux_booleans"><a class="anchor" href="#_setting_selinux_booleans"></a>Setting SELinux Booleans</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The SELinux policies from RHEL define a number of booleans, which enabe system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
+<p>The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
 </div>
 <div class="paragraph">
 <p>Booleans provide a compromise between a too strict policy, which becomes unusable, and a too lenient policy, which leaves a wide attach surface open.</p>
@@ -281,7 +281,7 @@ Pending Review
 <p>You can list and query the status of an SELinux boolean using the <code>getsebool</code> command, and you can change its status using the <code>setsebool</code> command.</p>
 </div>
 <div class="paragraph">
-<p>For example, the Apache Web Server could just serve static web pages, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
+<p>For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
 </div>
 </div>
 </div>
@@ -332,7 +332,7 @@ Pending Review
 </ol>
 </div>
 <div class="paragraph">
-<p>At any of the steps above, you may get sufficient information for establishing a root cause and propose a resolution. If the resolution doesn&#8217;t work, restart from step zero, until you are satisfied you resolved the issue.</p>
+<p>At any of the steps above, you may get sufficient information for establishing a root cause and propose a resolution. If the resolution doesn&#8217;t work, restart from the beginning, until you are satisfied you resolved the issue.</p>
 </div>
 </div>
 </div>
@@ -340,78 +340,13 @@ Pending Review
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We will perform two activities where you troubleshoot and fix SELinux issues. In between those activities, we will learn how to interpret SELinux errors, especially AVC errors.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
-</div>
-<div class="sect2">
-<h3 id="_selinux_policy_devel_policycoreutils_python_utils_slides_136_144"><a class="anchor" href="#_selinux_policy_devel_policycoreutils_python_utils_slides_136_144"></a>selinux-policy-devel policycoreutils-python-utils: slides #136-144</h3>
-<div class="paragraph">
-<p>SUPPORT SELINUX CASES</p>
-</div>
-<div class="paragraph">
-<p>Very busy and confusing diagram of a workflow for troubleshooting SELinux issues. Keep it? Redraw for legibility?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># dnf install selinux-policy-devel policycoreutils-python-utils</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Is audit daemon running?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># systemctl status auditd.service</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Is SELinux enabled?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># getenforce</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Put SELinux to permissive</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># setenforce 0</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Reproduce the scenario</p>
-</div>
-<div class="paragraph">
-<p>What does ausearch say?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -m USER_AVC -ts today</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Maybe needed</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># semodule -DB</code></pre>
-</div>
-</div>
+<p>We will perform two activities where you troubleshoot and fix SELinux issues. In between those activities, we will practice the interpretation of SELinux errors, especially AVC errors.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">SELinux Management</a></span>
-  <span class="next"><a href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a></span>
+  <span class="next"><a href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a></span>
 </nav>
 </article>
   </div>

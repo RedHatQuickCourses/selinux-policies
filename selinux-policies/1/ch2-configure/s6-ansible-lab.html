@@ -85,7 +85,7 @@
     <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
@@ -186,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>7 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -214,7 +214,7 @@ Pending Review
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -249,9 +249,9 @@ Pending Review
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Because Ansibe is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it&#8217;s better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.</p>
+<p>Because Ansible is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it&#8217;s better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.</p>
 <div class="paragraph">
-<p>1.1. Install the Ansible core and system roles pacakages.</p>
+<p>1.1. Install the Ansible core and system roles packages.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -293,7 +293,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>2.2. A single task includes and runs the SELinux system role and it persforms all changes required by variables with the <code>selinux_</code> preffix.</p>
+<p>2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the <code>selinux_</code> preffix.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -326,7 +326,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic reboot and reconnection to resume playbook execution only works with remote execution.</p>
+<p>If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic rebooting and reconnecting to resume playbook execution only works with remote execution.</p>
 </div>
 <div class="paragraph">
 <p>2.4. Run the playbook, which should do nothing on a properly configured RHEL machine:</p>
@@ -363,10 +363,10 @@ localhost                  : ok=8    changed=0    unreachable=0    failed=0    s
 <p>Notice that the end of the playbook execution log displays "changed=0" to indicate none of the tasks made any change to the system.</p>
 </div>
 <div class="paragraph">
-<p>If you read the playbook execution log, you&#8217;ll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn&#8217;t set the variabes which control such tasks.</p>
+<p>If you read the playbook execution log, you&#8217;ll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn&#8217;t set the variables which control such tasks.</p>
 </div>
 <div class="paragraph">
-<p>Also notice that the SELinux role takes care of installing dependencies, such as SELinux and Python RPM packages.</p>
+<p>Also notice that the SELinux role takes care of installing its own dependencies, such as SELinux and Python RPM packages.</p>
 </div>
 </li>
 <li>
@@ -421,7 +421,7 @@ localhost                  : ok=9    changed=1    unreachable=0    failed=0    s
 <p>Notice, in the end of the playbook execution log, it displays "changed=1" because it made a single change to the system.</p>
 </div>
 <div class="paragraph">
-<p>3.4. Check that the boolean was indded turned on:</p>
+<p>3.4. Check that the boolean was indeed turned on:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -481,8 +481,11 @@ localhost                  : ok=8    changed=1    unreachable=0    failed=1    s
 </div>
 </div>
 <div class="paragraph">
-<p>Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed sucessfully.</p>
+<p>Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed successfully.</p>
 </div>
+</li>
+<li>
+<p>If you wish, check the previous activities in this chapter for the steps to install the quotes web site and the static web site, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.</p>
 </li>
 </ol>
 </div>
@@ -500,7 +503,7 @@ localhost                  : ok=8    changed=1    unreachable=0    failed=1    s
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="s5-multihost.html">Consistent SElinux settings</a></span>
+  <span class="prev"><a href="s5-multihost.html">Consistent SELinux settings</a></span>
   <span class="next"><a href="s7-summary.html">Summary</a></span>
 </nav>
 </article>

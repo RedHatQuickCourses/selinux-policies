@@ -85,7 +85,7 @@
     <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a>
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
@@ -94,7 +94,7 @@
     <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s5-multihost.html">Consistent SElinux settings</a>
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
@@ -186,7 +186,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>4 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -214,10 +214,10 @@ Pending Review
 <h2 id="_selinux_audit_messages"><a class="anchor" href="#_selinux_audit_messages"></a>SELinux Audit Messages</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, these could be a lot of messages related to SELinux in a typical RHEL machine, even with light load.</p>
+<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with light load.</p>
 </div>
 <div class="paragraph">
-<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analisys.</p>
+<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.</p>
 </div>
 <div class="paragraph">
 <p>Most sysadmins are interested in permission denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named <strong>Access Vector Cache</strong>, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.</p>
@@ -231,7 +231,7 @@ Pending Review
 <p>Domain and resource contexts labels;</p>
 </li>
 <li>
-<p>Domain and resource identifiers, such as uid, pid, file system device, file inode, and network port;</p>
+<p>Domain and resource identifiers, such as UID, PID, file system device, file inode, and network port;</p>
 </li>
 <li>
 <p>Additional information on domains and resources, such as user name, file name, and executable file name;</p>
@@ -260,19 +260,19 @@ Pending Review
 <p>There are two tools, included wit RHEL, that help you interpret AVC errors.</p>
 </div>
 <div class="paragraph">
-<p>The first tool comes from the <code>policycoreutils-python-utils</code> package and the <code>audit2why</code> command. It also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
+<p>The first tool comes from the <code>policycoreutils-python-utils</code> package and the <code>audit2why</code> command. The same package also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
 </div>
 <div class="paragraph">
-<p>The <code>audit2why</code> command and its suite of commands take AVC messages from standard input, so you feed them with AVC messages stored in a file or pipe to them directly from the <code>ausearch</code> command.</p>
+<p>The <code>audit2why</code> command takes AVC messages from standard input, so you can feed it with either AVC messages stored in a file or pipe to them directly from the <code>ausearch</code> command.</p>
 </div>
 <div class="paragraph">
 <p>The second tool comes from the <code>setroubleshoot-server</code> package and the <code>sealert</code> command, which takes AVC messages from a file and offers a number of suggestions on how to resolve the AVC error, based on a number of included plugins.</p>
 </div>
 <div class="paragraph">
-<p>While the <code>audit2why</code> command offers a single suggestion for fixing an AVC error, the <code>sealert</code> command offers multiple suggestions. But any of them could be bad for your particular scenario. Sometimes those tools get confused ny the large number of rules and contexts in a typical RHEL machine.</p>
+<p>While the <code>audit2why</code> command offers a single suggestion for fixing an AVC error, the <code>sealert</code> command offers multiple suggestions. But any of them could be bad for your particular scenario. Sometimes those tools get confused by the large number of rules and contexts in a typical RHEL machine.</p>
 </div>
 <div class="paragraph">
-<p>You must be able to read and interpret the AVC message and relate it to its target application: why is the application trying something which was denied by SELinux? If the application was supposed to try that something, is there any way of allowing it without increasing the potential attack surface too much?</p>
+<p>You must be able to read and interpret an AVC message and relate it to its target application: why is the application trying something which was denied by SELinux? If the application was supposed to try that something, is there any way of allowing it without increasing the potential attack surface too much?</p>
 </div>
 <div class="paragraph">
 <p>You could always extend your SELinux policies with rules that allow an application to do anything. Before you do that, you must ask: should I?</p>
@@ -289,7 +289,7 @@ Pending Review
 <p>It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each if its policy elements.</p>
 </div>
 <div class="paragraph">
-<p>RHEL provides the <code>selinux-policy-doc</code> package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs are on a single package.</p>
+<p>RHEL provides the <code>selinux-policy-doc</code> package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs of all policy modules from RHEL are on a single documentation package.</p>
 </div>
 </div>
 </div>
@@ -301,68 +301,8 @@ Pending Review
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"><a class="anchor" href="#_from_here_on_raw_copy_and_paste_from_other_sources_pending_reorganization"></a>FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#" class="bare">https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#</a></p>
-</div>
-<div class="sect2">
-<h3 id="_audit_logs_ausearch_audit2allow_slides_94_104"><a class="anchor" href="#_audit_logs_ausearch_audit2allow_slides_94_104"></a>Audit logs, ausearch, audit2allow: slides #94-104</h3>
-<div class="paragraph">
-<p>AVC MESSAGES</p>
-</div>
-<div class="paragraph">
-<p>WHERE CAN WE FIND LOGS?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># cat /var/log/audit/audit.log
-# ausearch -m AVC</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="file1" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file</p>
-</div>
-<div class="paragraph">
-<p>AUDITD.SERVICE HAVE TO BE RUNNING</p>
-</div>
-<div class="paragraph">
-<p>HOW TO PARSE AVC MESSAGES?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch
-# audit2allow</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># ausearch -m AVC -ts recent
-type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="shadow" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file
-# ausearch -m AVC -ts recent | audit2allow
-#============= httpd_t ==============
-allow httpd_t shadow_t:file read;</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"># semanage fcontext -&gt; manage SELinux contexts
-# semanage boolean -&gt; manage SELinux booleans
-# semanage port -&gt; manage SELinux ports
-# semanage permissive -&gt; put SELinux domain to permissive mode
-# sesearch -&gt; search for present SELinux rules
-# ausearch -&gt; search for SELinux denials
-# sealert -&gt; SELinux troubleshooter
-# audit2allow -&gt; Parse SELinux denials / create local SELinux module
-# semodule -DB / # semodule -B -&gt; SELinux policy rebuild</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 <nav class="pagination">
-  <span class="prev"><a href="s2-webapp-lab.html">Lab: Configure SElinux for a Web Application</a></span>
+  <span class="prev"><a href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a></span>
   <span class="next"><a href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a></span>
 </nav>
 </article>
