@@ -33,6 +33,8 @@ You could even try these activities directly on your day-to-day machine or a loc
 
 If you do not have a test machine readily available, but you have access to a https://www.redhat.com/en/services/training/learning-subscription[Red Hat Learning Subscription] (as all Red Hat employees and partners do) you can use the virtual lab environment from https://www.redhat.com/en/services/training/rh134-red-hat-system-administration-ii[Red Hat System Administration II (RH134)]. You can use either `servera` or `serverb` machines to perform all activities in this course.
 
+This course was tested with the RHEL 9.3 version of the RH134 classroom, but is expected to work with older and newer releases of that course classroom.
+
 To use RH134 as your virtual lab for hands-on activities, please follow one of the following links:
 
 * https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.3/pages/pr01s02[RH134 for Red Hat Employees].
