@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 15
 
 = Lab: Troubleshoot SELinux policies
 
@@ -12,7 +12,7 @@ WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -56,7 +56,7 @@ DocumentRoot "/var/website"
 ...
 --
 +
-You can find a copy of the file with all changes already done in the https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf[sample app] repository.
+You can find a copy of the configuration file with all changes already applied in the https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf[sample applications] git repository.
 +
 1.4. Create a test web site:
 +
@@ -138,7 +138,7 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 +
 Notice that `audit2why` suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.
 +
-3.2. If you took too long to review the AVC error, the previous step might return "<no matches>". In this case, you can filter by the application binary, which is also useful when there are AVC erros from multiple processes:
+3.2. If you took too long to review the AVC error, the previous step might return "<no matches>". In this case, you can filter by the application binary, which is also useful when there are AVC errors from multiple processes:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -160,12 +160,12 @@ type=AVC msg=audit(1721416004.455:243): avc:  denied  { name_bind } for  pid=534
 +
 In this case, `audit2why` suggests creating a custom policy module to fix the AVC. Sometimes this can be the right approach, but in this particular case the loaded policy already assigns TCP port 8000 to a different resource type (`soundd_port_t`). It would be better to avoid interfering with the default policies from RHEL, but if you have to, you could add allow rules so the Apache Web Server has access to more resource types.
 +
-Feel free to change your Apache Web Server configuration and retry the previous steps to see this differeent suggestion by yourself. Or if you prefer, just proceed to the next step.
+Feel free to change your Apache Web Server configuration and retry the previous steps to see this different suggestion by yourself. Or if you prefer, just proceed to the next step.
 
 
 4. Assess if the suggestion from `audit2why` was a good one.
 +
-4.1. We already know that our Apache Web Server configuration does not require NIS, and that the previous recommendation looks odd. But let's check what enabling that boolean entais:
+4.1. We already know that our Apache Web Server configuration does not require NIS, and that the previous recommendation looks odd. But let's check what enabling that boolean entails:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -180,7 +180,7 @@ allow nsswitch_domain unreserved_port_t:tcp_socket name_connect; [ nis_enabled ]
 It is a long list of allow rules, which raises a red flag. After all, we want network servers to run under the most restrictive policy we can.
 +
 4.2. Check the range of ports that would be allowed by the boolean.
-It includes a resouce types which grant a large range of TCP ports:
+It includes a resource types which grant a large range of TCP ports:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -188,11 +188,11 @@ $ *semanage port -l | grep tcp | grep 'unreserved_port_t'*
 unreserved_port_t              tcp      61000-65535, 1024-3276
 --
 +
-That made `audit2why` suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports.
+That made `audit2why` suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.
 +
-By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is not considered secure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default and you should be careful to not enable them unless there's a real need.
+By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is considered insecure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default. You should be careful to not enable them unless there's a real need and you provide some mitigation for the increased exposure.
 
-5. Because we didn't like the suggestion from `audit2why`, check if the `sealert` provides a better suggesiton.
+5. Because we didn't like the suggestion from `audit2why`, check if the `sealert` provides a better suggestion.
 +
 5.1. Save the AVC errors into a text file:
 +
@@ -206,10 +206,11 @@ $ *sudo ausearch -m AVC -x /usr/sbin/httpd > avc.log*
 [source,subs="verbatim,quotes"]
 --
 $ *dnf -y install setroubleshoot-server*
+...
 Complete!
 --
 +
-5.3. Process the text file with `sealert`. It gives a long output, with multiple suggestions. Let's revew them one by one:
+5.3. Process the text file with `sealert`. It gives a long output, with multiple suggestions. Let's review them one by one:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -236,7 +237,7 @@ Do
 ...
 --
 +
-5.5. The second suggestion is enabling the same boolean we got from `audit2why`, which we do not consider a good suggesiton:
+5.5. The second suggestion is enabling the same boolean we got from `audit2why`, which we do not consider a good suggestion:
 +
 [source,subs="verbatim"]
 --
@@ -284,11 +285,12 @@ $ *dnf -y install selinux-policy docs*
 ...
 Complete!
 $ *man httpd_selinux*
+...
 --
 +
 Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.
 +
-6.2. From the man page, the follwing resource type seems to be the one we need:
+6.2. From the man page, the following resource type seems to be the one we need:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -309,7 +311,7 @@ http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
 ...
 --
 +
-6.5. Try to label the 30000 TCP port with the correct SELinux context. It is expected to fail:
+6.5. Label the 30000 TCP port with the correct SELinux context:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -328,7 +330,7 @@ http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 844
 
 7. Try again starting the Apache Web Server and check if there are more AVC errors.
 +
-7.1. Start Apache Web and verify it sucessfully listen for connections on the new port:
+7.1. Start Apache Web and verify it successfully listen for connections on the new port:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -349,7 +351,7 @@ $ *curl http://127.0.0.1:30000/index.html*
 <title>403 Forbidden</title>
 ...
 --
-7.3. You are sure the `httpd` daemon should have access to the `/var/website/index.html` file, right?
+7.3. You are sure the `httpd` daemon has file access permissions to the `/var/website/index.html` file, right?
 +
 [source,subs="verbatim,quotes"]
 --
@@ -357,7 +359,7 @@ ls -l /var/website/index.html
 -rw-r--r--. 1 root root 26 Jul 19 14:22 /var/website/index.html
 --
 +
-7.4. Verify if there are new AVC errors. You shold see "denied" entry which refers to a `path` of `/var/website/index.html`
+7.4. Verify if there are new AVC errors. You should see "denied" entry which refers to a `path` of `/var/website/index.html`
 +
 [source,subs="verbatim,quotes"]
 --
@@ -384,7 +386,7 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
                 You can use audit2allow to generate a loadable module to allow this access.
 --
 +
-It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoiding adding to the policy, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
+It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoiding adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
 +
 7.6. Check the advice from `sealert`:
 +
@@ -444,116 +446,3 @@ $ *curl http://127.0.0.1:30000/index.html*
 Interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.
 
 Before we start activities related to creating a custom SELinux policy, let's discuss how to ensure multiple servers and desktops have consistent SELinux settings.
-
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
-
-=== Custom httpd config: slides #105-122
-
-TROUBLESHOOTING EXISTING POLICY
-
-MISLABELED SYSTEM I.E LABELS ON OBJECTS ARE WRONG
-
-[source,subs="verbatim,quotes"]
---
-# restorecon -Rv /
---
-
-or
- 
-[source,subs="verbatim,quotes"]
---
-# fixfiles onboot
-# reboot
---
-
-SELINUX MODIFICATIONS OF THE DISTRO POLICY VIA SELINUX USERSPACE TOOLING
-
-SOMETIMES IT’S NOT NECESSARY TO CREATE CUSTOM SELINUX POLICY, LOCAL MODIFICATION CAN FIX IT.
-
-APACHE HTTP SERVER WITH CHANGES IN THE DEFAULT CONFIGURATION
-
-httpd service configured to listen on tcp port 3131 instead of port 80
-document root will be /var/test_www/ instead of /var/www/
-
-Change in /etc/httpd/conf/httpd.conf
-
-[source,subs="verbatim,quotes"]
---
-# sed -i 's_Listen 80_Listen 3131_' /etc/httpd/conf/httpd.conf
-# sed -i 's_DocumentRoot "/var/www/html"_DocumentRoot "/var/test\_www/html"_' /etc/httpd/conf/httpd.conf
-# sed -i 's_<Directory "/var/www/html">_<Directory "/var/test\_www/html">_' /etc/httpd/conf/httpd.conf
---
-
-[source,subs="verbatim,quotes"]
---
-APPLY CHANGES IN THE CONFIGURATION AND SEARCH FOR AVC DENIALS 
-
-# systemctl restart httpd
-# ausearch -m AVC -ts recent
---
-
-httpd service trying to bind on port 3131 instead of 80, this should be changed in SELinux policy
-
-type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket
-
-[source,subs="verbatim,quotes"]
---
-# semanage port -l | grep 80
-http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
-
-# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
-Found 1 semantic av rules:
-  allow httpd_t http_port_t : tcp_socket name_bind ;
-
-# semanage port -a -t http_port_t -p tcp 3131
-# semanage port -l | grep http_port_t
-http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000
---
-
-[source,subs="verbatim,quotes"]
---
-# systemctl restart httpd
-# wget localhost:3131/index.html
---
-
-httpd service DocumentRoot is in /var/test_www/html and this directory has wrong label
-
-type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file
-
-[source,subs="verbatim,quotes"]
---
-# matchpathcon /var/test_www/html/index.html
-/var/test_www/html/index.html    system_u:object_r:var_t:s0
-
-# matchpathcon /var/www/html/index.html
-/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
-
-# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
-# restorecon -Rv /var/
---
-
-[source,subs="verbatim,quotes"]
---
-# semanage fcontext -l | grep httpd_sys_content_t | grep www
-var/www(/.*)?            all files
-system_u:object_r:httpd_sys_content_t:s0
-/var/test_www(/.*)?    all files
-system_u:object_r:httpd_sys_content_t:s0
-....
-....
---
-
-HTTPD SERVICE SELINUX DENIALS ARE FIXED WITHOUT WRITING CUSTOM POLICY!
-
-=== Skip: Local policies using CIL
-
-=== Skip: Packaging policies as RPMs
-
-=== Skip: Ansible collections
-
-=== Skip: SELinux News
-
-

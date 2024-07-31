@@ -1,18 +1,18 @@
-:time_estimate: 5
+:time_estimate: 8
 
-= Lab: Configure SElinux for a Web Application
+= Lab: Configure SELinux for a Web Application
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Troubleshoot SELinux errors from an Apache Web Server and configure SELinux to fix those errors.
+Troubleshoot SELinux errors from an Apache Web Server running server-side scripting applications and configure SELinux to fix those errors.
 
 WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have the either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -28,7 +28,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 1. Download a sample web site with includes dynamic pages using the PHP server-side scripting language.
 +
-1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `quotes` diretory.
+1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `quotes` directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -40,7 +40,7 @@ $ *ls*
 db.sql  hello.php  index.html  quotes.php
 --
 +
-1.2. Verify if the prequisite Apache Web Server and MySQL database server packages are installed. It should be fine if you have different versions of those packages. If they are not, please install them:
+1.2. Verify if the prerequisite Apache Web Server and MySQL database server packages are installed. It should be fine if you have different versions of those packages. If they are not, please install them:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -71,14 +71,14 @@ $ *systemctl is-active mysqld*
 active
 --
 +
-1.5. Use the provided SQL script to initialie the quotes database:
+1.5. Use the provided SQL script to initialize the quotes database:
 +
 [source,subs="verbatim,quotes"]
 --
 $ *sudo mysql < db.sql*
 --
 
-2. Install the quote applicaion on the Apache Web Server document root by making a very common mistake: moving files between directories with different SELinux contexts:
+2. Install the quote application on the Apache Web Server document root by making a very common mistake: moving files between directories with different SELinux contexts:
 +
 2.1. Move the welcome page and the dynamic pages from the git repository to the Apache Web Sever document root:
 +
@@ -93,18 +93,18 @@ system_u:object_r:httpd_sys_content_t:s0 ..
     unconfined_u:object_r:user_home_t:s0 quotes.php
 --
 +
-2.2. If the output of the previous command shows a different SELinux context type on the HTML and PHP files, force them to the incorrect type:
+2.2. If the output of the previous command shows an SELinux context type other than `user_home_t` on the HTML and PHP files, force them to the INCORRECT type, in order to emulate the common error:
 +
 [source,subs="verbatim,quotes"]
 --
 $ *sudo chcon -t user_home_t /var/www/html/\**
 --
 +
-Remember that, if you move files between different file systems, they do not retain their permissions and SELinux context, but inherit them from the destination directory.
+Remember that, if you move files between different file systems, they do not retain their permissions and SELinux context, but inherit them from the destination directory as they would with a copy operation.
 
 3. Verify that the Apache Web Server cannot serve the welcome page you just installed.
 +
-3.2 Try to retrive the welcome page, it is expected to fail. Feel free to use a real web browser intead of the `curl` command, if you like:
+3.2 Try to retrieve the welcome page. It is expected to fail. Feel free to use a real web browser instead of the `curl` command, if you like:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -131,8 +131,7 @@ drwxr-xr-x. 4 root    root     33 Jul 18 14:48 ..
 -rw-r--r--. 1 student student 955 Jul 22 18:22 quotes.php
 --
 +
-3.4. Check that the audit log has an event from SELinux
-sudo ausearch -m avc -ts recent
+3.4. Check that the audit log has an event from SELinux:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -144,7 +143,7 @@ type=SYSCALL msg=audit(1721682596.879:196): arch=c000003e syscall=257 success=no
 type=AVC msg=audit(1721682596.879:196): avc:  denied  { read } for  pid=3108 comm="httpd" name="index.html" dev="vda4" ino=25927060 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=0
 --
 +
-Notice that the event refers to the `httpd` executable and to the `index.html` file, so it must be related to the error acessing the welcome page.
+Notice that the event refers to the `httpd` executable and to the `index.html` file, so it must be related to the error retrieving the welcome page.
 
 4. Fix the context on HTML and PHP pages and verify that the quotes dynamic page fails to work.
 +
@@ -174,7 +173,7 @@ $ *curl http://127.0.0.1/*
 </html>
 --
 +
-4.3. Click the link to the "random quote", or visit it using the `curl` command. You should get what looks, from a web browser, like an empty page, but which is actually a truncated response. This is a sign of trouble, besides a sign of a badly designed application which does not perform any error handling:
+4.3. Click the link to the "random quote", or visit it using the `curl` command. You should get what looks, from a web browser, like an empty page, but which is actually a truncated response. Ignore for now the issue of having a badly designed application which does not perform any error handling:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -284,103 +283,6 @@ The 4 Ps for Change and Release: Planning Prevents Poor Performance.
 
 == Next Steps
 
-Just setting the correct context labels on files and other resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set from RHEL.
+Just setting the correct context labels on resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set from RHEL.
 
-The next section will focus on interpreting SELinux audit events and tools which help you assess if it's the case of configuring a server or addig custom policy.
-
-
-== FROM HERE ON, RAW COPY-AND-PASTE FROM OTHER SOURCES, PENDING REORGANIZATION
-
-https://docs.google.com/presentation/d/11K6ykCk2d9QySZ3rVzJWnX6FADEGLCacVAmumbBlENs/edit#
-
-=== Http with NFS: slides #145-158
-
-What does ausearch say
-[source,subs="verbatim,quotes"]
---
-# ausearch -m AVC -m USER_AVC -ts today
---
-
-type=AVC msg=audit(1395177286.929:1638): avc:  denied  { read } for  pid=6591 comm="httpd" name="webpages" dev="0:37" ino=2112 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:nfs_t:s0 tclass=dir
-
-[source,subs="verbatim,quotes"]
---
-# ausearch -m AVC -m USER_AVC -ts today | audit2allow
-...
-# sealert -a avc
-...
---
-
-[source,subs="verbatim,quotes"]
---
-#============= httpd_t ==============
-#!!!! This avc can be allowed using one of the these booleans:
-# 	httpd_use_nfs, git_system_use_nfs
-allow httpd_t nfs_t:dir read;
---
-
-[source,subs="verbatim,quotes"]
---
-# semanage boolean -l | grep httpd_use_nfs
-# semanage boolean -m --on httpd_use_nfs
---
-
-type=AVC msg=audit(1491948261.488:599): avc:  denied  { name_bind } for  pid=5920 comm="httpd" src=3131 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:unreserved_port_t:s0 tclass=tcp_socket
-
-[source,subs="verbatim,quotes"]
---
-# semanage port -l | grep 80
-http_port_t                	tcp  	80, 81, 443, 488, 8008,   8009, 8443, 9000
-
-# sesearch -A -s httpd_t -t http_port_t  -c tcp_socket  -p name_bind
-Found 1 semantic av rules:
-  allow httpd_t http_port_t : tcp_socket name_bind ;
-
-# semanage port -a -t http_port_t -p tcp 3131
-# semanage port -l | grep http_port_t
-http_port_t                	tcp  	3131, 80, 81, 443, 488, 8008,   8009, 8443, 9000
---
-
-type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:var_t:s0 tclass=file
-
-[source,subs="verbatim,quotes"]
---
-# matchpathcon /var/test_www/html/index.html
-/var/test_www/html/index.html    system_u:object_r:var_t:s0
-
-# matchpathcon /var/www/html/index.html
-/var/www/html/index.html    system_u:object_r:httpd_sys_content_t:s0
-
-# semanage fcontext -a -t httpd_sys_content_t "/var/test_www(/.*)?"
-# restorecon -Rv /var/
---
-
-type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="index.html" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:unlabeled_t:s0 tclass=file
-
-[source,subs="verbatim,quotes"]
---
-# restorecon -Rv /
-# fixfiles onboot && reboot
---
-
-// This example of allowing httpd access to mysqld logs seem strage. Something to justify creating a fix-up policy? Could it be from a web UI for mysql?
-
-type=AVC msg=audit(1491949594.146:622): avc:  denied  { read } for  pid=6094 comm="httpd" name="db" dev="dm-0" ino=13485999 scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:mysql_log_t:s0 tclass=file
-
-[source,subs="verbatim,quotes"]
---
-# audit2allow -i avc
-#============= httpd_t ==============
-allow httpd_t mysqld_log_t:file read;
---
-
-[source,subs="verbatim,quotes"]
---
-# audit2allow -i avc -M local_httpd
-******************** IMPORTANT ***********************
-To make this policy package active, execute:
-semodule -i local_httpd.pp
-# semodule -i local_httpd.pp
---
-
-
+The next section will focus on interpreting SELinux audit events and tools which help you assess if it's the case of configuring a server or adding a custom policy.

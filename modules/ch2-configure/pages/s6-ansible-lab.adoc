@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 7
 
 = Lab: Automate SELinux Configuration
 
@@ -12,7 +12,7 @@ WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have the root password or unrestricted sudo and access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
 * SELinux enabled and enforcing, using the targeted policy.
 * The `setools-console` package.
@@ -25,9 +25,9 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
-1. Because Ansibe is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it's better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.
+1. Because Ansible is idempotent, you can run the playbooks here on the machine you already performed the previous activities, but it's better if you also try them on a fresh system to demonstrate that the playbooks really configured SELinux for the two scenarios.
 +
-1.1. Install the Ansible core and system roles pacakages.
+1.1. Install the Ansible core and system roles packages.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -65,7 +65,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml
 ...
 --
 +
-2.2. A single task includes and runs the SELinux system role and it persforms all changes required by variables with the `selinux_` preffix.
+2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the `selinux_` preffix.
 +
 [source,subs="verbatim"]
 --
@@ -96,7 +96,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml
 ...
 --
 +
-If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic reboot and reconnection to resume playbook execution only works with remote execution.
+If the playbook does require a reboot using the local system, you have to reboot manually and then re-run the playbook. Automatic rebooting and reconnecting to resume playbook execution only works with remote execution.
 +
 2.4. Run the playbook, which should do nothing on a properly configured RHEL machine:
 +
@@ -129,9 +129,9 @@ localhost                  : ok=8    changed=0    unreachable=0    failed=0    s
 +
 Notice that the end of the playbook execution log displays "changed=0" to indicate none of the tasks made any change to the system.
 +
-If you read the playbook execution log, you'll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn't set the variabes which control such tasks. 
+If you read the playbook execution log, you'll see all it could do, from changing file contexts to installing policy modules. This minimal playbook didn't set the variables which control such tasks. 
 +
-Also notice that the SELinux role takes care of installing dependencies, such as SELinux and Python RPM packages.
+Also notice that the SELinux role takes care of installing its own dependencies, such as SELinux and Python RPM packages.
 
 3. Review and run the playbook which allows the Apache Web Server to connect to remote databases.
 +
@@ -179,7 +179,7 @@ localhost                  : ok=9    changed=1    unreachable=0    failed=0    s
 +
 Notice, in the end of the playbook execution log, it displays "changed=1" because it made a single change to the system.
 +
-3.4. Check that the boolean was indded turned on:
+3.4. Check that the boolean was indeed turned on:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -233,7 +233,9 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=8    changed=1    unreachable=0    failed=1    skipped=11   rescued=1    ignored=0 
 --
 +
-Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed sucessfully.
+Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed successfully.
+
+5. If you wish, check the previous activities in this chapter for the steps to install the quotes web site and the static web site, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.
 
 == Next Steps
 

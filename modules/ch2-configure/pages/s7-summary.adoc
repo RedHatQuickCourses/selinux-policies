@@ -8,7 +8,7 @@ In this chapter, you learned:
 
 * AVC errors from SELinux include a lot of information, such as the domain and resource contexts, process ids, user ids, and file paths.
 
-* The `audit2why` and `sealert` tools help with interpreting AVC erros and suggest actions to fix the error, if you want to allow an application to perform the task which was denied by SELinux.
+* The `audit2why` and `sealert` tools help with interpreting AVC errors and suggest actions to fix the error, if you want to allow an application to perform the task which was denied by SELinux.
 
 * You shouldn't blindly trust the suggestions from the SELinux tools. You should make a decision of either configuring the policies from RHEL or creating a new custom policy.
 
