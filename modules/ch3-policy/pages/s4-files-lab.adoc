@@ -251,7 +251,7 @@ Because the test application uses HTTPS to access the weather forecast service, 
 +
 [source,subs="verbatim,quotes"]
 --
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R*
 ...
 #============= testapp_t ==============
 miscfiles_read_certs(testapp_t)
@@ -327,8 +327,8 @@ Creating targeted testapp.pp policy package
 +
 [source,subs="verbatim,quotes"]
 --
-$ TIME=$(date +%T) ; sudo systemctl restart testapp
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
+$ *TIME=$(date +%T) ; sudo systemctl restart testapp*
+$ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki*
 0
 --
 
