@@ -507,7 +507,7 @@ type=AVC msg=audit(1721935451.740:344): avc:  denied  { search } for  pid=5272 c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | audit2allow -R</strong>
 ...
 #============= testapp_t ==============
 miscfiles_read_certs(testapp_t)
@@ -590,8 +590,8 @@ Creating targeted testapp.pp policy package
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ TIME=$(date +%T) ; sudo systemctl restart testapp
-$ sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>TIME=$(date +%T) ; sudo systemctl restart testapp</strong>
+$ <strong>sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c pki</strong>
 0</code></pre>
 </div>
 </div>
