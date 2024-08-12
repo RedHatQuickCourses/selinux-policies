@@ -8,11 +8,9 @@ Objective::
 
 Ensure that a RHEL machine has SELinux enabled and in the enforced mode, with the targeted policy set loaded.
 
-WARNING: Pending Review
-
 == Before you Begin
 
-You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
 
@@ -22,7 +20,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 // Do I need to do 'restorecon -Rv /' before 'fixfiles -F onboot' ?
 
-1. Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:
+1. Open a terminal on your RHEL machine and switch to a root shell. Then, verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -31,7 +29,7 @@ $ *sudo -i*
 Enforcing
 --
 
-2. If your output was different on the previous step, follow one of the following to enable SELinux and set it to the enforced mode:
+2. If your output was different in the previous step, follow one of the following to enable SELinux and set it to the enforced mode:
 +
 2.1. If your system is on permissive mode, switch to enforced mode:
 +
@@ -44,19 +42,19 @@ Permissive
 Enforcing
 --
 +
-2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don't have to use `sed`, you can use your preferred text editor on the `/etc/selinux/config` file.
+2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don't have to use `sed`; you can use your preferred text editor on the `/etc/selinux/config` file.
 +
 [source,subs="verbatim,quotes"]
 --
 # *getenforce*
-Disbled
+Disabled
 # *sed -i s/SELINUX=disabled/SELINUX=enforcing/ /etc/selinux/config*
 # *fixfiles -F onboot*
 System will relabel on next boot
 # reboot
 --
 +
-Be patient, relabeling might take a while. After a new login, you should see the same output as *step 1*:
+Be patient, as relabeling might take a while. After logging in again, you should see the same output as in *step 1*:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -82,7 +80,7 @@ Memory protection checking:     actual (secure)
 Max kernel policy version:      33
 --
 
-4. If your output shows that at a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:
+4. If your output shows that a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive that you can change the policy set of your current lab machine, follow these steps:
 +
 4.1. In the following example, the system has the *mls* policy set loaded, but the instructions would be the same for the *minimum* policy set from previous RHEL releases:
 +
@@ -113,7 +111,7 @@ System will relabel on next boot
 # *reboot*
 --
 +
-Be patient, relabeling might take a while. After a new login, you should see the same output as *step 3*:
+Be patient, as relabeling might take a while. After logging in again, you should see the same output as in *step 3*:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -140,7 +138,7 @@ type=SYSCALL msg=audit(11/09/23 03:43:12.299:347) : arch=x86_64 syscall=write su
 type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 lsm=selinux res=yes
 --
 +
-5.2. Or to show recent denials, which on a good system should be none:
+5.2. Or to show recent denials, which, on a good system, should be none:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -205,9 +203,9 @@ Classes: 135
 ...
 --
 +
-Among the classes, you should see easily recognize ones such as `file` and `dir`.
+Among the classes, you should easily recognized ones such as `file` and `dir`.
 +
-7.4. The `sesearch` command searches among the SELinux rules in the loaded policies. Te following example lists all allow rules:
+7.4. The `sesearch` command searches among the SELinux rules in the loaded policies. The following example lists all allow rules:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -218,9 +216,9 @@ allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:as
 ...
 --
 +
-Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming but SELinux tools help navigating loaded policies.
+Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming, but SELinux tools help navigate loaded policies.
 
 == Next Steps
 
-Later in this course we'll learn how to filter the results of `sesearch`, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.
+Later in this course, you will learn how to filter the results of `sesearch`, but before that you must understand the concepts of SELinux labels and rules, which you see in the next section.
 

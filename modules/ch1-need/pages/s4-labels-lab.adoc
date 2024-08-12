@@ -10,11 +10,10 @@ Objective::
 
 Explore the Labels and SELinux rules included with a default installation of Red Hat Enterprise Linux.
 
-WARNING: Pending Review
 
 == Before you Begin
 
-You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
+You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.
 
 Ensure that your system has SELinux enabled and in enforcing mode. Review the xref:s2-setup-lab.adoc[first activity] in this course if you need help with those checks.
 
@@ -35,7 +34,7 @@ $ *ls -Z test.file*
 unconfined_u:object_r:user_home_t:s0 test.file
 --
 +
-1.2. All your process inherit the resource type of your login shell:
+1.2. All your processes inherit the resource type of your login shell:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -49,7 +48,7 @@ For now, ignore all fields of the domain (process) and resource (files) contexts
 
 2. Show that SELinux allows the domain to access home directories.
 +
-2.1. Install the the `setools-console` package, if it's not already installed on your test machine:
+2.1. Install the `setools-console` package, if it's not already installed on your test machine:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -70,15 +69,15 @@ allow files_unconfined_type file_type:file execmod; [ selinuxuser_execmod ]:True
 allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };
 --
 +
-If you wish, you can also try a similar search for user's home files. Just replace `user_home_dir_t` with `user_home_t` in the previous command.
+If you wish, you can also try a similar search for the user's home files. Just replace `user_home_dir_t` with `user_home_t` in the previous command.
 +
-The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on user's home directories.
+The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on the user's home directories.
 +
 2.3. If you're adventurous, retry the previous command without one of the `-s`, `-t`, or `-c` options. Be warned that it'll display a large number of allow rules.
 
-3. Run the `passwd` command and check its context and of the system password files.
+3. Run the `passwd` command and check its context and also of the system password files.
 +
-3.1. Run the `passwd` command in the backgrond so it get stuck and you can check its SELinux context:
+3.1. Run the `passwd` command in the background so it get's stuck, allowing you to check its SELinux context:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -116,7 +115,7 @@ $ *kill %1*
 
 4. Check if the `passwd` command and your interactive processes are allowed to access the password files by the SELinux policy.
 +
-4.1. Notice that the `passwd_t` domain is allowed access to both password files, as expected:
+4.1. Notice that the `passwd_t` domain is allowed access to both the password files, as expected:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -214,7 +213,7 @@ $ *sudo semanage fcontext -l | grep passwd_file_t*
 /etc/ptmptmp                                       regular file       system_u:object_r:passwd_file_t:s0
 --
 
-6. Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system services have access to user's files.
+6. Verify that system services run each under a different context, so they belong to different domains than each other and are also different than interactive user logins. Then verify which system services have access to the user's files.
 +
 6.1. Find the context of common system services such as the Secure Shell and Cron daemons.
 +
@@ -233,7 +232,7 @@ system_u:system_r:crond_t:s0-s0:c0.c1023 1120 ?  Ss     0:00 /usr/sbin/crond -n
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep --color=auto crond
 --
 +
-6.2. Check if the domain types for the Secure Shell and Cron daemons have access to user's home directories.
+6.2. Check if the domain types for the Secure Shell and Cron daemons have access to the user's home directories.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -251,7 +250,7 @@ The Secure Shell daemon starts with elevated privileges, as the root user, and s
 +
 On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to access user's files.
 +
-6.3. But how does the Secure Shell daemon gets the user's list of authorized keys? We already know there's a different resource type for those files:
+6.3. But how does the Secure Shell daemon get the user's list of authorized keys? We already know there's a different resource type for those files:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -274,7 +273,7 @@ $ *sesearch --allow -s init_t -t unconfined_t -c process -p transition*
 allow init_t login_userdomain:process transition;
 --
 +
-7.2. Check that interactice processes can transition to the domain type of the `passwd` command:
+7.2. Check that interactive processes can transition to the domain type of the `passwd` command:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -295,5 +294,5 @@ Domain transitions require a few more rules to exist, such as access to the corr
 
 == Next Steps
 
-Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we see in the next section.
+Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we will see in the next section.
 

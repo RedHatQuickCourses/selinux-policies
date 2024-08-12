@@ -8,13 +8,11 @@ Objective::
 
 Verify that system services run as confined processes but processes from interactive sessions run unconfined.
 
-WARNING: Pending Review
-
 // This is very similar to the previous lab, for now there's a lot of concepts and little to actually do
 
 == Before you Start
 
-You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with the following:
 
 * SELinux enabled and enforcing the targeted policy.
 * The `setools-console` package.
@@ -25,9 +23,9 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
-1. First check that unprivileged users and their processes are unconfined.
+1. First, check that unprivileged users and their processes are unconfined.
 +
-1.1. Open a terminal to your RHEL machine and login with an unprivileged user. In the following example, the username is `student` but the actual username and user id doesn't matter, as long as it is not the root user.
+1.1. Open a terminal to your RHEL machine and log in with an unprivileged user. In the following example, the username is `student` but the actual username and user id doesn't matter, as long as it is not the root user.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -89,7 +87,7 @@ system_u:system_r:mysqld_t:s0     28698 ?        Ssl    0:00 /usr/libexec/mysqld
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28966 pts/0 S+   0:00 grep --color=auto mysqld
 --
 +
-Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and different unconfined processes.
+Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also, notice that the SELinux users and roles do not change between different confined processes and different unconfined processes.
 
 3. Install a third-party application and check that Systemd runs it unconfined.
 +
@@ -144,7 +142,7 @@ Notice that, though the test application gets the `unconfined_t` domain context 
 
 4. Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather forecasts from cities with Red Hat offices.
 +
-4.1. Start the test application on your shell and let it running:
+4.1. Start the test application on your shell and let it run:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -179,7 +177,7 @@ Storing signatures
 ...
 --
 +
-Leave the vi editor running. We choose to run an UBI8 container on purpose, to highlight that the RHEL release inside a container may be different than the RHEL release on its host.
+Leave the vi editor running. We choose to run a UBI8 container on purpose, to highlight that the RHEL release inside a container may be different than the RHEL release on its host.
 +
 5.2. On another terminal, list all processes and observe their MCS categories. Use the vi process to find which of the Bash shell processes belong to the container.
 +
@@ -196,9 +194,9 @@ system_u:system_r:container_t:s0:c108,c599 5265 pts/0 S+   0:00 vi /etc/redhat-r
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 5284 pts/2 S+   0:00 grep --color=auto vi /etc
 --
 +
-The vi process runs with categories `c108,c599` ad there's a Bash processes with the same categories. Also notice both processes have the domain type `container_t` so they are NOT unconfined. Now compare with other Bash processes, which run with categories `c0.c1023` and are unconfined.
+The vi process runs with categories `c108,c599` and there's a Bash process with the same categories. Also notice both processes have the domain type `container_t` so they are NOT unconfined. Now compare with other Bash processes, which run with categories `c0.c1023` and are unconfined.
 +
-5.3. Go back to the fist terminal and close the text editor. You can also exit the shell, terminating the container.
+5.3. Go back to the first terminal and close the text editor. You can also exit the shell, terminating the container.
 
 
 == Next Steps
