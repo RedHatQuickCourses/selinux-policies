@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Why You Should Care About SELinux? :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-setup-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s1-intro.html">Why You Should Care About SELinux?</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Why You Should Care About SELinux?</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>9 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Review the purpose of SELinux and evaluate the need for custom SELinux policies.
+== Do Not Disable SELinux!</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common applications. At that time, it was easy to find people advising to disable SELinux in order to make something work, but that wasn&#8217;t a good advice!</p>
+</div>
+<div class="paragraph">
+<p>Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complaints, real or perceived. There&#8217;s very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this course with SELinux enabled and in enforcing mode!</p>
+</div>
+<div class="paragraph">
+<p>IT professionals are under increasing demand to adopt and improve security practices. DevOps has evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern for all professionals, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s emphasize this critical advice:</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All organizations should run all their RHEL machines and VMs, as well as all their CentOS and Fedora machines and VMs, with <strong>SELinux enabled</strong> and in <strong>enforcing mode</strong>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_is_selinux"><a class="anchor" href="#_what_is_selinux"></a>What is SELinux</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Skipping the <a href="https://en.wikipedia.org/wiki/Security-Enhanced_Linux#History">history</a> <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/5/html/deployment_guide/rhlcommon-appendix-0005">lesson</a>, suffices to say that SELinux is a security mechanism that enforces policy rules for every process in the system, no matter which user started the process.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/s1-intro-fig-1.svg" alt="s1 intro fig 1">
+</div>
+</div>
+<div class="paragraph">
+<p>SELinux <strong>policies</strong> control access to any <strong>object</strong> managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy does not allow access, then access is denied.</p>
+</div>
+<div class="paragraph">
+<p>Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is accessible to other users, as they could do with file system permissions.</p>
+</div>
+<div class="paragraph">
+<p>SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and Seccomp. These mechanisms continue to affect all processes, and SELinux can deny access where those other mechanisms grant access. POSIX file permissions are not gone either. They all should be used together to enforce a good security posture.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_use_selinux"><a class="anchor" href="#_why_use_selinux"></a>Why Use SELinux?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The biggest benefit of SELinux is <a href="https://access.redhat.com/solutions/7032454">protecting systems from zero-day vulnerabilities</a>. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to lure an application to perform any task the application wouldn&#8217;t normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/s1-intro-fig-2.svg" alt="s1 intro fig 2">
+</div>
+</div>
+<div class="paragraph">
+<p>SELinux is so effective that many CVEs which were considered severe in regular Linux systems have minimal impact, or no impact at all, on RHEL servers. For example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.hqcodeshop.fi/archives/243-SElinux-and-Shellshock.html">CVE-2014-6271 and CVE-2014-7169</a> a.k.a ShellShock</p>
+</li>
+<li>
+<p><a href="https://access.redhat.com/security/cve/cve-2024-21626">CVE-2024-21626</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To be effective, SELinux relies on the availability of security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.</p>
+</div>
+<div class="paragraph">
+<p>Notice that SELinux cannot prevent an application from doing things it&#8217;s supposed to do. For example, an SQL injection vulnerability in a web application would allow an application to access other data it already has access to but end users shouldn&#8217;t see. SELinux wouldn&#8217;t prevent such a scenario: it either allows the application access to the remote database server or it doesn&#8217;t.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_who_provides_selinux_policies"><a class="anchor" href="#_who_provides_selinux_policies"></a>Who Provides SELinux Policies?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Red Hat provides a comprehensive policy for almost all packages included with RHEL and its add-on products. However, if you deploy any application from a third-party vendor, you must load a policy that is specifically tailored for that application. As you are attending this course, you are probably involved with creating such a policy.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/s1-intro-fig-3.svg" alt="s1 intro fig 3">
+</div>
+</div>
+<div class="paragraph">
+<p>Red Hat is not the only vendor that recommends enabling and configuring SELinux. For example, see some <a href="https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/">advice from DataDog</a>.</p>
+</div>
+<div class="paragraph">
+<p>Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, leaving the burden on their customers instead.</p>
+</div>
+<div class="paragraph">
+<p>Among the vendors who stepped up we can name Microsoft, which provides an <a href="https://techcommunity.microsoft.com/t5/sql-server-blog/sql-server-2022-now-available-for-both-rhel-9-and-ubuntu-22-04/ba-p/3896410">SELinux policy for the MS SQL Server database</a>.</p>
+</div>
+<div class="paragraph">
+<p>Another vendor who provides SELinux policies for their software is <a href="https://docs.trellix.com/bundle/trellix-agent-5.7.x-product-guide/page/GUID-4C38F3FD-0881-4D48-AA52-572E4BFFC167.html">Trellix</a>, for their endpoint security suite.</p>
+</div>
+<div class="paragraph">
+<p>Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer&#8217;s environment. However, they still encourage their customers to use SELinux for additional security. For example, IBM already provided <a href="https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux">sample SELinux policies for DB2</a> way before IBM acquired Red Hat.</p>
+</div>
+<div class="paragraph">
+<p>Some vendors who used to advise disabling SELinux due to fears of performance degradation now recommend that customers run their applications with SELinux enabled and in enforcing mode.. For example SAP supports running <a href="https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102">SAP Hana with SELinux</a>. By the way, you can find members of the SAP community who guide their fellow users on <a href="https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463">how to create SELinux policies to protect SAP applications</a>.</p>
+</div>
+<div class="paragraph">
+<p>Even without a policy designed specifically for that application, it is still much better to have SELinux policies that protect everything else in a server than disabling SELinux entirely.</p>
+</div>
+<div class="paragraph">
+<p>If your organization has an internal software development group, ideally that group should provide SELinux policies alongside their application binaries and configuration files. This is consistent with the expectation that they would also provide instructions on firewall settings, file system permissions, and other requirements for deploying their application.</p>
+</div>
+<div class="paragraph">
+<p>If they don&#8217;t, then the system administrator responsible for securing the deployment must work with them to create such a policy.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_do_you_need_to_create_custom_selinux_policies"><a class="anchor" href="#_what_do_you_need_to_create_custom_selinux_policies"></a>What Do You Need to Create Custom SELinux Policies?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming or scripting knowledge to create and validate SELinux policies.</p>
+</div>
+<div class="paragraph">
+<p>Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn&#8217;t mean access to the application&#8217;s source code and understanding of its internal implementation details. Instead, it means understanding of what an application does, to the level you are able to answer questions such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Does it make sense for that application to read the contents of /directory/file?</p>
+</li>
+<li>
+<p>Does it make sense for that application to listen on TCP Port 12345?</p>
+</li>
+<li>
+<p>Does it make sense for that application to open network connections to api.example.com?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In fact, RHEL includes tools to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not permissive enough) without good knowledge about the target application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_do_selinux_policies_require_customization"><a class="anchor" href="#_why_do_selinux_policies_require_customization"></a>Why Do SELinux Policies Require Customization?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most software is configurable with different paths for data files, log files, and network ports for incoming connections. Access to these paths, ports, and other kernel objects must be allowed by SELinux.</p>
+</div>
+<div class="paragraph">
+<p>Of course, no preexisting policy can anticipate all variations of file paths, network ports, and other configuration details that a user could choose for all possible deployment scenarios of an application. If an SELinux policy is designed over rigid configuration assumptions, it forces users to operate the application under those assumptions only.</p>
+</div>
+<div class="paragraph">
+<p>SELinux provides a few ways through which you can design a policy to be malleable and yet ensure an application cannot be abused by exploring known and unknown bugs. We will learn about those mechanisms later in this course.</p>
+</div>
+<div class="paragraph">
+<p>In the worst case scenario, system administrators can configure an application to run in the <strong>permissive mode</strong>. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable to exploits, but the remaining of the system will still be protected.</p>
+</div>
+<div class="paragraph">
+<p>In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.</p>
+</div>
+<div class="paragraph">
+<p>While it is possible to put the entire system in permissive move, this is rarely necessary.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first activity of this course verifies that you have a test machine with SELinux enabled and with the default policy set loaded. Later, you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Review of SELinux</a></span>
+  <span class="next"><a href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Explore Labels and Policy Rules in a RHEL Machine :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s3-labels.html">
+    <link rel="next" href="s5-rhel.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Explore Labels and Policy Rules in a RHEL Machine</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>9 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Explore the Labels and SELinux rules included with a default installation of Red Hat Enterprise Linux.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+</div>
+<div class="paragraph">
+<p>Ensure that your system has SELinux enabled and in enforcing mode. Review the <a href="s2-setup-lab.html" class="xref page">first activity</a> in this course if you need help with those checks.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Log in as a regular Linux user (not root) and verify the SELinux context of your files and processes.</p>
+<div class="paragraph">
+<p>1.1. Notice that your home directory and your files have different resource types:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -dZ $HOME</strong>
+unconfined_u:object_r:user_home_dir_t:s0 /home/student
+$ <strong>echo '123' &gt; test.file</strong>
+$ <strong>ls -Z test.file</strong>
+unconfined_u:object_r:user_home_t:s0 test.file</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1.2. All your processes inherit the resource type of your login shell:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps Z</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1175 pts/0 Ss   0:00 -bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1592 pts/0 R+   0:00 ps Z</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For now, ignore all fields of the domain (process) and resource (files) contexts, except for their types, which are <code>unconfined_t</code> and <code>user_home_dir_t</code> or <code>user_home_t</code>, respectively.</p>
+</div>
+</li>
+<li>
+<p>Show that SELinux allows the domain to access home directories.</p>
+<div class="paragraph">
+<p>2.1. Install the <code>setools-console</code> package, if it&#8217;s not already installed on your test machine:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo install -y setools-console</strong>
+...
+Complete!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.2. Search for allow rules using the domain and resource types from the previous step:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow files_unconfined_type file_type:file execmod; [ selinuxuser_execmod ]:True
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you wish, you can also try a similar search for the user&#8217;s home files. Just replace <code>user_home_dir_t</code> with <code>user_home_t</code> in the previous command.</p>
+</div>
+<div class="paragraph">
+<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on the user&#8217;s home directories.</p>
+</div>
+<div class="paragraph">
+<p>2.3. If you&#8217;re adventurous, retry the previous command without one of the <code>-s</code>, <code>-t</code>, or <code>-c</code> options. Be warned that it&#8217;ll display a large number of allow rules.</p>
+</div>
+</li>
+<li>
+<p>Run the <code>passwd</code> command and check its context and also of the system password files.</p>
+<div class="paragraph">
+<p>3.1. Run the <code>passwd</code> command in the background so it get&#8217;s stuck, allowing you to check its SELinux context:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>passwd &gt; /dev/null &amp;</strong>
+[1] 1628
+$
+
+[1]+  Stopped                 passwd &gt; /dev/null
+$ <strong>ps -Z 1628</strong>
+LABEL                               PID TTY      STAT   TIME COMMAND
+unconfined_u:unconfined_r:passwd_t:s0-s0:c0.c1023 1628 pts/0 T   0:00 passwd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the <code>passwd</code> transitioned from the <code>unconfined_t</code> type of its Bash shell to the <code>passwd_t</code> type.</p>
+</div>
+<div class="paragraph">
+<p>3.2. Check the context of the password files. The option after <code>-Z</code> uses the numeral one for "one file per line":</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z -1 /etc/passwd /etc/shadow</strong>
+system_u:object_r:passwd_file_t:s0 /etc/passwd
+     system_u:object_r:shadow_t:s0 /etc/shadow</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that there are different SELinux types for <code>/etc/passwd</code>, which everyone&#8217;s supposed to read, and for <code>/etc/shadow</code>, which no one is supposed to read.</p>
+</div>
+<div class="paragraph">
+<p>3.3. Don&#8217;t forget to kill the <code>passwd</code> process that you left in the background:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>kill %1</strong>
+[student@servera ~]$
+[1]+  Terminated              passwd &gt; /dev/null</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check if the <code>passwd</code> command and your interactive processes are allowed to access the password files by the SELinux policy.</p>
+<div class="paragraph">
+<p>4.1. Notice that the <code>passwd_t</code> domain is allowed access to both the password files, as expected:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s passwd_t -t passwd_file_t -c file</strong>
+...
+allow passwd_t passwd_file_t:file { append create link rename setattr unlink watch watch_reads write };
+$ <strong>sesearch --allow -s passwd_t -t shadow_t -c file</strong>
+...
+allow passwd_t shadow_t:file { append create getattr ioctl link lock map open read relabelfrom relabelto rename setattr unlink watch watch_reads write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.2. Check that, surprisingly, the <code>unconfined_t</code> domain is also allowed access to both password files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t passwd_file_t -c file</strong>
+...
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };
+...
+$ <strong>sesearch --allow -s unconfined_t -t shadow_t -c file</strong>
+...
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will make sense in the next section, when we explain the reasoning behind the default policies included with RHEL. For now, let&#8217;s move forward.</p>
+</div>
+<div class="paragraph">
+<p>4.3. It seems, from the previous output, that unconfined_t domain type inherits from the <code>files_unconfined_type</code> attribute. Check that assumption:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a files_unconfined_type -x | grep unconfined_t</strong>
+   attribute files_unconfined_type;
+        certmonger_unconfined_t
+        pegasus_openlmi_unconfined_t
+        unconfined_t
+        virt_qemu_ga_unconfined_t
+        vmtools_unconfined_t
+        watchdog_unconfined_t
+        xdm_unconfined_t</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.4. Similarly, it seems that the <code>passwd_file_t</code> and <code>shadow_t</code> resource types inherit from the <code>file_type</code> attribute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>seinfo -a file_type -x | grep shadow_t</strong>
+        shadow_t
+$ <strong>seinfo -a file_type -x | grep passwd_file_t</strong>
+        passwd_file_t</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check that the loaded policy sets default contexts for files under user&#8217;s home directories and also for password files. You have to use the <code>semanage</code> command instead of the <code>sesearch</code> command:</p>
+<div class="paragraph">
+<p>5.1. First check user home directories, with type <code>user_home_dir_t</code>, and user&#8217;s files, with type <code>user_home_t</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep user_home_dir_t</strong>
+/home/[^/]+                                        directory          unconfined_u:object_r:user_home_dir_t:s0
+/home/[^/]+                                        symbolic link      unconfined_u:object_r:user_home_dir_t:s0
+$ <strong>sudo semanage fcontext -l | grep user_home_t</strong>
+/home/[^/]+/.+                                     all files          unconfined_u:object_r:user_home_t:s0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. Check the default context for user&#8217;s SSH keys, to prove that not all files under the <code>/home</code> directory get the same context:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep ssh_home_t</strong>
+/home/[^/]+/\.ansible/cp/.*                        socket             unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.shosts                               all files          unconfined_u:object_r:ssh_home_t:s0
+/home/[^/]+/\.ssh(/.*)?                            all files          unconfined_u:object_r:ssh_home_t:s0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.3. Check the default context for password files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo semanage fcontext -l | grep shadow_t</strong>
+/etc/gshadow.*                                     regular file       system_u:object_r:shadow_t:s0
+/etc/nshadow.*                                     regular file       system_u:object_r:shadow_t:s0
+/etc/security/opasswd                              regular file       system_u:object_r:shadow_t:s0
+/etc/security/opasswd\.old                         regular file       system_u:object_r:shadow_t:s0
+/etc/shadow.*                                      regular file       system_u:object_r:shadow_t:s0
+/etc/tcb/.+/shadow.*                               regular file       system_u:object_r:shadow_t:s0
+/var/db/shadow.*                                   regular file       system_u:object_r:shadow_t:s0
+$ <strong>sudo semanage fcontext -l | grep passwd_file_t</strong>
+/etc/\.pwd\.lock                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/group[-\+]?                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/group\.lock                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd[-\+]?                                  regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.OLD                                   regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.adjunct.*                             regular file       system_u:object_r:passwd_file_t:s0
+/etc/passwd\.lock                                  regular file       system_u:object_r:passwd_file_t:s0
+/etc/ptmptmp                                       regular file       system_u:object_r:passwd_file_t:s0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that system services run each under a different context, so they belong to different domains than each other and are also different than interactive user logins. Then verify which system services have access to the user&#8217;s files.</p>
+<div class="paragraph">
+<p>6.1. Find the context of common system services such as the Secure Shell and Cron daemons.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ps ax -Z | grep sshd</strong>
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1117 ?   Ss     0:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1161 ?   Ss     0:00 sshd: student [priv]
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1174 ? S   0:00 sshd: student@pts/0
+system_u:system_r:sshd_t:s0-s0:c0.c1023 1279 ?   Ss     0:00 sshd: student [priv]
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1282 ? S   0:00 sshd: student@pts/1
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1711 pts/0 S+   0:00 grep --color=auto sshd
+$ <strong>ps ax -Z | grep crond</strong>
+system_u:system_r:crond_t:s0-s0:c0.c1023 1119 ?  Ss     0:00 /usr/sbin/atd -f
+system_u:system_r:crond_t:s0-s0:c0.c1023 1120 ?  Ss     0:00 /usr/sbin/crond -n
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep --color=auto crond</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6.2. Check if the domain types for the Secure Shell and Cron daemons have access to the user&#8217;s home directories.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s sshd_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+$ <strong>sesearch --allow -s crond_t -t user_home_dir_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow files_unconfined_type file_type:file execmod; [ selinuxuser_execmod ]:True
+allow files_unconfined_type file_type:file { append audit_access create execute execute_no_trans getattr ioctl link lock map mounton open quotaon read relabelfrom relabelto rename setattr swapon unlink watch watch_mount watch_reads watch_sb watch_with_perm write };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the Secure Shell daemon has no access to user&#8217;s files but the Cron daemon does have access.</p>
+</div>
+<div class="paragraph">
+<p>The Secure Shell daemon starts with elevated privileges, as the root user, and should be constrained as a potential avenue for security exploits.</p>
+</div>
+<div class="paragraph">
+<p>On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to access user&#8217;s files.</p>
+</div>
+<div class="paragraph">
+<p>6.3. But how does the Secure Shell daemon get the user&#8217;s list of authorized keys? We already know there&#8217;s a different resource type for those files:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls -Z .ssh/authorized_keys</strong>
+unconfined_u:object_r:ssh_home_t:s0 .ssh/authorized_keys
+$ <strong>sesearch --allow -s sshd_t -t ssh_home_t -c file</strong>
+allow domain file_type:file map; [ domain_can_mmap_files ]:True
+allow login_pgm ssh_home_t:file { getattr ioctl lock open read };
+allow ssh_server ssh_home_t:file { append create link rename setattr unlink watch watch_reads write };
+allow sshd_t user_home_type:file { getattr ioctl lock open read };</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify domain transition rules which allow interactive processes and system services to be assigned to their intended domain types.</p>
+<div class="paragraph">
+<p>7.1. Check the domain transition rule for interactive processes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s init_t -t unconfined_t -c process -p transition</strong>
+allow init_t login_userdomain:process transition;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>7.2. Check that interactive processes can transition to the domain type of the <code>passwd</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s unconfined_t -t passwd_t -c process -p transition</strong>
+allow unconfined_t domain:process transition;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>7.3. Check the domain transitions rule for system services:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sesearch --allow -s init_t -t crond_t -c process -p transition</strong>
+allow initrc_domain daemon:process transition;
+$ <strong>sesearch --allow -s init_t -t sshd_t -c process -p transition</strong>
+allow initrc_domain daemon:process transition;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Domain transitions require a few more rules to exist, such as access to the correct executable file. We will see those rules later, when we learn to create custom policies.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we will see in the next section.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s3-labels.html">SELinux Policies, Labels, and Contexts</a></span>
+  <span class="next"><a href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

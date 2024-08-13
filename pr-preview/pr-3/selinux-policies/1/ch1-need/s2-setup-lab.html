@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Verify the Status of SELinux in a RHEL Machine :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s1-intro.html">
+    <link rel="next" href="s3-labels.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Verify the Status of SELinux in a RHEL Machine</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>6 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Ensure that a RHEL machine has SELinux enabled and in the enforced mode, with the targeted policy set loaded.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a terminal on your RHEL machine and switch to a root shell. Then, verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo -i</strong>
+# <strong>getenforce</strong>
+Enforcing</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If your output was different in the previous step, follow one of the following to enable SELinux and set it to the enforced mode:</p>
+<div class="paragraph">
+<p>2.1. If your system is on permissive mode, switch to enforced mode:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>getenforce</strong>
+Permissive
+# <strong>setenforce 1</strong>
+# getenforce
+Enforcing</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don&#8217;t have to use <code>sed</code>; you can use your preferred text editor on the <code>/etc/selinux/config</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>getenforce</strong>
+Disabled
+# <strong>sed -i s/SELINUX=disabled/SELINUX=enforcing/ /etc/selinux/config</strong>
+# <strong>fixfiles -F onboot</strong>
+System will relabel on next boot
+# reboot</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Be patient, as relabeling might take a while. After logging in again, you should see the same output as in <strong>step 1</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo -i</strong>
+# <strong>getenforce</strong>
+Enforcing</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the <strong>targeted</strong> policy set is loaded:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>sestatus</strong>
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If your output shows that a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive that you can change the policy set of your current lab machine, follow these steps:</p>
+<div class="paragraph">
+<p>4.1. In the following example, the system has the <strong>mls</strong> policy set loaded, but the instructions would be the same for the <strong>minimum</strong> policy set from previous RHEL releases:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>sestatus</strong>
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             mls
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4.2. Change the SELinux policy set in the <code>/etc/selinux/config</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>dnf install -y selinux-policy-targeted</strong>
+...
+# <strong>sed -i s/SELINUXTYPE=mls/SELINUXTYPE=targeted/ /etc/selinux/config</strong>
+# <strong>fixfiles -F onboot</strong>
+System will relabel on next boot
+# <strong>reboot</strong></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Be patient, as relabeling might take a while. After logging in again, you should see the same output as in <strong>step 3</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>sestatus</strong>
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now that you know that SELinux is enabled and in enforcing mode, you can use the Linux audit log to find about any activity, especially access denials, from SELinux.</p>
+<div class="paragraph">
+<p>You could review the raw audit log but the <code>ausearch</code> command provides many nice filters.</p>
+</div>
+<div class="paragraph">
+<p>5.1. For example, to show that a policy was loaded:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>ausearch -m MAC_POLICY_LOAD -i --just-one</strong>
+----
+type=PROCTITLE msg=audit(11/09/23 03:43:12.299:347) : proctitle=/sbin/load_policy
+type=SYSCALL msg=audit(11/09/23 03:43:12.299:347) : arch=x86_64 syscall=write success=yes exit=3519798 a0=0x4 a1=0x7fd2c8200000 a2=0x35b536 a3=0x0 items=0 ppid=5462 pid=5466 auid=devops uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=pts0 ses=1 comm=load_policy exe=/usr/sbin/load_policy subj=unconfined_u:unconfined_r:load_policy_t:s0-s0:c0.c1023 key=(null)
+type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 lsm=selinux res=yes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>5.2. Or to show recent denials, which, on a good system, should be none:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>ausearch -m avc,user_avc,selinux_err,user_selinux_err -ts recent</strong>
+&lt;no matches&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Most of the time, you will be interested only in the <code>avc</code> audit events.</p>
+</div>
+</li>
+<li>
+<p>List the SELinux packages installed on your system. As you progress in this course, it may be required that you install some additional packages:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>rpm -qa | grep selinux</strong>
+...
+# <strong>dnf search selinux</strong>
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>A standard installation of RHEL includes no tool to inspect the loaded SELinux policies. You can install the <code>seinfo</code> and <code>sesearch</code> commands for that purpose:</p>
+<div class="paragraph">
+<p>7.1. Install the setools-console package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>dnf install setools-console</strong>
+...
+Completed!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>7.2. List the number of instances of each construct available in SELinux policies. There&#8217;s quite a lot!</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>seinfo</strong>
+Statistics for policy file: /sys/fs/selinux/policy
+Policy Version:             33 (MLS enabled)
+Target Policy:              selinux
+Handle unknown classes:     allow
+  Classes:             135    Permissions:         457
+  Sensitivities:         1    Categories:         1024
+  Types:              5100    Attributes:          253
+  Users:                 8    Roles:                14
+  Booleans:            349    Cond. Expr.:         379
+  Allow:             63446    Neverallow:            0
+  Auditallow:          165    Dontaudit:          8450
+  Type_trans:       252192    Type_change:          87
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fortunately, you can write good and useful SELinux policies without knowing about all those constructs. You will focus mostly on classes, types, attributes, allow rules, and type transitions.</p>
+</div>
+<div class="paragraph">
+<p>7.3. The <code>seinfo</code> command can list the instances of each SELinux policy construct. For example, to list classes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>seinfo --class</strong>
+
+Classes: 135
+   alg_socket
+   anon_inode
+   appletalk_socket
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Among the classes, you should easily recognized ones such as <code>file</code> and <code>dir</code>.</p>
+</div>
+<div class="paragraph">
+<p>7.4. The <code>sesearch</code> command searches among the SELinux rules in the loaded policies. The following example lists all allow rules:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>sesearch --allow | head</strong>
+allow NetworkManager_dispatcher_chronyc_script_t NetworkManager_dispatcher_chronyc_script_t:filesystem associate;
+allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_script_t:file { entrypoint execute getattr ioctl lock map open read };
+allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:association sendto;
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming, but SELinux tools help navigate loaded policies.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Later in this course, you will learn how to filter the results of <code>sesearch</code>, but before that you must understand the concepts of SELinux labels and rules, which you see in the next section.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-intro.html">Why You Should Care About SELinux?</a></span>
+  <span class="next"><a href="s3-labels.html">SELinux Policies, Labels, and Contexts</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
