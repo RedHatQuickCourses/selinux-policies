@@ -8,13 +8,11 @@ Objective::
 
 Troubleshoot SELinux errors from an Apache Web Server running server-side scripting applications and configure SELinux to fix those errors.
 
-WARNING: Pending Review
-
 == Before you Begin
 
-You need a RHEL machine to which you have the either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
+You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
-* SELinux enabled and enforcing, using the targeted policy.
+* SELinux enabled and enforced, using the targeted policy.
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `httpd` package.
@@ -26,7 +24,7 @@ These instructions were tested on RHEL 9.3 but should work with minimal change o
 
 == Instructions
 
-1. Download a sample web site with includes dynamic pages using the PHP server-side scripting language.
+1. Download a sample website with includes dynamic pages using the PHP server-side scripting language.
 +
 1.1. Clone the course samples repository, if you didn't in a previous activity, and enter the `quotes` directory.
 +
@@ -80,7 +78,7 @@ $ *sudo mysql < db.sql*
 
 2. Install the quote application on the Apache Web Server document root by making a very common mistake: moving files between directories with different SELinux contexts:
 +
-2.1. Move the welcome page and the dynamic pages from the git repository to the Apache Web Sever document root:
+2.1. Move the welcome page and the dynamic pages from the git repository to the Apache Web Server document root:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -206,7 +204,7 @@ type=AVC msg=audit(1721683996.862:250): avc:  denied  { name_connect } for  pid=
 
 5. Verify that the Apache Web Server can run PHP scripts. Also verify that PHP scripts, when executed interactively, can access MySQL databases.
 +
-5.1. Visit the hello page, which is hidden from normal navigation. It is quite common that dynamic web sites have a few hidden pages for troubleshooting purposes and for health reporting to monitoring systems:
+5.1. Visit the hello page, which is hidden from normal navigation. It is quite common that dynamic websites have a few hidden pages for troubleshooting purposes and for health reporting to monitoring systems:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -226,7 +224,7 @@ $ *php -f /var/www/html/quotes.php*
 <html>
 <body>
 <h1>
-IT is ever-changing and there is the need to evolve in order to stay relevant.
+It is ever-changing and there is a need to evolve in order to stay relevant.
 </h1>
 <p>
 <a href="/index.html">Back</a> | <a href="../quotes.php">Another quote</a>
@@ -283,6 +281,6 @@ The 4 Ps for Change and Release: Planning Prevents Poor Performance.
 
 == Next Steps
 
-Just setting the correct context labels on resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set from RHEL.
+Just setting the correct context labels on resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set by RHEL.
 
 The next section will focus on interpreting SELinux audit events and tools which help you assess if it's the case of configuring a server or adding a custom policy.

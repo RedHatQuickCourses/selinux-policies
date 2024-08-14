@@ -4,10 +4,8 @@ Goal::
 
 Configure SELinux targeted policies for RHEL packages
 
-WARNING: Pending Review
-
 == Introduction
 
-This chapter reviews tools provided with RHEL that support managing and troubleshooting SELinux policies. It provides a couple case studies of Apache Web Server with typical configuration changes and a PHP application.
+This chapter reviews tools provided by RHEL that support managing and troubleshooting SELinux policies. It provides a couple of case studies of Apache Web Server with typical configuration changes and a PHP application.
 
-These same tools will be used in the next chapter to create and validate custom policies for third-part applications on a RHEL.
+These same tools will be used in the next chapter to create and validate custom policies for third-party applications on a RHEL.

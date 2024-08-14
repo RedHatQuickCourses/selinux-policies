@@ -8,8 +8,6 @@ Objective::
 
 Run an Apache Web Server with changes to its default configuration under the targeted policy set from RHEL.
 
-WARNING: Pending Review
-
 == Before you Begin
 
 You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
@@ -58,7 +56,7 @@ DocumentRoot "/var/website"
 +
 You can find a copy of the configuration file with all changes already applied in the https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf[sample applications] git repository.
 +
-1.4. Create a test web site:
+1.4. Create a test website:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -108,7 +106,7 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 +
 You might expect a second AVC on the new document root, but the Apache Web Server terminated with an error code before it tried to open any web page. We will get there shortly.
 +
-In the previous AVC error, notice the following fields, starting from the end of the message and going backwards:
+In the previous AVC error, notice the following fields, starting from the end of the message and going backward:
 +
 * The resource class (`t_class`) of `tcp_socket`
 * The resource context (`tcontext`) of type `unreserved_port_t`
@@ -130,20 +128,20 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
         Was caused by:
         The boolean nis_enabled was set incorrectly. 
         Description:
-        Allow nis to enabled
+        Allow nis to be enabled
 
         Allow access by executing:
         # setsebool -P nis_enabled 1
 --
 +
-Notice that `audit2why` suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.
+Notice that `audit2why` suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static website has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.
 +
 3.2. If you took too long to review the AVC error, the previous step might return "<no matches>". In this case, you can filter by the application binary, which is also useful when there are AVC errors from multiple processes:
 +
 [source,subs="verbatim,quotes"]
 --
 $ *sudo ausearch -m AVC -x /usr/sbin/httpd | audit2why*
-... same output as previous step ...
+... same output as the previous step ...
 --
 +
 3.3. To illustrate how the suggestion from `audit2why` could look more sane, here's the output you would get if, instead of 30000, you configure your Apache Web Serve to listen on port 8000:
@@ -180,7 +178,7 @@ allow nsswitch_domain unreserved_port_t:tcp_socket name_connect; [ nis_enabled ]
 It is a long list of allow rules, which raises a red flag. After all, we want network servers to run under the most restrictive policy we can.
 +
 4.2. Check the range of ports that would be allowed by the boolean.
-It includes a resource types which grant a large range of TCP ports:
+It includes resource types which grant a large range of TCP ports:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -188,7 +186,7 @@ $ *semanage port -l | grep tcp | grep 'unreserved_port_t'*
 unreserved_port_t              tcp      61000-65535, 1024-3276
 --
 +
-That made `audit2why` suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.
+That made `audit2why` suggest the boolean. We do not want our web server vulnerable to exploits that would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.
 +
 By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is considered insecure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default. You should be careful to not enable them unless there's a real need and you provide some mitigation for the increased exposure.
 
@@ -269,7 +267,7 @@ allow this access for now by executing:
 ...
 --
 +
-We can ignore the remaining of the output of `sealert`, which provides contextual information about the system where it runs and the AVC errors it processed.
+We can ignore the remaining of the output of `sealert`, which provides contextual information about the system where it runs and the AVC errors it processes.
 
 6. Review the online policy docs for a proper fix.
 +
@@ -288,7 +286,7 @@ $ *man httpd_selinux*
 ...
 --
 +
-Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.
+Browse the main page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the time, the information you need is in either the lists of port types or the list of file contexts.
 +
 6.2. From the man page, the following resource type seems to be the one we need:
 +
@@ -330,7 +328,7 @@ http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 844
 
 7. Try again starting the Apache Web Server and check if there are more AVC errors.
 +
-7.1. Start Apache Web and verify it successfully listen for connections on the new port:
+7.1. Start Apache Web and verify it successfully listens for connections on the new port:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -341,7 +339,7 @@ $ *ss -ltnp | grep 30000*
 LISTEN 0      511                *:30000            *:*    users:(("httpd",pid=5682,fd=4),("httpd",pid=5681,fd=4),("httpd",pid=5680,fd=4),("httpd",pid=5678,fd=4))
 --
 +
-7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:
+7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the website on localhost:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -359,7 +357,7 @@ ls -l /var/website/index.html
 -rw-r--r--. 1 root root 26 Jul 19 14:22 /var/website/index.html
 --
 +
-7.4. Verify if there are new AVC errors. You should see "denied" entry which refers to a `path` of `/var/website/index.html`
+7.4. Verify if there are new AVC errors. You should see a "denied" entry which refers to a `path` of `/var/website/index.html`
 +
 [source,subs="verbatim,quotes"]
 --
@@ -386,7 +384,7 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
                 You can use audit2allow to generate a loadable module to allow this access.
 --
 +
-It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoiding adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
+It suggests generating a policy module, which would allow the `httpd_t` domain type access to the `var_t` resource type. It is a best practice to avoid adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.
 +
 7.6. Check the advice from `sealert`:
 +
@@ -409,7 +407,7 @@ Do
 ...
 --
 +
-The other suggestion from `sealert` provides a long list of file types the Apache Web Server domains has access to.
+The other suggestion from `sealert` provides a long list of file types the Apache Web Server domains have access to.
 
 
 8. Change the context type of the alternate document root.
@@ -432,7 +430,7 @@ Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:objec
 Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
 --
 
-9. Restart the Apache Web Server and check that now you can access the static web site.
+9. Restart the Apache Web Server and check that now you can access the static website.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -443,6 +441,6 @@ $ *curl http://127.0.0.1:30000/index.html*
 
 == Next Steps
 
-Interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.
+Interpreting AVC errors requires careful consideration of what the offending application is trying to do and knowledge of the targeted policy set by RHEL.
 
 Before we start activities related to creating a custom SELinux policy, let's discuss how to ensure multiple servers and desktops have consistent SELinux settings.

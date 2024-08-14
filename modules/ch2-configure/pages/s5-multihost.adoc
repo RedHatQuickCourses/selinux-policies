@@ -8,26 +8,24 @@ Objective::
 
 Ensure consistent SELinux settings on multiple servers by using Ansible collections.
 
-WARNING: Pending Review
-
 // Check for a supported system role
 
 // Mention consistency between dev, test, and production; or multiple data centers running the same apps (multiple copies of the same servers)
 
 == The Need to Automate SELinux Configuration
 
-Configuring SELinux in one RHEL machine is not hard nor very time consuming, but you usually have to configure SELinux in multiple machines, and also ensure those machines stay configured the way you wish over time.
+Configuring SELinux in one RHEL machine is not hard nor very time-consuming, but you usually have to configure SELinux in multiple machines, and also ensure those machines stay configured the way you wish over time.
 
-Even if your SELinux configuration seem to be specific to a given application, that application is probably deployed into multiple machines from: 
+Even if your SELinux configuration seems to be specific to a given application, that application is probably deployed into multiple machines from: 
 
-* Development, testing and production environments;
+* Development, testing, and production environments;
 * Disaster recovery sites;
 * Multiple branch offices;
 * Different cloud provider regions;
 
 And the list could go on.
 
-The solution is automation, and Red Hat uses https://www.redhat.com/en/technologies/management/ansible[Ansible] to automate the management of multiple products, including RHEL. This course does not teach the fundamentals of Ansible, but it provides working examples on which you can build upon for your real world environments.
+The solution is automation, and Red Hat uses https://www.redhat.com/en/technologies/management/ansible[Ansible] to automate the management of multiple products, including RHEL. This course does not teach the fundamentals of Ansible, but it provides working examples on which you can build for your real-world environments.
 
 == The SELinux System Role from RHEL
 
@@ -35,15 +33,14 @@ Red Hat Enterprise Linux (RHEL) provides a number of Ansible roles for common sy
 
 The https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/automating_system_administration_by_using_rhel_system_roles/index#introduction-to-the-selinux-system-role_configuring-selinux-using-system-roles[SELinux System Role] performs common SELinux administration tasks, from enabling SELinux to loading policy modules.
 
-Like other system roles, the SELinux system role require that a playbook sets a number of variables, them performs actions based on the values of those variables. If a variable is unset, them the role does nothing.
+Like other system roles, the SELinux system role requires that a playbook sets a number of variables, then performs actions based on the values of those variables. If a variable is unset, then the role does nothing.
 
 You can find a list of all variables from the SELinux system role and their purposes on the sample files from the system roles RPM package itself or on the upstream https://galaxy.ansible.com/ui/standalone/roles/linux-system-roles/selinux/documentation/[Linux System Roles] Ansible collection.
 
-The SELinux system roles and other RHEL system role can be used by themselves, in narrow purpose playbooks, or in larger playbooks which perform all tasks required to deploy and configure an application.  
+The SELinux system roles and other RHEL system roles can be used by themselves, in narrow-purpose playbooks, or in larger playbooks which perform all tasks required to deploy and configure an application.  
 
-In fact, the https://www.redhat.com/en/blog/using-system-tags-enable-extended-security-hardening-recommendations[Red Hat Insights Security Advisor] service uses RHEL system roles in its remediation playbooks to increase security of systems it finds with SELinux disabled or in permissive move, if you enable Red Hat Insights extended security hardening.
+In fact, the https://www.redhat.com/en/blog/using-system-tags-enable-extended-security-hardening-recommendations[Red Hat Insights Security Advisor] service uses RHEL system roles in its remediation playbooks to increase the security of systems it finds with SELinux disabled or in the permissive move, if you enable Red Hat Insights extended security hardening.
 
 == Next Steps
 
-We will wrap up this chapter with working examples of Ansible playbooks which configure SELinux for the two previous use cases of a PHP application and an Apache web server with non-standard settin
-gs. Then we start the final chapter of this course by creating a custom policy module for a compiled application.
+We will wrap up this chapter with working examples of Ansible playbooks which configure SELinux for the two previous use cases of a PHP application and an Apache web server with non-standard settings. Then we start the final chapter of this course by creating a custom policy module for a compiled application.
