@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Supporting SELinux :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-webapp-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s1-support.html">Supporting SELinux</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Supporting SELinux</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Adopt a structured workflow for resolving SELinux issues.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_issues_with_selinux"><a class="anchor" href="#_common_issues_with_selinux"></a>Common Issues With SELinux</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users or with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
+</div>
+<div class="paragraph">
+<p>You also learned that, if you add a third-party application to a RHEL server, it&#8217;s better that you, its developer, or its vendor provide a custom policy module to protect that third-party application. But you don&#8217;t have to: it is recommended but optional.</p>
+</div>
+<div class="paragraph">
+<p>Why do people sometimes struggle with running Linux servers with SELinux enabled and in enforcing mode? Most of the times, it&#8217;s because they did one of those common things:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Moved files around, and their SELinux context does not match the policy rules anymore.</p>
+</li>
+<li>
+<p>Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, and the SELinux context of those files was lost.</p>
+</li>
+<li>
+<p>Configured a system server to listen on a non-standard network port, and that port is not labeled to match the policy rules.</p>
+</li>
+<li>
+<p>Configured a system server to read or write to different data and log directories, and those directories do not have labels that match the policy rules.</p>
+</li>
+<li>
+<p>Enabled an optional feature of a system service that is potentially dangerous and is not allowed by default policy rules.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You resolve most of those issues by setting files and directories to the correct SELinux context, and the latest issue you resolve by setting SELinux booleans.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_labeling_files_with_a_new_context"><a class="anchor" href="#_labeling_files_with_a_new_context"></a>Labeling Files With a New Context</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not advised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and then you apply the type to the file with the <code>restorecon</code> command.</p>
+</div>
+<div class="paragraph">
+<p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages and labels the <code>/var/www/html</code> directory accordingly. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_labeling_non_file_resources"><a class="anchor" href="#_labeling_non_file_resources"></a>Labeling Non-file Resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To label other classes of kernel objects, which cannot store the labels in extended attributes, you must use the <code>semanage</code> command. For example, use <code>semanage port</code> to label TCP and UDP ports.</p>
+</div>
+<div class="paragraph">
+<p>As a concrete example, the SELinux policy for MySQL defines the <code>mysqld_port_t</code> type for the standard MySQL server port 3306. If you configure a second instance of the MySQL daemon, you must add its TCP port to the SELinux policy with the the <code>mysqld_port_t</code> type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_setting_selinux_booleans"><a class="anchor" href="#_setting_selinux_booleans"></a>Setting SELinux Booleans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
+</div>
+<div class="paragraph">
+<p>Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attached surface open.</p>
+</div>
+<div class="paragraph">
+<p>You can list and query the status of an SELinux boolean using the <code>getsebool</code> command, and you can change its status using the <code>setsebool</code> command.</p>
+</div>
+<div class="paragraph">
+<p>For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages that access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generic_workflow_for_troubleshooting_selinux_issues"><a class="anchor" href="#_generic_workflow_for_troubleshooting_selinux_issues"></a>Generic Workflow for Troubleshooting SELinux Issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever you find something that looks like an issue with SELinux, follow these troubleshooting steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ensure that the application was not denied access to files, networks, or devices by other Linux mechanisms such as file system permissions and packet filtering. Remember that SELinux does not override other Linux security mechanisms.</p>
+</li>
+<li>
+<p>Install SELinux support tools from packages such as <code>setools-console</code> and <code>policycoreutils-python-utils</code>.</p>
+</li>
+<li>
+<p>Ensure that the audit daemon is active.</p>
+</li>
+<li>
+<p>Check that SELinux is enabled and in enforcing mode.</p>
+</li>
+<li>
+<p>Check that the targeted policy was loaded.</p>
+</li>
+<li>
+<p>Review SELinux messages in the audit log using <code>ausearch</code>.</p>
+</li>
+<li>
+<p>Put the application&#8217;s confined domain in permissive mode, and reproduce the scenario that creates the issue.</p>
+</li>
+<li>
+<p>If necessary, put the entire system in permissive mode, and reproduce the scenario.</p>
+</li>
+<li>
+<p>Use SELinux tools, such as <code>audit2why</code> and <code>sealert</code>, to help you interpret AVC errors and suggest potential fixes.</p>
+</li>
+<li>
+<p>Implement configuration changes, such as relabeling files and enabling booleans.</p>
+</li>
+<li>
+<p>If all else fails, create a custom policy module.</p>
+</li>
+<li>
+<p>If you put a confined domain or a system in permissive mode, restore it to enforcing mode.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>At any of the steps above, you may get sufficient information for establishing a root cause and propose a resolution. If the resolution doesn&#8217;t work, restart from the beginning, until you are satisfied you resolved the issue.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will perform two activities where you troubleshoot and fix SELinux issues. In between those activities, we will practice the interpretation of SELinux errors, especially AVC errors.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">SELinux Management</a></span>
+  <span class="next"><a href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

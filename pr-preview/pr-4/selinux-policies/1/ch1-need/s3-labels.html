@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SELinux Policies, Labels, and Contexts :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-setup-lab.html">
+    <link rel="next" href="s4-labels-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Review of SELinux</a></li>
+    <li><a href="s3-labels.html">SELinux Policies, Labels, and Contexts</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">SELinux Policies, Labels, and Contexts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>9 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Review the fundamental concepts required to read and interpret SELinux policies.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_policies_and_allow_rules"><a class="anchor" href="#_selinux_policies_and_allow_rules"></a>SELinux policies and allow rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SELinux Policies are compiled into a binary format and loaded into Kernel memory for efficient execution. Later this course shows the source policy language and the tools required for compiling and loading policies. For now, let&#8217;s focus on reading and interpreting SELinux policies.</p>
+</div>
+<div class="paragraph">
+<p>As a human, your intent is declaring, as part of a policy, something similar to:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>APACHE process can READ its LOGGING FILE</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Where APACHE is a mnemonic for the Apache Web Server, and LOGGING FILE refers to a number of files in a well-known directory.</p>
+</div>
+<div class="paragraph">
+<p>A close approximation for that declaration, in SELinux policy language, would be the following policy statement:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>ALLOW apache_process apache_log: FILE READ;</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Where:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"apache_process" and "apache_log" are labels assigned to processes and objects, respectively.</p>
+</li>
+<li>
+<p>"FILE" is an object class, declaring that the rule applies to files but not to objects of other classes such as network ports and message queues.</p>
+</li>
+<li>
+<p>"READ" is the set of operations allowed, and the set of valid operations depends on the class.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will see later that an allow rule is only one of the many possible kinds of SELinux policy rules, or policy statement, but it is the one that makes the bulk of most custom policies.</p>
+</div>
+<div class="paragraph">
+<p>SELinux policy rules allow processes with a given label to access objects with a matching label. Process labels may grant different access levels to objects depending on their labels, for example read-only with some labels and read-write with others.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_labels_and_contexts"><a class="anchor" href="#_selinux_labels_and_contexts"></a>SELinux Labels and Contexts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SELinux works by assigning labels to processes and objects. Those labels define the SELinux <strong>context</strong> of a process or of an object such as a file. Because processes are also Linux Kernel objects, SELinux refers to labeled process as <strong>domains</strong> and to the objects those domains act upon as <strong>resources</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Files are always resources, because a file cannot become a process. But processes can be domains, for example to open files. Processes can also be resources, for example wen a process (a domain) sends a signal to another process (a resource).</p>
+</div>
+<div class="paragraph">
+<p>An SELinux context (or label) has four fields:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>&lt;user&gt;:&lt;role&gt;:&lt;type&gt;:&lt;MLS/MCS&gt;</p>
+</div>
+</blockquote>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">&lt;user&gt;</dt>
+<dd>
+<p>SELinux users aren&#8217;t POSIX users. They are kinds of users, and policies can use these kinds to restrict abilities such as <code>sudo</code> to a different POSIX user or open network connections.</p>
+</dd>
+<dt class="hdlist1">&lt;role&gt;</dt>
+<dd>
+<p>SELinux roles group permissions so a user can switch between a more restricted set of permissions to a less restricted set and the same set of permissions can be granted ot multiple kinds of users.</p>
+</dd>
+<dt class="hdlist1">&lt;type&gt;</dt>
+<dd>
+<p>SELinux types uniquely name groups of domains or resources to which you grant permissions using policy statements.</p>
+</dd>
+<dt class="hdlist1">&lt;MLS/MCS&gt;</dt>
+<dd>
+<p>SELinux MLS/MCS field sets a security level and one or more security categories. We&#8217;ll explain more about levels and categories when we discuss the SELinux policies for Multi Level Security and Multi Category Security systems.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Most of the SELinux policies focus on types. In fact, the Linux Kernel ignores the user and role fields of the context and checks only the type when processing allow rules. The user and role fields are used mostly for type transition rules.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_to_set_the_context_of_a_resource"><a class="anchor" href="#_how_to_set_the_context_of_a_resource"></a>How to Set The Context of a Resource</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most kernel objects have labels assigned at runtime by SELinux policies themselves, and you must use SELinux management commands such as <code>semanage</code> to assign different labels to SELinux resources such as TCP ports. If you do not update your SELinux policy and reboots a system, all labels changes to those resources are lost.</p>
+</div>
+<div class="paragraph">
+<p>Files are different: SELinux stores labels in the extended attributes of files. Changes on file labels are persistent, unless a system administrator requires relabeling files to match the policy.</p>
+</div>
+<div class="paragraph">
+<p>Common file system types for Linux, such as XFS and ext4, support extended attributes, as well of modern versions of the NFS protocol. If you&#8217;re using a file system which does not support extended attributes, you can specify the label for all files using <code>mount</code> options.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <code>/etc/password</code> file has a default label of type <code>passwd_file_t</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>ls -Z /etc/passwd</strong>
+system_u:object_r:passwd_file_t:s0 /etc/passwd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That label is stored on the <code>security.selinux</code> extended attribute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># <strong>getfattr -n security.selinux /etc/passwd</strong>
+getfattr: Removing leading '/' from absolute path names
+# file: etc/passwd
+security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must take care with labels on files from removable media and network shares, because those files could have their labels removed or changed by systems running with SELinux disabled or under different policy sets.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_default_contexts_for_files"><a class="anchor" href="#_default_contexts_for_files"></a>Default Contexts for Files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An SELinux policy can set default file labels for files and directories. These default labels are expected to match the labels assigned by domains at file creation, which are set to one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The of the parent directory</p>
+</li>
+<li>
+<p>The context explicitly set by the application</p>
+</li>
+<li>
+<p>The context set by a File type transition rule</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A system administrator could change the labels on files after creation, and if the policy doesn&#8217;t set the default label, it wouldn&#8217;t be easy to restore the labels as expected by the policy.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_context_transition_rules"><a class="anchor" href="#_context_transition_rules"></a>Context Transition Rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SELinux policies can also set labels on domains and resources by means of context transition rules.</p>
+</div>
+<div class="paragraph">
+<p>There are two main kinds of context transition rules:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Domain context transition rules</dt>
+<dd>
+<p>Specify the new label for a child process after a fork and exec, based on the context of the original domain and the executable to be executed.</p>
+</dd>
+<dt class="hdlist1">File context transition rules</dt>
+<dd>
+<p>Specify the new context of files created by a given domain, when you don&#8217;t want the new file to inherit the context of its parent directory.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Domain context transition rules are required because all Linux processes, including all interactive user logins, are descendants of the init process. Without those rules, only applications coded to invoke SELinux system calls would be able to switch to different context labels. Thanks to domain context transition rules, processes can run under a very strict and customized SELinux policy without being coded with SELinux awareness.</p>
+</div>
+<div class="paragraph">
+<p>File context transition rules enable having common folders for files from different applications, such as configuration files in the <code>/etc</code> directory or log files in the <code>/var/log</code> directory, as mandated by the Linux Filesystem Hierarchy Standard (FHS), and retain the ability to configure policies such as that one application cannot read the configuration or log files of another application.</p>
+</div>
+<div class="paragraph">
+<p>Use of domain context transition rules based on SELinux uses and roles enables configuring your RHEL system in such a way that a system administrator can perform day-to-day tasks, such as installing packages and creating users, but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy management tasks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_type_attributes"><a class="anchor" href="#_selinux_type_attributes"></a>SELinux Type Attributes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The concept of attributes from SELinux enables grouping multiple types and referring to the name of attribute name in allow rules. They enable specifying an allow rule only once for a number of different domain and/or resource types.</p>
+</div>
+<div class="paragraph">
+<p>When you search for allow rules in the current loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_level_security_mls_and_multi_category_security_mcs_systems"><a class="anchor" href="#_multi_level_security_mls_and_multi_category_security_mcs_systems"></a>Multi Level Security (MLS) and Multi Category Security (MCS) systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The fourth field of an SELinux label sometimes looks like there&#8217;s a fifth field because it is usually written as:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>level:category</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Both levels and categories are numbers, which can be optionally mapped to a text string, and only the level part of it is mandatory. If a context has no category assigned to it, the fourth field of an SELinux label will be:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>level</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>This is the purpose of levels and categories in SELinux policies:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Level</dt>
+<dd>
+<p>Specify a security clearance of a domain or resource. Domains with a higher security clearance can access resources from lower security clearances, but they cannot change the security clearance of a resource to a lower level. You can specify a range of levels using a dash (-).</p>
+</dd>
+<dt class="hdlist1">Category</dt>
+<dd>
+<p>Specify an optional set of categories for a domain or a resource. Domains can only access resources if they share one common category. You can specify multiple categories using dots (.).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To differentiate levels from categories, as both are numbers, SELinux labels prefix levels with "s" and categories with "c". Most times, you&#8217;ll see the MCS/MLS field as "s0" meaning "level zero, no categories".</p>
+</div>
+<div class="paragraph">
+<p>For example, to set a context to levels 1 to 3 and categories 2, 3, and 7, you would write:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>s1-3:c2.c3.c7</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>This course will not focus emphasis on levels and categories because they are not commonly used to protect system services and network services.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_modes"><a class="anchor" href="#_selinux_modes"></a>SELinux Modes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you know about SELinux contexts and rules, we can review the meaning of the SELinux modes:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enforcing</dt>
+<dd>
+<p>The SELinux policies loaded into the kernel are fully effective, denying access to operations which are not explicitly allowed.</p>
+</dd>
+<dt class="hdlist1">Permissive</dt>
+<dd>
+<p>The SELinux policies loaded into the kernel are still being checked, but instead of denying access to operations which are not explicitly allowed, the violation is just logged and all operations are allowed.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>It is possible to put an entire system in permissive mode, but rarely necessary. It is possible to put selected domains in permissive mode and that&#8217;s enough to deal with most cases of policy development and troubleshooting. Just don&#8217;t cheat by creating a policy which puts a domain in permissive mode and let it be that way for too long.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will now check the context labels assigned by default to files and processes on RHEL, and the default policy statements that reference those labels. This way you practice reading and interpreting SELinux policies so you can later write your own custom policies.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a></span>
+  <span class="next"><a href="s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
