@@ -49,7 +49,7 @@ ____
 ____
 
 <user>::
-SELinux users are not the same as POSIX users. They are different kind of users, and policies can use these kinds to restrict abilities such as `sudo` to a different POSIX user or open network connections.
+SELinux users are not the same as POSIX users. SELinux users are not meant to represent individual human or system users, but to represent classes of users. SELinux policies can use these kinds classes of users to restrict abilities such as `sudo` to a different POSIX user or open network connections.
 
 <role>::
 SELinux roles group permissions, so that a user can switch between a more restricted set of permissions to a less restricted set. The same set of permissions can be granted to multiple kinds of users.
@@ -96,6 +96,7 @@ An SELinux policy can set default file labels for files and directories. These d
 
 * The label of the parent directory 
 // Is it label?
+// Fernando: yes it is, good catch!
 * The context explicitly set by the application
 * The context set by a File type transition rule
 

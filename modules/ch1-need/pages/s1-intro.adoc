@@ -35,6 +35,7 @@ SELinux is not a replacement for other security mechanisms in Linux, such as Net
 
 The biggest benefit of SELinux is https://access.redhat.com/solutions/7032454[protecting systems from zero-day vulnerabilities]. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to lure an application to perform any task the application wouldn't normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
 // Is that link correct?
+// Fernando: yes it is. Some KBs require a customer portal login.
 
 image::s1-intro-fig-2.svg[]
 
