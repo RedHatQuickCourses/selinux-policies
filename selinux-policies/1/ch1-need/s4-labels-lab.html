@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,25 +196,13 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+<p>You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
 </div>
 <div class="paragraph">
 <p>Ensure that your system has SELinux enabled and in enforcing mode. Review the <a href="s2-setup-lab.html" class="xref page">first activity</a> in this course if you need help with those checks.</p>
@@ -244,7 +232,7 @@ unconfined_u:object_r:user_home_t:s0 test.file</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>1.2. All your process inherit the resource type of your login shell:</p>
+<p>1.2. All your processes inherit the resource type of your login shell:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -261,7 +249,7 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1592 pts/0 R+   0:00 ps Z<
 <li>
 <p>Show that SELinux allows the domain to access home directories.</p>
 <div class="paragraph">
-<p>2.1. Install the the <code>setools-console</code> package, if it&#8217;s not already installed on your test machine:</p>
+<p>2.1. Install the <code>setools-console</code> package, if it&#8217;s not already installed on your test machine:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -282,19 +270,19 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 </div>
 </div>
 <div class="paragraph">
-<p>If you wish, you can also try a similar search for user&#8217;s home files. Just replace <code>user_home_dir_t</code> with <code>user_home_t</code> in the previous command.</p>
+<p>If you wish, you can also try a similar search for the user&#8217;s home files. Just replace <code>user_home_dir_t</code> with <code>user_home_t</code> in the previous command.</p>
 </div>
 <div class="paragraph">
-<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on user&#8217;s home directories.</p>
+<p>The last entry shows an allow rule which grants permission to apend, create, execute, write, read, and other operations on the user&#8217;s home directories.</p>
 </div>
 <div class="paragraph">
 <p>2.3. If you&#8217;re adventurous, retry the previous command without one of the <code>-s</code>, <code>-t</code>, or <code>-c</code> options. Be warned that it&#8217;ll display a large number of allow rules.</p>
 </div>
 </li>
 <li>
-<p>Run the <code>passwd</code> command and check its context and of the system password files.</p>
+<p>Run the <code>passwd</code> command and check its context and also of the system password files.</p>
 <div class="paragraph">
-<p>3.1. Run the <code>passwd</code> command in the backgrond so it get stuck and you can check its SELinux context:</p>
+<p>3.1. Run the <code>passwd</code> command in the background so it get&#8217;s stuck, allowing you to check its SELinux context:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -338,7 +326,7 @@ system_u:object_r:passwd_file_t:s0 /etc/passwd
 <li>
 <p>Check if the <code>passwd</code> command and your interactive processes are allowed to access the password files by the SELinux policy.</p>
 <div class="paragraph">
-<p>4.1. Notice that the <code>passwd_t</code> domain is allowed access to both password files, as expected:</p>
+<p>4.1. Notice that the <code>passwd_t</code> domain is allowed access to both the password files, as expected:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -446,7 +434,7 @@ $ <strong>sudo semanage fcontext -l | grep passwd_file_t</strong>
 </div>
 </li>
 <li>
-<p>Verify that system services run each under a different context, so they belong to different domains than each other and also different than interactive user logins. Then verify which system services have access to user&#8217;s files.</p>
+<p>Verify that system services run each under a different context, so they belong to different domains than each other and are also different than interactive user logins. Then verify which system services have access to the user&#8217;s files.</p>
 <div class="paragraph">
 <p>6.1. Find the context of common system services such as the Secure Shell and Cron daemons.</p>
 </div>
@@ -466,7 +454,7 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 1713 pts/0 S+   0:00 grep 
 </div>
 </div>
 <div class="paragraph">
-<p>6.2. Check if the domain types for the Secure Shell and Cron daemons have access to user&#8217;s home directories.</p>
+<p>6.2. Check if the domain types for the Secure Shell and Cron daemons have access to the user&#8217;s home directories.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -488,7 +476,7 @@ allow files_unconfined_type file_type:file { append audit_access create execute 
 <p>On the other side, regular users are expected to create their own Cron and At jobs, which would be expected to access user&#8217;s files.</p>
 </div>
 <div class="paragraph">
-<p>6.3. But how does the Secure Shell daemon gets the user&#8217;s list of authorized keys? We already know there&#8217;s a different resource type for those files:</p>
+<p>6.3. But how does the Secure Shell daemon get the user&#8217;s list of authorized keys? We already know there&#8217;s a different resource type for those files:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -514,7 +502,7 @@ allow init_t login_userdomain:process transition;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>7.2. Check that interactice processes can transition to the domain type of the <code>passwd</code> command:</p>
+<p>7.2. Check that interactive processes can transition to the domain type of the <code>passwd</code> command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -545,7 +533,7 @@ allow initrc_domain daemon:process transition;</code></pre>
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we see in the next section.</p>
+<p>Before learning to configure SELinux policies and create custom SELinux policies, we must learn the assumptions behind the policy sets included with RHEL, which we will see in the next section.</p>
 </div>
 </div>
 </div>
