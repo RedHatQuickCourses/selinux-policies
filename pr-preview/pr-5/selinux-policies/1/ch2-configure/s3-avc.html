@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Interpreting AVC messages :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="s2-webapp-lab.html">
+    <link rel="next" href="s4-troubleshoot-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-policy/index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-policy/s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">SELinux Management</a></li>
+    <li><a href="s3-avc.html">Interpreting AVC messages</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Interpreting AVC messages</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>4 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Assess if an SELinux access denied message can be resolved by a change of configuration, without creating a custom policy.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selinux_audit_messages"><a class="anchor" href="#_selinux_audit_messages"></a>SELinux Audit Messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with a light load.</p>
+</div>
+<div class="paragraph">
+<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific events, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.</p>
+</div>
+<div class="paragraph">
+<p>Most sysadmins are interested in permission-denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named <strong>Access Vector Cache</strong>, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.</p>
+</div>
+<div class="paragraph">
+<p>The standard Linux audit log search tool (<code>ausearch</code>) provides built-in filters for SELinux events, including AVC errors. Anyway, any SELinux event contains lots of information, which makes them hard to read:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Domain and resource contexts labels;</p>
+</li>
+<li>
+<p>Domain and resource identifiers, such as UID, PID, file system device, file inode, and network port;</p>
+</li>
+<li>
+<p>Additional information on domains and resources, such as user name, file name, and executable file name;</p>
+</li>
+<li>
+<p>AVC checks results and log messages.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Follows a sample AVC error message. Take your time to read it and identify the information from previous bullets.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><code>type=AVC msg=audit(1226882925.714:136): avc:  denied  { read } for  pid=2512 comm="httpd" name="file1" dev=dm-0 ino=284133 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:shadow_t:s0 tclass=file</code></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_selinux_audit_alert_and_troubleshoot_tools"><a class="anchor" href="#_the_selinux_audit_alert_and_troubleshoot_tools"></a>The SELinux Audit, Alert, and Troubleshoot Tools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are two tools, included with RHEL, that help you interpret AVC errors.</p>
+</div>
+<div class="paragraph">
+<p>The first tool comes from the <code>policycoreutils-python-utils</code> package and the <code>audit2why</code> command. The same package also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
+</div>
+<div class="paragraph">
+<p>The <code>audit2why</code> command takes AVC messages from standard input, so you can feed it with either AVC messages stored in a file or pipe to them directly from the <code>ausearch</code> command.</p>
+</div>
+<div class="paragraph">
+<p>The second tool comes from the <code>setroubleshoot-server</code> package and the <code>sealert</code> command, which takes AVC messages from a file and offers a number of suggestions on how to resolve the AVC error, based on a number of included plugins.</p>
+</div>
+<div class="paragraph">
+<p>While the <code>audit2why</code> command offers a single suggestion for fixing an AVC error, the <code>sealert</code> command offers multiple suggestions. But any of them could be bad for your particular scenario. Sometimes those tools get confused by the large number of rules and contexts in a typical RHEL machine.</p>
+</div>
+<div class="paragraph">
+<p>You must be able to read and interpret an AVC message and relate it to its target application: why is the application trying something which was denied by SELinux? If the application was supposed to try that something, is there any way of allowing it without increasing the potential attack surface too much?</p>
+</div>
+<div class="paragraph">
+<p>You could always extend your SELinux policies with rules that allow an application to do anything. Before you do that, you must ask: should I?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_policy_introspection_and_documentation"><a class="anchor" href="#_policy_introspection_and_documentation"></a>Policy Introspection and Documentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As we already saw in previous activities, you can introspect the loaded SELinux rules using commands such as <code>sesearch</code> and <code>semanage</code>. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn&#8217;t guarantee you will understand the intent behind a given policy element.</p>
+</div>
+<div class="paragraph">
+<p>It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each of its policy elements.</p>
+</div>
+<div class="paragraph">
+<p>RHEL provides the <code>selinux-policy-doc</code> package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs of all policy modules from RHEL are on a single documentation package.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, then this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. The next chapter focuses on writing custom policy modules.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a></span>
+  <span class="next"><a href="s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

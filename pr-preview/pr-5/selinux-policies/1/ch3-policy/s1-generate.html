@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Create a Custom SELinux Policy :: Writing Targeted Policies for SELinux on RHEL</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-generic-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Writing Targeted Policies for SELinux on RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/selinux-policies/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="selinux-policies" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s3-labels.html">SELinux Policies, Labels, and Contexts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s4-labels-lab.html">Lab: Explore Labels and Policy Rules in a RHEL Machine</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s5-rhel.html">How Red Hat Protects System Services on RHEL With SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s6-confined-lab.html">Lab: Explore Confined and Unconfined Processes in RHEL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-need/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-configure/index.html">SELinux Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s1-support.html">Supporting SELinux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s2-webapp-lab.html">Lab: Configure SELinux for a Web Application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s3-avc.html">Interpreting AVC messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s4-troubleshoot-lab.html">Lab: Troubleshoot SELinux policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s5-multihost.html">Consistent SELinux settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s6-ansible-lab.html">Lab: Automate SELinux Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-configure/s7-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Extending SELinux Policies</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-generate.html">Create a Custom SELinux Policy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-interfaces.html">Reference SELinux Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s4-files-lab.html">Lab: Reference Interfaces From a Custom SELinux Policy Module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s5-manual-vs-auto.html">Manual or Automatic Policy Creation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s6-network-lab.html">Lab: Allow Network Access to a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s7-redistribute.html">Package SELinux Policy Modules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s8-finish-lab.html">Lab: Finish a Custom SELinux Policy Module for a Confined Domain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s9-summary.html">Summary</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Writing Targeted Policies for SELinux on RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Writing Targeted Policies for SELinux on RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Writing Targeted Policies for SELinux on RHEL</a></li>
+    <li><a href="index.html">Extending SELinux Policies</a></li>
+    <li><a href="s1-generate.html">Create a Custom SELinux Policy</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Create a Custom SELinux Policy</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Understand the process of creating a custom SELinux policy module using the tools from RHEL.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_semi_automated_policy_creation_process"><a class="anchor" href="#_a_semi_automated_policy_creation_process"></a>A Semi-Automated Policy Creation Process</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Red Hat recommends that you create a custom SELinux policy module by following this process:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Generate a stater policy module using the <code>sepolicy generate</code> command.</p>
+</li>
+<li>
+<p>Build and load the autogenerated policy module</p>
+</li>
+<li>
+<p>Run the application in permissive mode, as set by the autogenerated policy module.</p>
+</li>
+<li>
+<p>Interact with the application, so it creates AVC errors in the audit log.</p>
+</li>
+<li>
+<p>Feed AVC errors to the <code>audit2allow</code> command, and merge the resulting policies into the autogenerated policy module.</p>
+</li>
+<li>
+<p>Go back to (2), repeating the process until you exercised all features of the application and get no more AVC errors.</p>
+</li>
+<li>
+<p>Remove the permissive flag from the autogenerated policy module.</p>
+</li>
+<li>
+<p>Perform a final build and load of the policy module and extensive tests of the application in enforcing mode.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The <code>audit2allow</code> command comes from the same <code>policycoreutils-python-utils</code> package which provides the <code>audit2why</code> command which we used in the previous chapter. The <code>sepolicy</code> command comes from the <code>policycoreutils-devel</code> package.</p>
+</div>
+<div class="paragraph">
+<p>At each iteration of the process, you must exercise care that you don&#8217;t add rules which make your policy module too lenient and give too much power to your application. This means you need knowledge about the target application (what it does and what it needs) and of the RHEL targeted policy set (which types, attributes, and rules it provides).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_a_policy_module"><a class="anchor" href="#_generate_a_policy_module"></a>Generate a Policy Module</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>sepolicy generate</code> command offers command-line options to generate a starter policy for different kinds of applications:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sepolicy generate --help</strong>
+...
+positional arguments:
+  command               executable to confine
+...
+Policy types which require a command:
+  --application         Generate 'User Application' policy
+  --cgi                 Generate 'Web Application/Script (CGI)' policy
+  --dbus                Generate 'DBUS System Daemon' policy
+  --inetd               Generate 'Internet Services Daemon' policy
+  --init                Generate 'Standard Init Daemon' policy
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depending on the type of the application, it will introspect the <code>command</code> file as an executable file and try to guess a set of default policies based on the expected behavior of the type of application.</p>
+</div>
+<div class="paragraph">
+<p>For example, for regular system services which run as Systemd services, you should use the "Standard Init Daemon" policy (option <code>--init</code>) which generates:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>New types for the application domain and for application executable, runtime, and data/configuration/log files.</p>
+</li>
+<li>
+<p>A transition rule from the <code>init_t</code> domain type to the application domain type.</p>
+</li>
+<li>
+<p>Allow rules for the application file types.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This policy module requires additional allow rules for any and all tasks the application performs, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open network connections.</p>
+</li>
+<li>
+<p>Access system files.</p>
+</li>
+<li>
+<p>Access user files.</p>
+</li>
+<li>
+<p>Access device files.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Depending on the complexity of the application, it may require additional domain and resource types.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_policy_module_sources_and_build_script"><a class="anchor" href="#_policy_module_sources_and_build_script"></a>Policy Module Sources and Build Script</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A typical policy module, as generated by the <code>sepolicy generate</code> command, includes the following source files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>command.if</code> - defines interfaces, types, and attributes.</p>
+</li>
+<li>
+<p><code>command.fc</code> - defines the security context for application files.</p>
+</li>
+<li>
+<p><code>command.te</code> - contains allow rules and domain transition rules.</p>
+</li>
+<li>
+<p><code>command_selinux.spec</code> - RPM package specification.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Most of the work on completing an autogenerated policy module happens on the <strong>type enforcement</strong> file (the <code>.te</code> file), by adding more rules.</p>
+</div>
+<div class="paragraph">
+<p>The <code>sepolicy generate</code> command also generates a build script, named <code>command.sh</code>, which performs the following tasks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Builds a binary policy module named <code>command.pp</code>.</p>
+</li>
+<li>
+<p>Loads the binary policy module.</p>
+</li>
+<li>
+<p>Generates a man page for the policy module, based on comments in its <strong>interface file</strong> (the <code>command.if</code> file).</p>
+</li>
+<li>
+<p>Packages the binary policy module and its interface file in an RPM package.</p>
+</li>
+<li>
+<p>Packages the policy source files in an SRPM package.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>At each iteration of the policy creation process, you run the build script again to rebuild and reload your custom policy module, and then restart your application to check for new or remaining AVC errors under the updated policy.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_test_application"><a class="anchor" href="#_the_test_application"></a>The Test Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The third-party application we use in the next few activities is the same one we used in a <a href="../ch1-need/s6-confined-lab.html" class="xref page">previous activity</a>, named <code>testapp</code>, and it is designed to run either as a system service or as an interactive application.</p>
+</div>
+<div class="paragraph">
+<p>If you start the test application as a system service, it performs the following tasks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a PID file, as it is typical for system services.</p>
+</li>
+<li>
+<p>Read from the <code>/proc/meminfo</code> virtual file.</p>
+</li>
+<li>
+<p>Connect to <a href="https://wttr.in/" class="bare">https://wttr.in/</a> in a loop, for a hard-coded list of cities. These are cities with Red Hat offices.</p>
+</li>
+<li>
+<p>Log messages into the system log (journald).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It does the same tasks every time, not requiring any user input or listening for network requests. And, once it finishes the list of cities, it terminates.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/RedHatQuickCourses/selinux-policies-samples/tree/main/testapp">source code</a> of the test application is available, if you are curious, but you don&#8217;t need it in order to create its custom SELinux policy.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following four activities create a custom policy module for the test application, by following the interactive process outline in this section. In between each activity, there&#8217;s a short presentation section which explains additional aspects of developing SELinux policy modules, starting with policy interfaces.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Extending SELinux Policies</a></span>
+  <span class="next"><a href="s2-generic-lab.html">Lab: Create a Generic SELinux Policy Module</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
