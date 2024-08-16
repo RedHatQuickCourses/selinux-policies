@@ -51,7 +51,7 @@
     <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,6 +196,18 @@
 </dd>
 </dl>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -270,7 +282,7 @@ DocumentRoot "/var/website"
 <p>You can find a copy of the configuration file with all changes already applied in the <a href="https://github.com/RedHatQuickCourses/selinux-policies-samples/blob/main/website/httpd.conf">sample applications</a> git repository.</p>
 </div>
 <div class="paragraph">
-<p>1.4. Create a test website:</p>
+<p>1.4. Create a test web site:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -330,7 +342,7 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 <p>You might expect a second AVC on the new document root, but the Apache Web Server terminated with an error code before it tried to open any web page. We will get there shortly.</p>
 </div>
 <div class="paragraph">
-<p>In the previous AVC error, notice the following fields, starting from the end of the message and going backward:</p>
+<p>In the previous AVC error, notice the following fields, starting from the end of the message and going backwards:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -371,14 +383,14 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
         Was caused by:
         The boolean nis_enabled was set incorrectly.
         Description:
-        Allow nis to be enabled
+        Allow nis to enabled
 
         Allow access by executing:
         # setsebool -P nis_enabled 1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that <code>audit2why</code> suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static website has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.</p>
+<p>Notice that <code>audit2why</code> suggests an INCORRECT way of fixing the AVC, so do NOT follow its advice. You know your static web site has no need of enabling Network Information Systems (NIS), which is nowadays considered a very outdated technology.</p>
 </div>
 <div class="paragraph">
 <p>3.2. If you took too long to review the AVC error, the previous step might return "&lt;no matches&gt;". In this case, you can filter by the application binary, which is also useful when there are AVC errors from multiple processes:</p>
@@ -386,7 +398,7 @@ type=AVC msg=audit(1721413656.365:161): avc:  denied  { name_bind } for  pid=158
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo ausearch -m AVC -x /usr/sbin/httpd | audit2why</strong>
-... same output as the previous step ...</code></pre>
+... same output as previous step ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -429,7 +441,7 @@ allow nsswitch_domain unreserved_port_t:tcp_socket name_connect; [ nis_enabled ]
 </div>
 <div class="paragraph">
 <p>4.2. Check the range of ports that would be allowed by the boolean.
-It includes resource types which grant a large range of TCP ports:</p>
+It includes a resource types which grant a large range of TCP ports:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -438,7 +450,7 @@ unreserved_port_t              tcp      61000-65535, 1024-3276</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>That made <code>audit2why</code> suggest the boolean. We do not want our web server vulnerable to exploits that would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.</p>
+<p>That made <code>audit2why</code> suggest the boolean. We do not want our web server vulnerable to exploits which would listen to more network ports than it needs. Listening to additional ports is a common behavior of malware that installs back-doors into a system.</p>
 </div>
 <div class="paragraph">
 <p>By the way, the fact that NIS requires such a large range of network ports is among the reasons the technology is considered insecure nowadays. The targeted policy from RHEL includes many booleans to support legacy technologies and those booleans are disabled by default. You should be careful to not enable them unless there&#8217;s a real need and you provide some mitigation for the increased exposure.</p>
@@ -528,7 +540,7 @@ allow this access for now by executing:
 </div>
 </div>
 <div class="paragraph">
-<p>We can ignore the remaining of the output of <code>sealert</code>, which provides contextual information about the system where it runs and the AVC errors it processes.</p>
+<p>We can ignore the remaining of the output of <code>sealert</code>, which provides contextual information about the system where it runs and the AVC errors it processed.</p>
 </div>
 </li>
 <li>
@@ -552,7 +564,7 @@ $ <strong>man httpd_selinux</strong>
 </div>
 </div>
 <div class="paragraph">
-<p>Browse the main page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the time, the information you need is in either the lists of port types or the list of file contexts.</p>
+<p>Browse the man page and see it includes a somewhat long list of booleans from the policy, which is followed by a list of port types. Skip the list of managed files which just state resource domains the domain has access to, and see the list of file contexts. Most of the times, the information you need is in either the lists of ports types or the list of file contexts.</p>
 </div>
 <div class="paragraph">
 <p>6.2. From the man page, the following resource type seems to be the one we need:</p>
@@ -599,7 +611,7 @@ http_port_t                    tcp      30000, 80, 81, 443, 488, 8008, 8009, 844
 <li>
 <p>Try again starting the Apache Web Server and check if there are more AVC errors.</p>
 <div class="paragraph">
-<p>7.1. Start Apache Web and verify it successfully listens for connections on the new port:</p>
+<p>7.1. Start Apache Web and verify it successfully listen for connections on the new port:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -611,7 +623,7 @@ LISTEN 0      511                <strong>:30000            *:</strong>    users:
 </div>
 </div>
 <div class="paragraph">
-<p>7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the website on localhost:</p>
+<p>7.2. Do not celebrate yet, a running web server may still not be able to serve HTML pages. Try accessing the web site on localhost:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -632,7 +644,7 @@ LISTEN 0      511                <strong>:30000            *:</strong>    users:
 </div>
 </div>
 <div class="paragraph">
-<p>7.4. Verify if there are new AVC errors. You should see a "denied" entry which refers to a <code>path</code> of <code>/var/website/index.html</code></p>
+<p>7.4. Verify if there are new AVC errors. You should see "denied" entry which refers to a <code>path</code> of <code>/var/website/index.html</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -662,7 +674,7 @@ type=AVC msg=audit(1721420793.896:460): avc:  denied  { getattr } for  pid=5682 
 </div>
 </div>
 <div class="paragraph">
-<p>It suggests generating a policy module, which would allow the <code>httpd_t</code> domain type access to the <code>var_t</code> resource type. It is a best practice to avoid adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.</p>
+<p>It suggests generating a policy module, which would allow the <code>httpd_t</code> domain type access to the <code>var_t</code> resource type. It is a best practice to avoiding adding allow rules to the loaded policies, in order to keep a minimal attack surface. Fortunately, there is a better fix for this case.</p>
 </div>
 <div class="paragraph">
 <p>7.6. Check the advice from <code>sealert</code>:</p>
@@ -690,7 +702,7 @@ Do
 </div>
 </div>
 <div class="paragraph">
-<p>The other suggestion from <code>sealert</code> provides a long list of file types the Apache Web Server domains have access to.</p>
+<p>The other suggestion from <code>sealert</code> provides a long list of file types the Apache Web Server domains has access to.</p>
 </div>
 </li>
 <li>
@@ -717,7 +729,7 @@ Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfi
 </div>
 </li>
 <li>
-<p>Restart the Apache Web Server and check that now you can access the static website.</p>
+<p>Restart the Apache Web Server and check that now you can access the static web site.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl restart httpd</strong>
@@ -734,7 +746,7 @@ $ <strong>curl http://127.0.0.1:30000/index.html</strong>
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Interpreting AVC errors requires careful consideration of what the offending application is trying to do and knowledge of the targeted policy set by RHEL.</p>
+<p>Interpreting AVC errors require careful consideration of what the offending application is trying to do and knowledge of the targeted policy set from RHEL.</p>
 </div>
 <div class="paragraph">
 <p>Before we start activities related to creating a custom SELinux policy, let&#8217;s discuss how to ensure multiple servers and desktops have consistent SELinux settings.</p>

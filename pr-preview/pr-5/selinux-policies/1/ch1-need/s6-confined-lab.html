@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,25 +196,13 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_before_you_start"><a class="anchor" href="#_before_you_start"></a>Before you Start</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:</p>
+<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with the following:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -240,9 +228,9 @@ Pending Review
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>First check that unprivileged users and their processes are unconfined.</p>
+<p>First, check that unprivileged users and their processes are unconfined.</p>
 <div class="paragraph">
-<p>1.1. Open a terminal to your RHEL machine and login with an unprivileged user. In the following example, the username is <code>student</code> but the actual username and user id doesn&#8217;t matter, as long as it is not the root user.</p>
+<p>1.1. Open a terminal to your RHEL machine and log in with an unprivileged user. In the following example, the username is <code>student</code> but the actual username and user id doesn&#8217;t matter, as long as it is not the root user.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -313,7 +301,7 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 28966 pts/0 S+   0:00 grep
 </div>
 </div>
 <div class="paragraph">
-<p>Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also notice that the SELinux users and roles do not change between different confined processes and different unconfined processes.</p>
+<p>Notice, in the previous outputs, the different SELinux users and roles of the daemons compared to the interactive ps processes. Also, notice that the SELinux users and roles do not change between different confined processes and different unconfined processes.</p>
 </div>
 </li>
 <li>
@@ -379,7 +367,7 @@ system_u:system_r:unconfined_service_t:s0 37507 ? S     0:00 /usr/local/sbin/tes
 <li>
 <p>Run the test application interactively and check that it also runs unconfined. This time you can see what it does: it displays weather forecasts from cities with Red Hat offices.</p>
 <div class="paragraph">
-<p>4.1. Start the test application on your shell and let it running:</p>
+<p>4.1. Start the test application on your shell and let it run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -420,7 +408,7 @@ Storing signatures
 </div>
 </div>
 <div class="paragraph">
-<p>Leave the vi editor running. We choose to run an UBI8 container on purpose, to highlight that the RHEL release inside a container may be different than the RHEL release on its host.</p>
+<p>Leave the vi editor running. We choose to run a UBI8 container on purpose, to highlight that the RHEL release inside a container may be different than the RHEL release on its host.</p>
 </div>
 <div class="paragraph">
 <p>5.2. On another terminal, list all processes and observe their MCS categories. Use the vi process to find which of the Bash shell processes belong to the container.</p>
@@ -439,10 +427,10 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 5284 pts/2 S+   0:00 grep 
 </div>
 </div>
 <div class="paragraph">
-<p>The vi process runs with categories <code>c108,c599</code> ad there&#8217;s a Bash processes with the same categories. Also notice both processes have the domain type <code>container_t</code> so they are NOT unconfined. Now compare with other Bash processes, which run with categories <code>c0.c1023</code> and are unconfined.</p>
+<p>The vi process runs with categories <code>c108,c599</code> and there&#8217;s a Bash process with the same categories. Also notice both processes have the domain type <code>container_t</code> so they are NOT unconfined. Now compare with other Bash processes, which run with categories <code>c0.c1023</code> and are unconfined.</p>
 </div>
 <div class="paragraph">
-<p>5.3. Go back to the fist terminal and close the text editor. You can also exit the shell, terminating the container.</p>
+<p>5.3. Go back to the first terminal and close the text editor. You can also exit the shell, terminating the container.</p>
 </div>
 </li>
 </ol>

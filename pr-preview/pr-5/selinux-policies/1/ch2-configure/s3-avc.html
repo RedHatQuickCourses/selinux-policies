@@ -51,7 +51,7 @@
     <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,19 +196,31 @@
 </dd>
 </dl>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Pending Review
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_selinux_audit_messages"><a class="anchor" href="#_selinux_audit_messages"></a>SELinux Audit Messages</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with a light load.</p>
+<p>SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with light load.</p>
 </div>
 <div class="paragraph">
-<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific events, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.</p>
+<p>If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the <code>/var/log/audit</code> directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.</p>
 </div>
 <div class="paragraph">
-<p>Most sysadmins are interested in permission-denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named <strong>Access Vector Cache</strong>, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.</p>
+<p>Most sysadmins are interested in permission denied events, which SELinux calls <strong>AVC errors</strong>. The term "AVC" comes from an internal component of the Linux kernel, named <strong>Access Vector Cache</strong>, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.</p>
 </div>
 <div class="paragraph">
 <p>The standard Linux audit log search tool (<code>ausearch</code>) provides built-in filters for SELinux events, including AVC errors. Anyway, any SELinux event contains lots of information, which makes them hard to read:</p>
@@ -225,7 +237,7 @@
 <p>Additional information on domains and resources, such as user name, file name, and executable file name;</p>
 </li>
 <li>
-<p>AVC checks results and log messages.</p>
+<p>AVC check results and log message.</p>
 </li>
 </ul>
 </div>
@@ -245,7 +257,7 @@
 <h2 id="_the_selinux_audit_alert_and_troubleshoot_tools"><a class="anchor" href="#_the_selinux_audit_alert_and_troubleshoot_tools"></a>The SELinux Audit, Alert, and Troubleshoot Tools</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are two tools, included with RHEL, that help you interpret AVC errors.</p>
+<p>There are two tools, included wit RHEL, that help you interpret AVC errors.</p>
 </div>
 <div class="paragraph">
 <p>The first tool comes from the <code>policycoreutils-python-utils</code> package and the <code>audit2why</code> command. The same package also provides the <code>audit2allow</code> which we use later in this course to help generate custom policies for third-party applications.</p>
@@ -271,10 +283,10 @@
 <h2 id="_policy_introspection_and_documentation"><a class="anchor" href="#_policy_introspection_and_documentation"></a>Policy Introspection and Documentation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As we already saw in previous activities, you can introspect the loaded SELinux rules using commands such as <code>sesearch</code> and <code>semanage</code>. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn&#8217;t guarantee you will understand the intent behind a given policy element.</p>
+<p>As we already seen in previous activities, you can introspect the loaded SELinux rules using commands such as <code>sesearch</code> and <code>semanage</code>. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn&#8217;t guarantee you will understand the intent behind of a given policy element.</p>
 </div>
 <div class="paragraph">
-<p>It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each of its policy elements.</p>
+<p>It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each if its policy elements.</p>
 </div>
 <div class="paragraph">
 <p>RHEL provides the <code>selinux-policy-doc</code> package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs of all policy modules from RHEL are on a single documentation package.</p>
@@ -285,7 +297,7 @@
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, then this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. The next chapter focuses on writing custom policy modules.</p>
+<p>We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, them this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. And the next chapter focuses on writing custom policy modules.</p>
 </div>
 </div>
 </div>

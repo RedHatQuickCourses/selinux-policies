@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,25 +196,13 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
+<p>You need a RHEL machine with either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages.</p>
 </div>
 <div class="paragraph">
 <p>These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.</p>
@@ -227,7 +215,7 @@ Pending Review
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Open a terminal to your RHEL machine and switch to a root shell. Then verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:</p>
+<p>Open a terminal on your RHEL machine and switch to a root shell. Then, verify that SELinux is enabled and in the enforced mode. This should be the default status of all new RHEL deployments:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo -i</strong>
@@ -237,7 +225,7 @@ Enforcing</code></pre>
 </div>
 </li>
 <li>
-<p>If your output was different on the previous step, follow one of the following to enable SELinux and set it to the enforced mode:</p>
+<p>If your output was different in the previous step, follow one of the following to enable SELinux and set it to the enforced mode:</p>
 <div class="paragraph">
 <p>2.1. If your system is on permissive mode, switch to enforced mode:</p>
 </div>
@@ -251,12 +239,12 @@ Enforcing</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don&#8217;t have to use <code>sed</code>, you can use your preferred text editor on the <code>/etc/selinux/config</code> file.</p>
+<p>2.2. If your system has SELinux disabled, enable it and reboot with relabeling of all files. You don&#8217;t have to use <code>sed</code>; you can use your preferred text editor on the <code>/etc/selinux/config</code> file.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs"># <strong>getenforce</strong>
-Disbled
+Disabled
 # <strong>sed -i s/SELINUX=disabled/SELINUX=enforcing/ /etc/selinux/config</strong>
 # <strong>fixfiles -F onboot</strong>
 System will relabel on next boot
@@ -264,7 +252,7 @@ System will relabel on next boot
 </div>
 </div>
 <div class="paragraph">
-<p>Be patient, relabeling might take a while. After a new login, you should see the same output as <strong>step 1</strong>:</p>
+<p>Be patient, as relabeling might take a while. After logging in again, you should see the same output as in <strong>step 1</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -293,7 +281,7 @@ Max kernel policy version:      33</code></pre>
 </div>
 </li>
 <li>
-<p>If your output shows that at a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive you can change the policy set of your current lab machine, follow these steps:</p>
+<p>If your output shows that a different policy set is loaded, we recommend that you switch to a different machine to perform the remaining of this course. But, if you are positive that you can change the policy set of your current lab machine, follow these steps:</p>
 <div class="paragraph">
 <p>4.1. In the following example, the system has the <strong>mls</strong> policy set loaded, but the instructions would be the same for the <strong>minimum</strong> policy set from previous RHEL releases:</p>
 </div>
@@ -326,7 +314,7 @@ System will relabel on next boot
 </div>
 </div>
 <div class="paragraph">
-<p>Be patient, relabeling might take a while. After a new login, you should see the same output as <strong>step 3</strong>:</p>
+<p>Be patient, as relabeling might take a while. After logging in again, you should see the same output as in <strong>step 3</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -357,7 +345,7 @@ type=MAC_POLICY_LOAD msg=audit(11/09/23 03:43:12.299:347) : auid=devops ses=1 ls
 </div>
 </div>
 <div class="paragraph">
-<p>5.2. Or to show recent denials, which on a good system should be none:</p>
+<p>5.2. Or to show recent denials, which, on a good system, should be none:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -431,10 +419,10 @@ Classes: 135
 </div>
 </div>
 <div class="paragraph">
-<p>Among the classes, you should see easily recognize ones such as <code>file</code> and <code>dir</code>.</p>
+<p>Among the classes, you should easily recognized ones such as <code>file</code> and <code>dir</code>.</p>
 </div>
 <div class="paragraph">
-<p>7.4. The <code>sesearch</code> command searches among the SELinux rules in the loaded policies. Te following example lists all allow rules:</p>
+<p>7.4. The <code>sesearch</code> command searches among the SELinux rules in the loaded policies. The following example lists all allow rules:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -446,7 +434,7 @@ allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:as
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming but SELinux tools help navigating loaded policies.</p>
+<p>Notice that there are thousands of rules in the default targeted policy set provided with RHEL. Trying to just read it all is overwhelming, but SELinux tools help navigate loaded policies.</p>
 </div>
 </li>
 </ol>
@@ -457,12 +445,12 @@ allow NetworkManager_dispatcher_chronyc_t NetworkManager_dispatcher_chronyc_t:as
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Later in this course we&#8217;ll learn how to filter the results of <code>sesearch</code>, but before that we must understand the concepts of SELinux labels and rules, which we see in the next section.</p>
+<p>Later in this course, you will learn how to filter the results of <code>sesearch</code>, but before that you must understand the concepts of SELinux labels and rules, which you see in the next section.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="s1-intro.html">Why You Should Care About SELinux</a></span>
+  <span class="prev"><a href="s1-intro.html">Why You Should Care About SELinux?</a></span>
   <span class="next"><a href="s3-labels.html">SELinux Policies, Labels, and Contexts</a></span>
 </nav>
 </article>
