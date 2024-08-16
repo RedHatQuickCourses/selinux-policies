@@ -192,21 +192,9 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Understand the use of SELinux policy interfaces to extend the targeted policy set from RHEL.</p>
+<p>Understand the use of SELinux policy interfaces to extend the targeted policy set in RHEL.</p>
 </dd>
 </dl>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -214,15 +202,15 @@ Pending Review
 <h2 id="_reusability_of_selinux_policy_rules"><a class="anchor" href="#_reusability_of_selinux_policy_rules"></a>Reusability of SELinux Policy Rules</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The targeted policy set from RHEL was designed with reusability goals. This helps both Red Hat&#8217;s own developers and partner or user organization&#8217;s developers by enabling them to create shorter policy modules which are easier to maintain.</p>
+<p>The targeted policy set in RHEL was designed with reusability goals. This helps both Red Hat&#8217;s own developers and partner or user organization&#8217;s developers by enabling them to create shorter policy modules which are easier to maintain.</p>
 </div>
 <div class="paragraph">
-<p>Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain compatible with future release of RHEL and the policy changes which may come.</p>
+<p>Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain and are compatible with future releases of RHEL and the policy changes that may come.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_documentation_of_selinux_policy_intefaces"><a class="anchor" href="#_documentation_of_selinux_policy_intefaces"></a>Documentation of SELinux Policy Intefaces</h2>
+<h2 id="_documentation_of_selinux_policy_interfaces"><a class="anchor" href="#_documentation_of_selinux_policy_interfaces"></a>Documentation of SELinux Policy Interfaces</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>All available policy modules install a copy of their interface files to the <code>/usr/share/selinux/devel/include</code> directory. Each interface in those files is preceded by comments, denoted by hash signs (#) and these comments describe the intent, usage, and arguments of each interface.</p>
@@ -233,13 +221,13 @@ Pending Review
 <h2 id="_generate_rules_that_reference_interfaces"><a class="anchor" href="#_generate_rules_that_reference_interfaces"></a>Generate Rules That Reference Interfaces</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>audit2allow</code> command, with the <code>-R</code> option, tries to find an interface which would resolve the AVC error. If it cannot find any interface, it outputs standalone allow statements.</p>
+<p>The <code>audit2allow</code> command, with the <code>-R</code> option, tries to find an interface that would resolve the AVC error. If it cannot find any interface, it outputs standalone allow statements.</p>
 </div>
 <div class="paragraph">
-<p>Similar to the <code>audit2why</code> command, the <code>audit2allow</code> command may not suggest the better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it needs.</p>
+<p>Similar to the <code>audit2why</code> command, the <code>audit2allow</code> command may not suggest a better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it needs.</p>
 </div>
 <div class="paragraph">
-<p>You can use the suggestion from the <code>audit2allow</code> command as a starting point: review the comments on that interface, and if it looks like it allows too much, scan the same interface file for other similar interfaces which may be more restrictive. It may require some trial-and-error until you find the best interface for your application.</p>
+<p>You can use the suggestion from the <code>audit2allow</code> command as a starting point: review the comments on that interface, and if it looks like it allows too much, scan the same interface file for other similar interfaces which may be more restrictive. It may require some trial and error until you find the best interface for your application.</p>
 </div>
 </div>
 </div>
@@ -247,10 +235,10 @@ Pending Review
 <h2 id="_expanding_interfaces_into_allow_statements"><a class="anchor" href="#_expanding_interfaces_into_allow_statements"></a>Expanding Interfaces Into Allow Statements</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If the comments in an interface file are not clear to you, or you wish to double check exactly which permissions you get from an interface, you can use the <code>macro-expand</code> command, from the <code>selinux-policy-devel</code> package, to expand an interface into its policy statements.</p>
+<p>If the comments in an interface file are not clear to you, or you wish to double-check exactly which permissions you get from an interface, you can use the <code>macro-expand</code> command, from the <code>selinux-policy-devel</code> package, to expand an interface into its policy statements.</p>
 </div>
 <div class="paragraph">
-<p>You give to the <code>macro-expander</code> a complete reference to an interface, including all arguments. It outputs the list of allow rules that the interface generates.</p>
+<p>You give the <code>macro-expander</code> a complete reference to an interface, including all arguments. It outputs the list of allow rules that the interface generates.</p>
 </div>
 <div class="paragraph">
 <p>Sometimes an interface uses type attributes instead of including explicit allow rules. If this is the case, the <code>-c</code> option shows the intermediate policy code in the kernel CIL language, and from that output you get the names of attributes to use with <code>sesearch</code> to find the allow rules which match the attribute.</p>
