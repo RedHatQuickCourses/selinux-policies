@@ -8,13 +8,11 @@ Objective::
 
 Automate the configuration of SELinux to support a web server with non-standard configurations and a PHP application which connects to a database.
 
-WARNING: Pending Review
-
 == Before you Begin
 
 You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:
 
-* SELinux enabled and enforcing, using the targeted policy.
+* SELinux enabled and enforced, using the targeted policy.
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `httpd` package.
@@ -50,7 +48,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml
 
 2. Examine and run the `enforce-targeted.yaml` playbook, which you can use as a starting point for your own custom playbooks.
 +
-2.1. There's a single play which defines a couple variables required by he SELinux system role.
+2.1. There's a single play which defines a couple of variables required by the SELinux system role.
 +
 [source,subs="verbatim"]
 --
@@ -65,7 +63,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml
 ...
 --
 +
-2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the `selinux_` preffix.
+2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the `selinux_` prefix.
 +
 [source,subs="verbatim"]
 --
@@ -80,7 +78,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml
 ...
 --
 +
-2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended for remove execution by Ansible Automation Platform or Red Hat Insights.
+2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended to remove execution by Ansible Automation Platform or Red Hat Insights.
 +
 [source,subs="verbatim"]
 --
@@ -165,7 +163,7 @@ $ *sudo ansible-playbook quotes.yaml*
 ...
 --
 +
-And observe on its output that the boolean is turned on:
+Observe on its output that the boolean is turned on:
 +
 [source,subs="verbatim"]
 --
@@ -215,7 +213,7 @@ httpd_can_network_connect_db --> on
 $ *sudo ansible-playbook website.yaml*
 ...
 --
-4.4. None of those playbooks install their respective applications and web sites, so if you try in a system which was not configured by previous activities, you will get errors similar to:
+4.4. None of those playbooks install their respective applications and websites, so if you try in a system which was not configured by previous activities, you will get errors similar to:
 +
 [source,subs="verbatim"]
 --
@@ -233,9 +231,9 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=8    changed=1    unreachable=0    failed=1    skipped=11   rescued=1    ignored=0 
 --
 +
-Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed successfully.
+Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks were completed successfully.
 
-5. If you wish, check the previous activities in this chapter for the steps to install the quotes web site and the static web site, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.
+5. If you wish, check the previous activities in this chapter for the steps to install the quotes website and the static website, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.
 
 == Next Steps
 

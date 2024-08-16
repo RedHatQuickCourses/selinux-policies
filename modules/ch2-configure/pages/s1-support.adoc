@@ -8,31 +8,29 @@ Objective::
 
 Adopt a structured workflow for resolving SELinux issues.
 
-WARNING: Pending Review
-
 == Common Issues With SELinux
 
-As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users nor with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.
+As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users or with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.
 
-You also learned that, if you add a third-party application to a RHEL server, it's better that you, its developer, or its vendor provides a custom policy module to protect that third-party application. But you don't have to: it is recommended but optional.
+You also learned that, if you add a third-party application to a RHEL server, it's better that you, its developer, or its vendor provide a custom policy module to protect that third-party application. But you don't have to: it is recommended but optional.
 
 Why do people sometimes struggle with running Linux servers with SELinux enabled and in enforcing mode? Most of the times, it's because they did one of those common things:
 
-* Moved files around, and their SELinux context do not match the policy rules anymore.
+* Moved files around, and their SELinux context does not match the policy rules anymore.
 
 * Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, and the SELinux context of those files was lost.
 
 * Configured a system server to listen on a non-standard network port, and that port is not labeled to match the policy rules.
 
-* Configured a system server to read or write to different data and log directories, and those directories do not have labels which match the policy rules.
+* Configured a system server to read or write to different data and log directories, and those directories do not have labels that match the policy rules.
 
-* Enabled an optional feature of a system service that is potentially dangerous and it's not allowed by default policy rules.
+* Enabled an optional feature of a system service that is potentially dangerous and is not allowed by default policy rules.
 
 You resolve most of those issues by setting files and directories to the correct SELinux context, and the latest issue you resolve by setting SELinux booleans.
 
 == Labeling Files With a New Context
 
-You can change the context type of a file directly with the `chcon` command, but you're not advised to. It is recommended that you define a new path expression for the intended type with the `semanage` command, and them you apply the type to the file with the `restorecon` command.
+You can change the context type of a file directly with the `chcon` command, but you're not advised to. It is recommended that you define a new path expression for the intended type with the `semanage` command, and then you apply the type to the file with the `restorecon` command.
 
 For example, the SELinux policy for the Apache Web Server defines the `httpd_sys_content_t` type for web pages and labels the `/var/www/html` directory accordingly. If you create a virtual host with a document root somewhere else, you must label that directory with the `httpd_sys_content_t` type.
 
@@ -46,11 +44,11 @@ As a concrete example, the SELinux policy for MySQL defines the `mysqld_port_t` 
 
 The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service's configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.
 
-Booleans provide a compromise between a too strict policy, which becomes unusable, and a too lenient policy, which leaves a wide attach surface open.
+Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attack surface open.
 
 You can list and query the status of an SELinux boolean using the `getsebool` command, and you can change its status using the `setsebool` command.
 
-For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as `httpd_enable_cgi` and `httpd_can_sendmail`.
+For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages that access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as `httpd_enable_cgi` and `httpd_can_sendmail`.
 
 == Generic Workflow for Troubleshooting SELinux Issues
 
@@ -70,7 +68,7 @@ Whenever you find something that looks like an issue with SELinux, follow these 
 
 6. Review SELinux messages in the audit log using `ausearch`.
 
-7. Put the application's confined domain in permissive mode, and reproduce the scenario which creates the issue.
+7. Put the application's confined domain in permissive mode, and reproduce the scenario that creates the issue.
 
 8. If necessary, put the entire system in permissive mode, and reproduce the scenario.
 

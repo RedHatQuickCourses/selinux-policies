@@ -8,22 +8,20 @@ Objective::
 
 Assess if an SELinux access denied message can be resolved by a change of configuration, without creating a custom policy.
 
-WARNING: Pending Review
-
 == SELinux Audit Messages
 
-SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with light load.
+SELinux sends events to the Linux Kernel audit log for all its security checks, no matter the result, and also for significant events such as loading and unloading policy modules. As you can guess, there could be a lot of messages related to SELinux in a typical RHEL machine, even with a light load.
 
-If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the `/var/log/audit` directory where you can search for specific event, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.
+If the audit daemon is running (as it should be, by default, and recommended for most RHEL systems), those messages are saved in the `/var/log/audit` directory where you can search for specific events, verify trends, or forward to a central log store or Security Information and Event Management (SIEM) system for archival and deeper analysis.
 
-Most sysadmins are interested in permission denied events, which SELinux calls *AVC errors*. The term "AVC" comes from an internal component of the Linux kernel, named *Access Vector Cache*, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.
+Most sysadmins are interested in permission-denied events, which SELinux calls *AVC errors*. The term "AVC" comes from an internal component of the Linux kernel, named *Access Vector Cache*, which builds an in-memory database of allow rules, keyed by domain and resource contexts, to improve performance. Thanks to the AVC, processing a large number of SELinux policy rules has a negligible impact on performance.
 
 The standard Linux audit log search tool (`ausearch`) provides built-in filters for SELinux events, including AVC errors. Anyway, any SELinux event contains lots of information, which makes them hard to read:
 
 * Domain and resource contexts labels;
 * Domain and resource identifiers, such as UID, PID, file system device, file inode, and network port;
 * Additional information on domains and resources, such as user name, file name, and executable file name;
-* AVC check results and log message.
+* AVC checks results and log messages.
 
 Follows a sample AVC error message. Take your time to read it and identify the information from previous bullets.
 ____
@@ -34,7 +32,7 @@ ____
 
 == The SELinux Audit, Alert, and Troubleshoot Tools
 
-There are two tools, included wit RHEL, that help you interpret AVC errors.
+There are two tools, included with RHEL, that help you interpret AVC errors.
 
 The first tool comes from the `policycoreutils-python-utils` package and the `audit2why` command. The same package also provides the `audit2allow` which we use later in this course to help generate custom policies for third-party applications.
 
@@ -50,12 +48,12 @@ You could always extend your SELinux policies with rules that allow an applicati
 
 == Policy Introspection and Documentation
 
-As we already seen in previous activities, you can introspect the loaded SELinux rules using commands such as `sesearch` and `semanage`. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn't guarantee you will understand the intent behind of a given policy element.
+As we already saw in previous activities, you can introspect the loaded SELinux rules using commands such as `sesearch` and `semanage`. You can list file contexts, confined domains, allow rules, booleans, and other policy elements. But that doesn't guarantee you will understand the intent behind a given policy element.
 
-It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each if its policy elements.
+It is expected that SELinux policy authors provide documentation about their policy modules which state the expected usage of each of its policy elements.
 
 RHEL provides the `selinux-policy-doc` package that installs man pages for all policy modules included with RHEL. Sometimes a policy module belongs to its own RPM package, so the policy can be installed only when the affected application or system service is also installed, but the docs of all policy modules from RHEL are on a single documentation package.
 
 == Next Steps
 
-We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, them this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. And the next chapter focuses on writing custom policy modules.
+We will perform a second activity of configuring SELinux to match the configuration of an Apache Web Server, then this chapter closes by addressing the issue of automating SELinux configurations on multiple RHEL machines. The next chapter focuses on writing custom policy modules.
