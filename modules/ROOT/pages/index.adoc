@@ -1,19 +1,26 @@
-= About This Course
+= Writing Targeted Policies for SELinux on Red Hat Enterprise Linux
 :navtitle: Home
+
 // Ideally, every course has a title on the top. So, here instead of the 'About This Course', can we make the title appear first? I suggest we can skip the line that says - About this course. Wherein, the title would appear first. Can we increase the font of the title by a bit?
-== Writing Targeted Policies for SELinux on Red Hat Enterprise Linux
+// Fernando: done as you said, but JFYI your comment, with no white lines between the two titles, messed up with page rendering.
+// Fernando: IMHO it's strange having the course title appear multiple times in sequence on the rendered course page.
 
 This course teaches the development of SELinux policies that extend the Red Hat Enterprise Linux (RHEL) *targeted* policy set. It focuses on developing SELinux policies with the help of development tools included in RHEL, especially the `sepolicy generate` and `audit2allow` commands.
 
 == Audience
 
-System Administrators, Site Reliability Engineers, Application Developers, and other IT professionals responsible for securing applications running on Linux servers.
+IT professionals responsible for securing applications running on Linux servers, such as:
+
+* System Administrators
+* Site Reliability Engineers
+* Application Developers 
 // Instead of writing this on a single line, can we make this a bulleted list? I remember seeing a bulleted list of these in some course that I edited recently. I feel that it would make the learners easily identify a specific category if needed. If not, we can keep this as it is.
+// Fernando: had to reword it a bit to fit as a bulleted list
 
 == Prerequisites
 
 Learners are expected to have experience managing RHEL servers, and some familiarity with managing SELinux on RHEL.
-// Removed the pharse 'are expected to have' in order to remove redundancy.
+// Removed the phrase 'are expected to have' in order to remove redundancy.
 
 If you're not new to SELinux but need a refresher on it's day-to-day administration, please review:
 
@@ -42,6 +49,7 @@ To use RH134 as your virtual lab for hands-on activities, please follow one of t
 * https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.3/pages/pr01s02[RH134 for Red Hat Employees].
 * https://rol.redhat.com/rol/app/courses/rh134-9.3/pages/pr01s02[RH134 for Red Hat Customers and Partners with a Learning Subscription].
 // Are the above links correct? I just wasn't able to access the second one. Maybe something went wrong on my end. But still, can you verify again?
+// Fernando: Re-checked all links, with right-click on Firefox. All work. Do you have active learning subscriptions to access those pages?
 
 == Additional Red Hat Training About SELinux
 
@@ -49,18 +57,21 @@ If you are new to SELinux on RHEL, you are strongly advised to start by reviewin
 
 === For Red Hat employees
 
-* https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch06[RH134 Chapter 06]
-* https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.0/pages/ch11s03[RH134 Chapter 11] 
+* https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.3/pages/ch06[RH134 Chapter 06]
+* https://role.rhu.redhat.com/rol-rhu/app/courses/rh134-9.3/pages/ch11s03[RH134 Chapter 11] 
 * https://role.rhu.redhat.com/rol-rhu/app/courses/rh415-9.2/pages/ch08[RH415 Chapter 08]
 * https://role.rhu.redhat.com/rol-rhu/app/courses/rh342-8.4/pages/ch09[RH342 Chapter 09]
 
 === For Red Hat Customers and Partners with a Learning Subscription
 
-* https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch06[RH134 Chapter 6]
-* https://rol.redhat.com/rol/app/courses/rh134-9.0/pages/ch11s03[RH134 Chapter 11]
+* https://rol.redhat.com/rol/app/courses/rh134-9.3/pages/ch06[RH134 Chapter 6]
+* https://rol.redhat.com/rol/app/courses/rh134-9.3/pages/ch11s03[RH134 Chapter 11]
 * https://rol.redhat.com/rol/app/courses/rh415-9.2/pages/ch08[RH415 Chapter 8]
 * https://rol.redhat.com/rol/app/courses/rh342-8.4/pages/ch09[RH342 Chapter 9]
 // Same with these links. Wasn't able to access them. Can you verify them?
+// Fernando: done, all work Just updated the RH134 links to the newer 9.3 version of the course.
+// Fernando: Please don't put comments right before headings, without empty lines. It messes up with page rendering.
+
 == Other Sources of Information About SELinux
 
 Of course, the ultimate sources of information about SELinux are the Red Hat Enterprise Linux product documentation and the upstream sources from the Fedora Project and the SELinux project.
