@@ -51,7 +51,7 @@
     <a class="nav-link" href="../ch1-need/index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="../ch1-need/s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-need/s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -263,7 +263,7 @@
 <p>The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
 </div>
 <div class="paragraph">
-<p>Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attached surface open.</p>
+<p>Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attack surface open.</p>
 </div>
 <div class="paragraph">
 <p>You can list and query the status of an SELinux boolean using the <code>getsebool</code> command, and you can change its status using the <code>setsebool</code> command.</p>

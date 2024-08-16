@@ -51,7 +51,7 @@
     <a class="nav-link" href="index.html">Review of SELinux</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux</a>
+    <a class="nav-link" href="s1-intro.html">Why You Should Care About SELinux?</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-setup-lab.html">Lab: Verify the Status of SELinux in a RHEL Machine</a>
@@ -196,28 +196,16 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_selinux_policies_and_allow_rules"><a class="anchor" href="#_selinux_policies_and_allow_rules"></a>SELinux policies and allow rules</h2>
+<h2 id="_selinux_policies_and_allow_rules"><a class="anchor" href="#_selinux_policies_and_allow_rules"></a>SELinux Policies and Allow Rules</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux Policies are compiled into a binary format and loaded into Kernel memory for efficient execution. Later this course shows the source policy language and the tools required for compiling and loading policies. For now, let&#8217;s focus on reading and interpreting SELinux policies.</p>
+<p>SELinux policies are compiled into a binary format and loaded into kernel memory for efficient execution. Later this course, we will cover the source policy language and the tools required for compiling and loading policies. For now, let&#8217;s focus on reading and interpreting SELinux policies.</p>
 </div>
 <div class="paragraph">
-<p>As a human, your intent is declaring, as part of a policy, something similar to:</p>
+<p>As a human, your intent is to declare something similar to the following as part of a policy:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -256,7 +244,7 @@ Pending Review
 </ul>
 </div>
 <div class="paragraph">
-<p>We will see later that an allow rule is only one of the many possible kinds of SELinux policy rules, or policy statement, but it is the one that makes the bulk of most custom policies.</p>
+<p>We will later see that an allow rule is just one of the many possible kinds of SELinux policy rules, or policy statements, but it is the one that makes the bulk of most custom policies.</p>
 </div>
 <div class="paragraph">
 <p>SELinux policy rules allow processes with a given label to access objects with a matching label. Process labels may grant different access levels to objects depending on their labels, for example read-only with some labels and read-write with others.</p>
@@ -267,10 +255,10 @@ Pending Review
 <h2 id="_selinux_labels_and_contexts"><a class="anchor" href="#_selinux_labels_and_contexts"></a>SELinux Labels and Contexts</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SELinux works by assigning labels to processes and objects. Those labels define the SELinux <strong>context</strong> of a process or of an object such as a file. Because processes are also Linux Kernel objects, SELinux refers to labeled process as <strong>domains</strong> and to the objects those domains act upon as <strong>resources</strong>.</p>
+<p>SELinux works by assigning labels to processes and objects. These labels define the SELinux <strong>context</strong> of a process or of an object such as a file. Because processes are also Linux Kernel objects, SELinux refers to labeled processes as <strong>domains</strong> and to the objects those domains act upon as <strong>resources</strong>.</p>
 </div>
 <div class="paragraph">
-<p>Files are always resources, because a file cannot become a process. But processes can be domains, for example to open files. Processes can also be resources, for example wen a process (a domain) sends a signal to another process (a resource).</p>
+<p>Files are always resources, because a file cannot become a process. But processes can be domains, for example, when they open files. Processes can also be resources, for example when a process (a domain) sends a signal to another process (a resource).</p>
 </div>
 <div class="paragraph">
 <p>An SELinux context (or label) has four fields:</p>
@@ -286,11 +274,11 @@ Pending Review
 <dl>
 <dt class="hdlist1">&lt;user&gt;</dt>
 <dd>
-<p>SELinux users aren&#8217;t POSIX users. They are kinds of users, and policies can use these kinds to restrict abilities such as <code>sudo</code> to a different POSIX user or open network connections.</p>
+<p>SELinux users are not the same as POSIX users. SELinux users are not meant to represent individual human or system users, but to represent classes of users. SELinux policies can use these kinds classes of users to restrict abilities such as <code>sudo</code> to a different POSIX user or open network connections.</p>
 </dd>
 <dt class="hdlist1">&lt;role&gt;</dt>
 <dd>
-<p>SELinux roles group permissions so a user can switch between a more restricted set of permissions to a less restricted set and the same set of permissions can be granted ot multiple kinds of users.</p>
+<p>SELinux roles group permissions, so that a user can switch between a more restricted set of permissions to a less restricted set. The same set of permissions can be granted to multiple kinds of users.</p>
 </dd>
 <dt class="hdlist1">&lt;type&gt;</dt>
 <dd>
@@ -308,16 +296,16 @@ Pending Review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_set_the_context_of_a_resource"><a class="anchor" href="#_how_to_set_the_context_of_a_resource"></a>How to Set The Context of a Resource</h2>
+<h2 id="_how_to_set_the_context_of_a_resource"><a class="anchor" href="#_how_to_set_the_context_of_a_resource"></a>How to Set The Context of a Resource?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Most kernel objects have labels assigned at runtime by SELinux policies themselves, and you must use SELinux management commands such as <code>semanage</code> to assign different labels to SELinux resources such as TCP ports. If you do not update your SELinux policy and reboots a system, all labels changes to those resources are lost.</p>
+<p>Most kernel objects have labels assigned at runtime by SELinux policies themselves. You must use SELinux management commands, such as <code>semanage</code> to assign different labels to SELinux resources such as TCP ports. If you do not update your SELinux policy and reboot the system, all labels changes to those resources are lost.</p>
 </div>
 <div class="paragraph">
 <p>Files are different: SELinux stores labels in the extended attributes of files. Changes on file labels are persistent, unless a system administrator requires relabeling files to match the policy.</p>
 </div>
 <div class="paragraph">
-<p>Common file system types for Linux, such as XFS and ext4, support extended attributes, as well of modern versions of the NFS protocol. If you&#8217;re using a file system which does not support extended attributes, you can specify the label for all files using <code>mount</code> options.</p>
+<p>Common file system types for Linux, such as XFS and ext4, support extended attributes, as well as modern versions of the NFS protocol. If you&#8217;re using a file system which does not support extended attributes, you can specify the label for all files using <code>mount</code> options.</p>
 </div>
 <div class="paragraph">
 <p>For example, the <code>/etc/password</code> file has a default label of type <code>passwd_file_t</code>:</p>
@@ -353,7 +341,7 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>The of the parent directory</p>
+<p>The label of the parent directory</p>
 </li>
 <li>
 <p>The context explicitly set by the application</p>
@@ -381,7 +369,7 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <dl>
 <dt class="hdlist1">Domain context transition rules</dt>
 <dd>
-<p>Specify the new label for a child process after a fork and exec, based on the context of the original domain and the executable to be executed.</p>
+<p>Specify the new label for a child process after a fork and exec, based on the context of the original domain and the executable to be run.</p>
 </dd>
 <dt class="hdlist1">File context transition rules</dt>
 <dd>
@@ -393,10 +381,10 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <p>Domain context transition rules are required because all Linux processes, including all interactive user logins, are descendants of the init process. Without those rules, only applications coded to invoke SELinux system calls would be able to switch to different context labels. Thanks to domain context transition rules, processes can run under a very strict and customized SELinux policy without being coded with SELinux awareness.</p>
 </div>
 <div class="paragraph">
-<p>File context transition rules enable having common folders for files from different applications, such as configuration files in the <code>/etc</code> directory or log files in the <code>/var/log</code> directory, as mandated by the Linux Filesystem Hierarchy Standard (FHS), and retain the ability to configure policies such as that one application cannot read the configuration or log files of another application.</p>
+<p>File context transition rules enable having common folders for files from different applications, such as configuration files in the <code>/etc</code> directory or log files in the <code>/var/log</code> directory, as mandated by the Linux Filesystem Hierarchy Standard (FHS). They also retain the ability to configure policies such that one application cannot read the configuration or log files of another application.</p>
 </div>
 <div class="paragraph">
-<p>Use of domain context transition rules based on SELinux uses and roles enables configuring your RHEL system in such a way that a system administrator can perform day-to-day tasks, such as installing packages and creating users, but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy management tasks.</p>
+<p>Use of domain context transition rules based on SELinux users and roles enables configuring your RHEL system in such a way that a system administrator can perform day-to-day tasks, such as installing packages and creating users, but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy management tasks.</p>
 </div>
 </div>
 </div>
@@ -404,15 +392,15 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <h2 id="_selinux_type_attributes"><a class="anchor" href="#_selinux_type_attributes"></a>SELinux Type Attributes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The concept of attributes from SELinux enables grouping multiple types and referring to the name of attribute name in allow rules. They enable specifying an allow rule only once for a number of different domain and/or resource types.</p>
+<p>The concept of attributes in SELinux enables grouping multiple types and referring to the name of attribute name in allow rules. They enable specifying an allow rule only once for a number of different domain and/or resource types.</p>
 </div>
 <div class="paragraph">
-<p>When you search for allow rules in the current loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.</p>
+<p>When you search for allow rules in the currently loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_multi_level_security_mls_and_multi_category_security_mcs_systems"><a class="anchor" href="#_multi_level_security_mls_and_multi_category_security_mcs_systems"></a>Multi Level Security (MLS) and Multi Category Security (MCS) systems</h2>
+<h2 id="_multi_level_security_mls_and_multi_category_security_mcs_systems"><a class="anchor" href="#_multi_level_security_mls_and_multi_category_security_mcs_systems"></a>Multi Level Security (MLS) and Multi Category Security (MCS) Systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The fourth field of an SELinux label sometimes looks like there&#8217;s a fifth field because it is usually written as:</p>
@@ -441,7 +429,7 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 <dl>
 <dt class="hdlist1">Level</dt>
 <dd>
-<p>Specify a security clearance of a domain or resource. Domains with a higher security clearance can access resources from lower security clearances, but they cannot change the security clearance of a resource to a lower level. You can specify a range of levels using a dash (-).</p>
+<p>Specify the security clearance of a domain or resource. Domains with a higher security clearance can access resources from lower security clearances, but they cannot change the security clearance of a resource to a lower level. You can specify a range of levels using a dash (-).</p>
 </dd>
 <dt class="hdlist1">Category</dt>
 <dd>
@@ -463,7 +451,7 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>This course will not focus emphasis on levels and categories because they are not commonly used to protect system services and network services.</p>
+<p>This course will not focus on levels and categories because they are not commonly used to protect system services and network services.</p>
 </div>
 </div>
 </div>
@@ -486,7 +474,7 @@ security.selinux="system_u:object_r:passwd_file_t:s0"</code></pre>
 </dl>
 </div>
 <div class="paragraph">
-<p>It is possible to put an entire system in permissive mode, but rarely necessary. It is possible to put selected domains in permissive mode and that&#8217;s enough to deal with most cases of policy development and troubleshooting. Just don&#8217;t cheat by creating a policy which puts a domain in permissive mode and let it be that way for too long.</p>
+<p>It is possible to put an entire system in permissive mode, but this is rarely necessary. It is possible to put selected domains in permissive mode and that&#8217;s usually enough to deal with most cases of policy development and troubleshooting. Just don&#8217;t cheat by creating a policy which puts a domain in permissive mode and let it be that way for too long.</p>
 </div>
 </div>
 </div>
