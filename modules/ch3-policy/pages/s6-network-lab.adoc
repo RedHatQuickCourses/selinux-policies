@@ -8,15 +8,13 @@ Objective::
 
 Resolve AVC errors from a custom policy module, caused by network operations, by referring to existing interfaces and adding allow statements.
 
-WARNING: Pending Review
-
 IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
 
 You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
 
-* SELinux enabled and enforcing, using the targeted policy.
+* SELinux enabled and enforced, using the targeted policy.
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `selinux-policy-devel` package.
@@ -38,7 +36,7 @@ inactive
 $ *TIME=$(date +%T) ; sudo systemctl restart testapp*
 --
 +
-1.2. Find the PID of the test application service and check that its running in a permissive domain:
+1.2. Find the PID of the test application service and check that it's running in a permissive domain:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -99,7 +97,7 @@ type=AVC msg=audit(1721936082.494:457): avc:  denied  { connect } for  pid=5639 
 type=AVC msg=audit(1721936082.494:458): avc:  denied  { getattr } for  pid=5639 comm="testapp" path="socket:[65312]" dev="sockfs" ino=65312 scontext=system_u:system_r:testapp_t:s0 tcontext=system_u:system_r:testapp_t:s0 tclass=udp_socket permissive=1
 --
 +
-You could could grep for "tclass=udp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.
+You could grep for "tclass=udp_socket" for a more precise output, if the string "udp" appears in AVCs not related to our current focus.
 +
 2.4. As there isn't an interface for UDP socket access, probably there isn't one for TCP sockets either, and we know HTTP clients, such as the test application, require TCP sockets:
 +
@@ -187,4 +185,4 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME | grep -c -E 't
 
 == Next Steps
 
-The next activities reviews the remaining AVC errors from the test application, and adds policy rules to fix them, so we can successfully run the test application in confined mode.
+The next activities reviews the remaining AVC errors from the test application, and add policy rules to fix them, so we can successfully run the test application in confined mode.

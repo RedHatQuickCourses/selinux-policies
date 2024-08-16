@@ -8,15 +8,13 @@ Objective::
 
 Resolve the latest AVC errors from a custom policy module and ensure that it works in enforcing mode.
 
-WARNING: Pending Review
-
 IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
 
-You need a RHEL machine to which you have the either root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
+You need a RHEL machine to which you have either root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must be configured with:
 
-* SELinux enabled and enforcing, using the targeted policy.
+* SELinux enabled and enforced, using the targeted policy.
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `selinux-policy-devel` package.
@@ -38,7 +36,7 @@ inactive
 $ *TIME=$(date +%T) ; sudo systemctl restart testapp*
 --
 +
-1.2. Find the PID of the test application service and check that its running in a permissive domain:
+1.2. Find the PID of the test application service and check that it's running in a permissive domain:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -86,7 +84,7 @@ $ *sudo ausearch -m AVC -x /usr/local/sbin/testapp --start $TIME --just-one | au
 sysnet_read_config(testapp_t)
 --
 +
-Remember that you should review the comments on the source of this interface and also expand it to review all allow statements it generates. In the interest of time, let's move on, knowing this is the expected interfaces for network clients that perform DNS queries.
+Remember that you should review the comments on the source of this interface and also expand it to review all allow statements it generates. In the interest of time, let's move on, knowing this is the expected interface for network clients that perform DNS queries.
 +
 2.3. Add the interface to the end of the `testapp.te` file:
 +
@@ -221,7 +219,7 @@ exit 0
 ...
 --
 +
-The postuninstall scriplet was omitted from the previous output, but it just reverses the effects of the postinstall scriptlet: it unloads the binary policy module and relabels all file affected by it.
+The postuninstall scriplet was omitted from the previous output, but it just reverses the effects of the postinstall scriptlet: it unloads the binary policy module and relabels all files affected by it.
 
 == Next Steps
 

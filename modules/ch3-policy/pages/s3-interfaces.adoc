@@ -8,31 +8,29 @@ Objective::
 
 Understand the use of SELinux policy interfaces to extend the targeted policy set from RHEL.
 
-WARNING: Pending Review
-
 == Reusability of SELinux Policy Rules
 
-The targeted policy set from RHEL was designed with reusability goals. This helps both Red Hat's own developers and partner or user organization's developers by enabling them to create shorter policy modules which are easier to maintain.
+The targeted policy set by RHEL was designed with reusability goals. This helps both Red Hat's own developers and partner or user organization's developers by enabling them to create shorter policy modules which are easier to maintain.
 
-Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain compatible with future release of RHEL and the policy changes which may come.
+Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain and are compatible with future releases of RHEL and the policy changes that may come.
 
-== Documentation of SELinux Policy Intefaces
+== Documentation of SELinux Policy Interfaces
 
 All available policy modules install a copy of their interface files to the `/usr/share/selinux/devel/include` directory. Each interface in those files is preceded by comments, denoted by hash signs (#) and these comments describe the intent, usage, and arguments of each interface.
 
 == Generate Rules That Reference Interfaces
 
-The `audit2allow` command, with the `-R` option, tries to find an interface which would resolve the AVC error. If it cannot find any interface, it outputs standalone allow statements.
+The `audit2allow` command, with the `-R` option, tries to find an interface that would resolve the AVC error. If it cannot find any interface, it outputs standalone allow statements.
 
-Similar to the `audit2why` command, the `audit2allow` command may not suggest the better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it needs.
+Similar to the `audit2why` command, the `audit2allow` command may not suggest a better interface for a given set of AVC errors. It displays the first match it finds, based on the resource type and operation, and that may be too permissive. It will work, but may allow an application to perform more operations than it needs.
 
-You can use the suggestion from the `audit2allow` command as a starting point: review the comments on that interface, and if it looks like it allows too much, scan the same interface file for other similar interfaces which may be more restrictive. It may require some trial-and-error until you find the best interface for your application.
+You can use the suggestion from the `audit2allow` command as a starting point: review the comments on that interface, and if it looks like it allows too much, scan the same interface file for other similar interfaces which may be more restrictive. It may require some trial and error until you find the best interface for your application.
 
 == Expanding Interfaces Into Allow Statements
 
-If the comments in an interface file are not clear to you, or you wish to double check exactly which permissions you get from an interface, you can use the `macro-expand` command, from the `selinux-policy-devel` package, to expand an interface into its policy statements.
+If the comments in an interface file are not clear to you, or you wish to double-check exactly which permissions you get from an interface, you can use the `macro-expand` command, from the `selinux-policy-devel` package, to expand an interface into its policy statements.
 
-You give to the `macro-expander` a complete reference to an interface, including all arguments. It outputs the list of allow rules that the interface generates.
+You give the `macro-expander` a complete reference to an interface, including all arguments. It outputs the list of allow rules that the interface generates.
 
 Sometimes an interface uses type attributes instead of including explicit allow rules. If this is the case, the `-c` option shows the intermediate policy code in the kernel CIL language, and from that output you get the names of attributes to use with `sesearch` to find the allow rules which match the attribute.
 
