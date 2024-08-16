@@ -196,30 +196,18 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need a RHEL machine to which you have the either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
+<p>You need a RHEL machine to which you have either the root password or unrestricted sudo, and also access to Red Hat Enterprise Linux package repositories, to install any missing packages. That machine must also be configured with:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>SELinux enabled and enforcing, using the targeted policy.</p>
+<p>SELinux enabled and enforced, using the targeted policy.</p>
 </li>
 <li>
 <p>The <code>setools-console</code> package.</p>
@@ -249,7 +237,7 @@ Pending Review
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Download a sample web site with includes dynamic pages using the PHP server-side scripting language.</p>
+<p>Download a sample website with includes dynamic pages using the PHP server-side scripting language.</p>
 <div class="paragraph">
 <p>1.1. Clone the course samples repository, if you didn&#8217;t in a previous activity, and enter the <code>quotes</code> directory.</p>
 </div>
@@ -309,7 +297,7 @@ active</code></pre>
 <li>
 <p>Install the quote application on the Apache Web Server document root by making a very common mistake: moving files between directories with different SELinux contexts:</p>
 <div class="paragraph">
-<p>2.1. Move the welcome page and the dynamic pages from the git repository to the Apache Web Sever document root:</p>
+<p>2.1. Move the welcome page and the dynamic pages from the git repository to the Apache Web Server document root:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -451,7 +439,7 @@ type=AVC msg=audit(1721683996.862:250): avc:  denied  { name_connect } for  pid=
 <li>
 <p>Verify that the Apache Web Server can run PHP scripts. Also verify that PHP scripts, when executed interactively, can access MySQL databases.</p>
 <div class="paragraph">
-<p>5.1. Visit the hello page, which is hidden from normal navigation. It is quite common that dynamic web sites have a few hidden pages for troubleshooting purposes and for health reporting to monitoring systems:</p>
+<p>5.1. Visit the hello page, which is hidden from normal navigation. It is quite common that dynamic websites have a few hidden pages for troubleshooting purposes and for health reporting to monitoring systems:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -472,7 +460,7 @@ Hello world
 &lt;html&gt;
 &lt;body&gt;
 &lt;h1&gt;
-IT is ever-changing and there is the need to evolve in order to stay relevant.
+IT is ever-changing and there is a need to evolve in order to stay relevant.
 &lt;/h1&gt;
 &lt;p&gt;
 &lt;a href="/index.html"&gt;Back&lt;/a&gt; | &lt;a href="../quotes.php"&gt;Another quote&lt;/a&gt;
@@ -541,7 +529,7 @@ The 4 Ps for Change and Release: Planning Prevents Poor Performance.
 <h2 id="_next_steps"><a class="anchor" href="#_next_steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Just setting the correct context labels on resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set from RHEL.</p>
+<p>Just setting the correct context labels on resources and enabling the correct booleans can go a long way to ensure you can run applications securely under the targeted policy set by RHEL.</p>
 </div>
 <div class="paragraph">
 <p>The next section will focus on interpreting SELinux audit events and tools which help you assess if it&#8217;s the case of configuring a server or adding a custom policy.</p>

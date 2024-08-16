@@ -196,18 +196,6 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -219,7 +207,7 @@ Pending Review
 <div class="ulist">
 <ul>
 <li>
-<p>SELinux enabled and enforcing, using the targeted policy.</p>
+<p>SELinux enabled and enforced, using the targeted policy.</p>
 </li>
 <li>
 <p>The <code>setools-console</code> package.</p>
@@ -277,7 +265,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
 <li>
 <p>Examine and run the <code>enforce-targeted.yaml</code> playbook, which you can use as a starting point for your own custom playbooks.</p>
 <div class="paragraph">
-<p>2.1. There&#8217;s a single play which defines a couple variables required by he SELinux system role.</p>
+<p>2.1. There&#8217;s a single play which defines a couple of variables required by the SELinux system role.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -293,7 +281,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the <code>selinux_</code> preffix.</p>
+<p>2.2. A single task includes and runs the SELinux system role and it performs all changes required by variables with the <code>selinux_</code> prefix.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -309,7 +297,7 @@ enforce-targeted.yaml  quotes.yaml  website.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended for remove execution by Ansible Automation Platform or Red Hat Insights.</p>
+<p>2.3. The task includes error handling to reconnect and re-run the system role in case the remote system reboots. This does not apply to our test using the local system, but it is recommended to remove execution by Ansible Automation Platform or Red Hat Insights.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -405,7 +393,7 @@ localhost                  : ok=8    changed=0    unreachable=0    failed=0    s
 </div>
 </div>
 <div class="paragraph">
-<p>And observe on its output that the boolean is turned on:</p>
+<p>Observe on its output that the boolean is turned on:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -462,7 +450,7 @@ httpd_can_network_connect_db --&gt; on</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>4.4. None of those playbooks install their respective applications and web sites, so if you try in a system which was not configured by previous activities, you will get errors similar to:</p>
+<p>4.4. None of those playbooks install their respective applications and websites, so if you try in a system which was not configured by previous activities, you will get errors similar to:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -481,11 +469,11 @@ localhost                  : ok=8    changed=1    unreachable=0    failed=1    s
 </div>
 </div>
 <div class="paragraph">
-<p>Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks completed successfully.</p>
+<p>Notice, in the end of the playbook execution log, it displays "failed=1" to show that not all tasks were completed successfully.</p>
 </div>
 </li>
 <li>
-<p>If you wish, check the previous activities in this chapter for the steps to install the quotes web site and the static web site, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.</p>
+<p>If you wish, check the previous activities in this chapter for the steps to install the quotes website and the static website, then run the playbooks here to configure SELinux for those applications. In the interest of time, we are not repeating those steps here.</p>
 </li>
 </ol>
 </div>

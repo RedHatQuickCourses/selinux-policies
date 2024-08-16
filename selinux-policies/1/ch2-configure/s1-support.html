@@ -196,28 +196,16 @@
 </dd>
 </dl>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Pending Review
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_common_issues_with_selinux"><a class="anchor" href="#_common_issues_with_selinux"></a>Common Issues With SELinux</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users nor with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
+<p>As you learned in the previous chapter, the SELinux targeted policy set in RHEL was designed to protect system services included with RHEL and not interfere with interactive users or with third-party applications. By design, you should be able to resolve most common issues without resorting to creating a custom policy module.</p>
 </div>
 <div class="paragraph">
-<p>You also learned that, if you add a third-party application to a RHEL server, it&#8217;s better that you, its developer, or its vendor provides a custom policy module to protect that third-party application. But you don&#8217;t have to: it is recommended but optional.</p>
+<p>You also learned that, if you add a third-party application to a RHEL server, it&#8217;s better that you, its developer, or its vendor provide a custom policy module to protect that third-party application. But you don&#8217;t have to: it is recommended but optional.</p>
 </div>
 <div class="paragraph">
 <p>Why do people sometimes struggle with running Linux servers with SELinux enabled and in enforcing mode? Most of the times, it&#8217;s because they did one of those common things:</p>
@@ -225,7 +213,7 @@ Pending Review
 <div class="ulist">
 <ul>
 <li>
-<p>Moved files around, and their SELinux context do not match the policy rules anymore.</p>
+<p>Moved files around, and their SELinux context does not match the policy rules anymore.</p>
 </li>
 <li>
 <p>Restored files from a backup tool, remote file share, or removable media that does not support extended attributes, and the SELinux context of those files was lost.</p>
@@ -234,10 +222,10 @@ Pending Review
 <p>Configured a system server to listen on a non-standard network port, and that port is not labeled to match the policy rules.</p>
 </li>
 <li>
-<p>Configured a system server to read or write to different data and log directories, and those directories do not have labels which match the policy rules.</p>
+<p>Configured a system server to read or write to different data and log directories, and those directories do not have labels that match the policy rules.</p>
 </li>
 <li>
-<p>Enabled an optional feature of a system service that is potentially dangerous and it&#8217;s not allowed by default policy rules.</p>
+<p>Enabled an optional feature of a system service that is potentially dangerous and is not allowed by default policy rules.</p>
 </li>
 </ul>
 </div>
@@ -250,7 +238,7 @@ Pending Review
 <h2 id="_labeling_files_with_a_new_context"><a class="anchor" href="#_labeling_files_with_a_new_context"></a>Labeling Files With a New Context</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not advised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and them you apply the type to the file with the <code>restorecon</code> command.</p>
+<p>You can change the context type of a file directly with the <code>chcon</code> command, but you&#8217;re not advised to. It is recommended that you define a new path expression for the intended type with the <code>semanage</code> command, and then you apply the type to the file with the <code>restorecon</code> command.</p>
 </div>
 <div class="paragraph">
 <p>For example, the SELinux policy for the Apache Web Server defines the <code>httpd_sys_content_t</code> type for web pages and labels the <code>/var/www/html</code> directory accordingly. If you create a virtual host with a document root somewhere else, you must label that directory with the <code>httpd_sys_content_t</code> type.</p>
@@ -275,13 +263,13 @@ Pending Review
 <p>The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service&#8217;s configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.</p>
 </div>
 <div class="paragraph">
-<p>Booleans provide a compromise between a too strict policy, which becomes unusable, and a too lenient policy, which leaves a wide attach surface open.</p>
+<p>Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attack surface open.</p>
 </div>
 <div class="paragraph">
 <p>You can list and query the status of an SELinux boolean using the <code>getsebool</code> command, and you can change its status using the <code>setsebool</code> command.</p>
 </div>
 <div class="paragraph">
-<p>For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages which access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
+<p>For example, the Apache Web Server primarily serves static web pages from local HTML files, but it also could serve dynamic pages that access databases, send e-mail, and perform a number of other tasks by means of Apache modules and scripting languages such as PHP. To use those features, you must enable booleans such as <code>httpd_enable_cgi</code> and <code>httpd_can_sendmail</code>.</p>
 </div>
 </div>
 </div>
@@ -312,7 +300,7 @@ Pending Review
 <p>Review SELinux messages in the audit log using <code>ausearch</code>.</p>
 </li>
 <li>
-<p>Put the application&#8217;s confined domain in permissive mode, and reproduce the scenario which creates the issue.</p>
+<p>Put the application&#8217;s confined domain in permissive mode, and reproduce the scenario that creates the issue.</p>
 </li>
 <li>
 <p>If necessary, put the entire system in permissive mode, and reproduce the scenario.</p>
