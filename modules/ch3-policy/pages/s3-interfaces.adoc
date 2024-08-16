@@ -6,11 +6,11 @@ _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
-Understand the use of SELinux policy interfaces to extend the targeted policy set from RHEL.
+Understand the use of SELinux policy interfaces to extend the targeted policy set in RHEL.
 
 == Reusability of SELinux Policy Rules
 
-The targeted policy set by RHEL was designed with reusability goals. This helps both Red Hat's own developers and partner or user organization's developers by enabling them to create shorter policy modules which are easier to maintain.
+The targeted policy set in RHEL was designed with reusability goals. This helps both Red Hat's own developers and partner or user organization's developers by enabling them to create shorter policy modules which are easier to maintain.
 
 Every policy module must define at least one interface, but it may also define additional interfaces for use by other modules. If other modules use these interfaces, instead of including explicit rules to the same effect, they are easier to maintain and are compatible with future releases of RHEL and the policy changes that may come.
 
