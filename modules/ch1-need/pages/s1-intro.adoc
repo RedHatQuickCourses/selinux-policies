@@ -1,26 +1,23 @@
 :time_estimate: 9
 
-= Why You Should Care About SELinux
+= Why You Should Care About SELinux?
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
 
 Review the purpose of SELinux and evaluate the need for custom SELinux policies.
-
-WARNING: Pending Review
-
 == Do Not Disable SELinux!
 
-SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common applications. At that time, it was easy to find people advising to disable SELinux in order to make something work. It wasn't good advice!
+SELinux has come a long way since the early days of RHEL 5, when it was complex to use and got in the way of deploying common applications. At that time, it was easy to find people advising to disable SELinux in order to make something work, but that wasn't a good advice!
 
-Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complains, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this course with SELinux enabled and in enforcing mode!
+Nowadays (actually since the days of RHEL 7) both the tooling and the policies provided by Red Hat as part of RHEL already evolved to solve most complaints, real or perceived. There's very little reason to run any machine, including end-user workstations and test servers, with either SELinux disabled or in permissive mode. In fact, you will perform all hands-on activities from this course with SELinux enabled and in enforcing mode!
 
-IT professionals are under increasing demand to adopt and improve security practices. DevOps evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern of all professionals, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.
+IT professionals are under increasing demand to adopt and improve security practices. DevOps has evolved into DevSecOps and development teams are expected to "shift left" security, which means security is a concern for all professionals, not just the administrators of mission-critical production servers. Opting out of such a powerful and mature security technology as SELinux is not a good practice.
 
 Let's emphasize this critical advice:
 
-IMPORTANT: All organizations should to run all their RHEL machines and VMs, and also all their CentOS and Fedora machines and VMs, with *SELinux enabled* and in *enforcing mode*.
+IMPORTANT: All organizations should run all their RHEL machines and VMs, as well as all their CentOS and Fedora machines and VMs, with *SELinux enabled* and in *enforcing mode*.
 
 == What is SELinux
 
@@ -28,15 +25,17 @@ Skipping the https://en.wikipedia.org/wiki/Security-Enhanced_Linux#History[histo
 
 image::s1-intro-fig-1.svg[]
 
-SELinux *policies* control access to any *object* managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy do not allow access, them access is denied.
+SELinux *policies* control access to any *object* managed by the Linux Kernel, such as files and TCP ports. Processes can access objects only if allowed by the current SELinux policy in the kernel. If the policy does not allow access, then access is denied.
 
-Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is accessible to other users, like they could do with file system permissions.
+Unlike file system permissions, SELinux rules cannot be waived by any user, not even by root. Besides that, regular users cannot change the policy to state that an object is accessible to other users, as they could do with file system permissions.
 
-SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and Seccomp. These mechanisms continue to affect all processes, and SELinux can deny access where those other mechanisms granted access. POSIX file permissions are not gone either. They all should be used together to enforce a good security posture.
+SELinux is not a replacement for other security mechanisms in Linux, such as Netfilter packet-inspection firewalls and Seccomp. These mechanisms continue to affect all processes, and SELinux can deny access where those other mechanisms grant access. POSIX file permissions are not gone either. They all should be used together to enforce a good security posture.
 
-== Why Using SELinux
+== Why Use SELinux?
 
 The biggest benefit of SELinux is https://access.redhat.com/solutions/7032454[protecting systems from zero-day vulnerabilities]. No matter what kind of exploit exists in an application, such as a buffer overflow or a code injection bug, it cannot be exploited to lure an application to perform any task the application wouldn't normally perform. For example, you cannot trick a web server to access files other than its web pages. SELinux also prevents most kinds of privilege escalation exploits.
+// Is that link correct?
+// Fernando: yes it is. Some KBs require a customer portal login.
 
 image::s1-intro-fig-2.svg[]
 
@@ -47,53 +46,53 @@ SELinux is so effective that many CVEs which were considered severe in regular L
 
 To be effective, SELinux relies on the availability of security policies that allow each individual application and system service to perform only the tasks they are supposed to perform.
 
-Notice that SELinux cannot prevent an application from doing things it's supposed to do. For example, an SQL injection vulnerability in a web application would allow an application to access other data it already has access to but end users shouldn't see. SELinux wouldn't prevent such a scenario: it ether allows the application access to the remote database server or doesn't.
+Notice that SELinux cannot prevent an application from doing things it's supposed to do. For example, an SQL injection vulnerability in a web application would allow an application to access other data it already has access to but end users shouldn't see. SELinux wouldn't prevent such a scenario: it either allows the application access to the remote database server or it doesn't.
 
-== Who Provides SELinux Policies
+== Who Provides SELinux Policies?
 
-Red Hat provides a comprehensive policy for almost all packages included with RHEL and its add-on products but, if you deploy any application from a third-party vendor, you must load a policy that is specifically tailored for that application. As you are attending this course, you are probably involved with creating such a policy.
+Red Hat provides a comprehensive policy for almost all packages included with RHEL and its add-on products. However, if you deploy any application from a third-party vendor, you must load a policy that is specifically tailored for that application. As you are attending this course, you are probably involved with creating such a policy.
 
 image::s1-intro-fig-3.svg[]
 
 Red Hat is not the only vendor that recommends enabling and configuring SELinux. For example, see some https://docs.datadoghq.com/security/default_rules/xccdf-org-ssgproject-content-rule-selinux-policytype/[advice from DataDog].
 
-Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, and instead leave the burden on their customers.
+Unfortunately, few IT vendors stepped up to provide SELinux policies for their products, leaving the burden on their customers instead.
 
 Among the vendors who stepped up we can name Microsoft, which provides an https://techcommunity.microsoft.com/t5/sql-server-blog/sql-server-2022-now-available-for-both-rhel-9-and-ubuntu-22-04/ba-p/3896410[SELinux policy for the MS SQL Server database].
 
-Another vendor who provides SELinux policies for their software is https://docs.trellix.com/bundle/trellix-agent-5.7.x-product-guide/page/GUID-4C38F3FD-0881-4D48-AA52-572E4BFFC167.html[Trellix] for their endpoint security suite.
+Another vendor who provides SELinux policies for their software is https://docs.trellix.com/bundle/trellix-agent-5.7.x-product-guide/page/GUID-4C38F3FD-0881-4D48-AA52-572E4BFFC167.html[Trellix], for their endpoint security suite.
 
-Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer's environment, but they still encourage their customers to use SELinux for additional security. For example, IBM already provided https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux[sample SELinux policies for DB2] way before IBM acquired Red Hat.
+Some vendors provide unsupported sample policies, and may warn customers that these policies require customization for the customer's environment. However, they still encourage their customers to use SELinux for additional security. For example, IBM already provided https://www.ibm.com/docs/en/db2/11.5?topic=security-enhanced-linux-selinux[sample SELinux policies for DB2] way before IBM acquired Red Hat.
 
-Some vendors who used to advise disabling SELinux, for fear of performance degradation, nowadays recommend that customers run with SELinux enabled and in enforcing mode. For example SAP supports running https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102[SAP Hana with SELinux]. By the way, you can find members of the SAP community who guide their fellow users on https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463[how to create SELinux policies to protect SAP applications].
+Some vendors who used to advise disabling SELinux due to fears of performance degradation now recommend that customers run their applications with SELinux enabled and in enforcing mode.. For example SAP supports running https://community.sap.com/t5/technology-blogs-by-members/selinux-and-sap-hana/ba-p/13547102[SAP Hana with SELinux]. By the way, you can find members of the SAP community who guide their fellow users on https://community.sap.com/t5/additional-blogs-by-sap/what-about-sap-and-selinux/ba-p/12844463[how to create SELinux policies to protect SAP applications].
 
-Even without a policy designed specifically for that application, it's still much better having SELinux policies that protect everything else in a server than disabling SELinux
+Even without a policy designed specifically for that application, it is still much better to have SELinux policies that protect everything else in a server than disabling SELinux entirely.
  
-If your organization has an internal software development group, ideally that group provides SELinux policies alongside their application binaries and configuration files. This is consistent with the expectation that they would provide instructions on firewall settings, file system permissions, and other requirements for deploying their application.
+If your organization has an internal software development group, ideally that group should provide SELinux policies alongside their application binaries and configuration files. This is consistent with the expectation that they would also provide instructions on firewall settings, file system permissions, and other requirements for deploying their application.
 
 If they don't, then the system administrator responsible for securing the deployment must work with them to create such a policy.
 
-== What You Need to Create Custom SELinux Policies
+== What Do You Need to Create Custom SELinux Policies?
 
-All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming not scripting knowledge to create and validate SELinux policies.
+All tools required to create, deploy, manage, and troubleshoot SELinux policies are included with RHEL. You do not need programming or scripting knowledge to create and validate SELinux policies.
 
-Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn't mean access to the application's source code and understanding of its internal implementation details. It means understanding of what an application does, to the level you are able to answer questions such as: 
+Creating an SELinux policy requires intimate knowledge about the architecture and implementation of the target application. By "intimate knowledge" it doesn't mean access to the application's source code and understanding of its internal implementation details. Instead, it means understanding of what an application does, to the level you are able to answer questions such as: 
 
 * Does it make sense for that application to read the contents of /directory/file?
 * Does it make sense for that application to listen on TCP Port 12345?
 * Does it make sense for that application to open network connections to api.example.com?
 
-In fact, RHEL includes tooling to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not permissive enough) without good knowledge about the target application.
+In fact, RHEL includes tools to generate policies automatically from executable files, web server scripts, containers, and other kinds of applications. But you cannot verify if the resulting policy is too permissive (or not permissive enough) without good knowledge about the target application.
 
 == Why Do SELinux Policies Require Customization?
 
-Most software are configurable with different paths for data files, log files, and network ports for incoming connections. Access to these paths, ports, and other kernel objects must be allowed by SELinux.
+Most software is configurable with different paths for data files, log files, and network ports for incoming connections. Access to these paths, ports, and other kernel objects must be allowed by SELinux.
 
-Of course, no preexisting policy can anticipate all variations of file paths, network ports, and other configuration details that a user could choose, for all possible deployment scenarios of an application. If an SELinux policy is designed over rigid configuration assumptions, it forces users to operate the application under those assumptions only.
+Of course, no preexisting policy can anticipate all variations of file paths, network ports, and other configuration details that a user could choose for all possible deployment scenarios of an application. If an SELinux policy is designed over rigid configuration assumptions, it forces users to operate the application under those assumptions only.
 
-SELinux provides a few ways you can design a policy to be malleable and yet ensure an application cannot be abused by exploring known and unknown bugs. We will learn about those mechanisms later in this course.
+SELinux provides a few ways through which you can design a policy to be malleable and yet ensure an application cannot be abused by exploring known and unknown bugs. We will learn about those mechanisms later in this course.
 
-In the worst case scenario, system administrators can configure an application to run in *permissive mode*. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable to exploits, but the remaining of the system will still be protected.
+In the worst case scenario, system administrators can configure an application to run in the *permissive mode*. In that mode, SELinux does not block access from the application to anything. The application will be unprotected and vulnerable to exploits, but the remaining of the system will still be protected.
 
 In fact, the recommended workflow for creating a custom SELinux policy starts by running the target applications in permissive mode.
 
@@ -101,4 +100,4 @@ While it is possible to put the entire system in permissive move, this is rarely
 
 == Next Steps
 
-The first activity of this course verifies that you have a test machine with SELinux enabled and with the default policy set loaded. Later you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.
+The first activity of this course verifies that you have a test machine with SELinux enabled and with the default policy set loaded. Later, you will learn how to read and interpret SELinux policies to assess if they grant or deny access to an object from an application.

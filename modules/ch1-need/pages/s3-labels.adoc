@@ -8,13 +8,11 @@ Objective::
 
 Review the fundamental concepts required to read and interpret SELinux policies.
 
-WARNING: Pending Review
+== SELinux Policies and Allow Rules
 
-== SELinux policies and allow rules
+SELinux policies are compiled into a binary format and loaded into kernel memory for efficient execution. Later this course, we will cover the source policy language and the tools required for compiling and loading policies. For now, let's focus on reading and interpreting SELinux policies.
 
-SELinux Policies are compiled into a binary format and loaded into Kernel memory for efficient execution. Later this course shows the source policy language and the tools required for compiling and loading policies. For now, let's focus on reading and interpreting SELinux policies.
-
-As a human, your intent is declaring, as part of a policy, something similar to:
+As a human, your intent is to declare something similar to the following as part of a policy:
 
 ____
 APACHE process can READ its LOGGING FILE
@@ -34,15 +32,15 @@ Where:
 * "FILE" is an object class, declaring that the rule applies to files but not to objects of other classes such as network ports and message queues.
 * "READ" is the set of operations allowed, and the set of valid operations depends on the class.
 
-We will see later that an allow rule is only one of the many possible kinds of SELinux policy rules, or policy statement, but it is the one that makes the bulk of most custom policies.
+We will later see that an allow rule is just one of the many possible kinds of SELinux policy rules, or policy statements, but it is the one that makes the bulk of most custom policies.
 
 SELinux policy rules allow processes with a given label to access objects with a matching label. Process labels may grant different access levels to objects depending on their labels, for example read-only with some labels and read-write with others.
 
 == SELinux Labels and Contexts
 
-SELinux works by assigning labels to processes and objects. Those labels define the SELinux *context* of a process or of an object such as a file. Because processes are also Linux Kernel objects, SELinux refers to labeled process as *domains* and to the objects those domains act upon as *resources*.
+SELinux works by assigning labels to processes and objects. These labels define the SELinux *context* of a process or of an object such as a file. Because processes are also Linux Kernel objects, SELinux refers to labeled processes as *domains* and to the objects those domains act upon as *resources*.
 
-Files are always resources, because a file cannot become a process. But processes can be domains, for example to open files. Processes can also be resources, for example wen a process (a domain) sends a signal to another process (a resource).
+Files are always resources, because a file cannot become a process. But processes can be domains, for example, when they open files. Processes can also be resources, for example when a process (a domain) sends a signal to another process (a resource).
 
 An SELinux context (or label) has four fields:
 
@@ -51,10 +49,10 @@ ____
 ____
 
 <user>::
-SELinux users aren't POSIX users. They are kinds of users, and policies can use these kinds to restrict abilities such as `sudo` to a different POSIX user or open network connections.
+SELinux users are not the same as POSIX users. SELinux users are not meant to represent individual human or system users, but to represent classes of users. SELinux policies can use these kinds classes of users to restrict abilities such as `sudo` to a different POSIX user or open network connections.
 
 <role>::
-SELinux roles group permissions so a user can switch between a more restricted set of permissions to a less restricted set and the same set of permissions can be granted ot multiple kinds of users.
+SELinux roles group permissions, so that a user can switch between a more restricted set of permissions to a less restricted set. The same set of permissions can be granted to multiple kinds of users.
 
 <type>::
 SELinux types uniquely name groups of domains or resources to which you grant permissions using policy statements.
@@ -64,13 +62,13 @@ SELinux MLS/MCS field sets a security level and one or more security categories.
 
 Most of the SELinux policies focus on types. In fact, the Linux Kernel ignores the user and role fields of the context and checks only the type when processing allow rules. The user and role fields are used mostly for type transition rules.
 
-== How to Set The Context of a Resource
+== How to Set The Context of a Resource?
 
-Most kernel objects have labels assigned at runtime by SELinux policies themselves, and you must use SELinux management commands such as `semanage` to assign different labels to SELinux resources such as TCP ports. If you do not update your SELinux policy and reboots a system, all labels changes to those resources are lost.
+Most kernel objects have labels assigned at runtime by SELinux policies themselves. You must use SELinux management commands, such as `semanage` to assign different labels to SELinux resources such as TCP ports. If you do not update your SELinux policy and reboot the system, all labels changes to those resources are lost.
 
 Files are different: SELinux stores labels in the extended attributes of files. Changes on file labels are persistent, unless a system administrator requires relabeling files to match the policy. 
 
-Common file system types for Linux, such as XFS and ext4, support extended attributes, as well of modern versions of the NFS protocol. If you're using a file system which does not support extended attributes, you can specify the label for all files using `mount` options.
+Common file system types for Linux, such as XFS and ext4, support extended attributes, as well as modern versions of the NFS protocol. If you're using a file system which does not support extended attributes, you can specify the label for all files using `mount` options.
 
 For example, the `/etc/password` file has a default label of type `passwd_file_t`:
 
@@ -96,7 +94,9 @@ You must take care with labels on files from removable media and network shares,
 
 An SELinux policy can set default file labels for files and directories. These default labels are expected to match the labels assigned by domains at file creation, which are set to one of:
 
-* The of the parent directory
+* The label of the parent directory 
+// Is it label?
+// Fernando: yes it is, good catch!
 * The context explicitly set by the application
 * The context set by a File type transition rule
 
@@ -109,24 +109,25 @@ SELinux policies can also set labels on domains and resources by means of contex
 There are two main kinds of context transition rules:
 
 Domain context transition rules::
-Specify the new label for a child process after a fork and exec, based on the context of the original domain and the executable to be executed.
+Specify the new label for a child process after a fork and exec, based on the context of the original domain and the executable to be run.
+// Added 'run' in place of 'executed' to avoid redundancy.
 
 File context transition rules::
 Specify the new context of files created by a given domain, when you don't want the new file to inherit the context of its parent directory.
 
 Domain context transition rules are required because all Linux processes, including all interactive user logins, are descendants of the init process. Without those rules, only applications coded to invoke SELinux system calls would be able to switch to different context labels. Thanks to domain context transition rules, processes can run under a very strict and customized SELinux policy without being coded with SELinux awareness.
 
-File context transition rules enable having common folders for files from different applications, such as configuration files in the `/etc` directory or log files in the `/var/log` directory, as mandated by the Linux Filesystem Hierarchy Standard (FHS), and retain the ability to configure policies such as that one application cannot read the configuration or log files of another application.
+File context transition rules enable having common folders for files from different applications, such as configuration files in the `/etc` directory or log files in the `/var/log` directory, as mandated by the Linux Filesystem Hierarchy Standard (FHS). They also retain the ability to configure policies such that one application cannot read the configuration or log files of another application.
 
-Use of domain context transition rules based on SELinux uses and roles enables configuring your RHEL system in such a way that a system administrator can perform day-to-day tasks, such as installing packages and creating users, but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy management tasks.
+Use of domain context transition rules based on SELinux users and roles enables configuring your RHEL system in such a way that a system administrator can perform day-to-day tasks, such as installing packages and creating users, but cannot change SELinux policies. Another possibility is allowing system administrators to change labels on resources but not performing other SELinux policy management tasks.
 
 == SELinux Type Attributes
 
-The concept of attributes from SELinux enables grouping multiple types and referring to the name of attribute name in allow rules. They enable specifying an allow rule only once for a number of different domain and/or resource types.
+The concept of attributes in SELinux enables grouping multiple types and referring to the name of attribute name in allow rules. They enable specifying an allow rule only once for a number of different domain and/or resource types.
 
-When you search for allow rules in the current loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.
+When you search for allow rules in the currently loaded policy, the SELinux utilities will match attributes by default, just like the Kernel would.
 
-== Multi Level Security (MLS) and Multi Category Security (MCS) systems
+== Multi Level Security (MLS) and Multi Category Security (MCS) Systems
 
 The fourth field of an SELinux label sometimes looks like there's a fifth field because it is usually written as:
 
@@ -143,7 +144,7 @@ ____
 This is the purpose of levels and categories in SELinux policies:
 
 Level::
-Specify a security clearance of a domain or resource. Domains with a higher security clearance can access resources from lower security clearances, but they cannot change the security clearance of a resource to a lower level. You can specify a range of levels using a dash (-).
+Specify the security clearance of a domain or resource. Domains with a higher security clearance can access resources from lower security clearances, but they cannot change the security clearance of a resource to a lower level. You can specify a range of levels using a dash (-).
 
 Category::
 Specify an optional set of categories for a domain or a resource. Domains can only access resources if they share one common category. You can specify multiple categories using dots (.).
@@ -156,7 +157,7 @@ ____
 s1-3:c2.c3.c7
 ____
 
-This course will not focus emphasis on levels and categories because they are not commonly used to protect system services and network services.
+This course will not focus on levels and categories because they are not commonly used to protect system services and network services.
 
 == SELinux Modes
 
@@ -168,7 +169,7 @@ The SELinux policies loaded into the kernel are fully effective, denying access 
 Permissive::
 The SELinux policies loaded into the kernel are still being checked, but instead of denying access to operations which are not explicitly allowed, the violation is just logged and all operations are allowed.
 
-It is possible to put an entire system in permissive mode, but rarely necessary. It is possible to put selected domains in permissive mode and that's enough to deal with most cases of policy development and troubleshooting. Just don't cheat by creating a policy which puts a domain in permissive mode and let it be that way for too long.
+It is possible to put an entire system in permissive mode, but this is rarely necessary. It is possible to put selected domains in permissive mode and that's usually enough to deal with most cases of policy development and troubleshooting. Just don't cheat by creating a policy which puts a domain in permissive mode and let it be that way for too long.
 
 == Next Steps
 
