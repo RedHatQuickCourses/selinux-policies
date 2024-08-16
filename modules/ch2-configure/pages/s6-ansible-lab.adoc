@@ -101,7 +101,7 @@ If the playbook does require a reboot using the local system, you have to reboot
 [source,subs="verbatim,quotes"]
 --
 $ *sudo ansible-playbook enforce-targeted.yaml*
-[WARNING]: The provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
 ...
 --
 +

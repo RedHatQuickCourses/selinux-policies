@@ -44,7 +44,7 @@ As a concrete example, the SELinux policy for MySQL defines the `mysqld_port_t` 
 
 The SELinux policies from RHEL define a number of booleans, which enable system administrators to selectively grant permission to use optional features of system services. If you enable the feature in the service's configuration file but do not enable the boolean, SELinux will not allow the service to perform the intended action.
 
-Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attached surface open.
+Booleans provide a compromise between a too-strict policy, which becomes unusable, and a too-lenient policy, which leaves a wide attack surface open.
 
 You can list and query the status of an SELinux boolean using the `getsebool` command, and you can change its status using the `setsebool` command.
 

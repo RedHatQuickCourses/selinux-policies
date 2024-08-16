@@ -224,7 +224,7 @@ $ *php -f /var/www/html/quotes.php*
 <html>
 <body>
 <h1>
-It is ever-changing and there is a need to evolve in order to stay relevant.
+IT is ever-changing and there is a need to evolve in order to stay relevant.
 </h1>
 <p>
 <a href="/index.html">Back</a> | <a href="../quotes.php">Another quote</a>
