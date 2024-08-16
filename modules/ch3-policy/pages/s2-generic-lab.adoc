@@ -8,8 +8,6 @@ Objective::
 
 Generate a policy module that runs a compiled application as a permissive domain in confined mode.
 
-WARNING: Pending Review
-
 IMPORTANT: All activities in this chapter require the results of the previous activities. You are not required to perform all of them at once, but it's certainly easier. If you must pause between activities, ensure you can continue using the same RHEL machine.
 
 == Before you Begin
@@ -70,7 +68,7 @@ $ *systemctl is-active testapp*
 active
 --
 +
-2.2. Find the PID of the test application service and check its running with the unconfined domain type:
+2.2. Find the PID of the test application service and check that its running with the unconfined domain type:
 +
 [source,subs="verbatim,quotes"]
 --
@@ -141,7 +139,7 @@ $ *ls noarch*
 testapp_selinux-1.0-1.el9.noarch.rpm
 --
 
-4. Restart the third-party application and verify it now runs in a permissive domain:
+4. Restart the third-party application and verify that it now runs in a permissive domain:
 +
 4.1. Restart the test application service to ensure its process runs in the new confined domain:
 +
