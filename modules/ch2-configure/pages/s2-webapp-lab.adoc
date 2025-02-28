@@ -241,7 +241,7 @@ It is expected that applications which fail to run on confined domains from syst
 +
 [source,subs="verbatim,quotes"]
 --
-$ *getseboolean -a | grep httpd*
+$ *semanage boolean --list | grep httpd*
 ...
 httpd_can_network_connect --> off
 httpd_can_network_connect_cobbler --> off
@@ -254,9 +254,9 @@ httpd_can_network_memcache --> off
 +
 [source,subs="verbatim,quotes"]
 --
-$ *sudo setsebool httpd_can_network_connect_db on*
-$ *getsebool httpd_can_network_connect_db*
-httpd_can_network_connect_db --> on
+$ *sudo semanage boolean --modify httpd_can_network_connect_db --on*
+$ *sudo semanage boolean --list | grep httpd_can_network_connect_db*
+httpd_can_network_connect_db   (on   ,   on)  Allow httpd to can network connect db
 --
 +
 6.3. Revisit the "random quote" page. It should now work:
