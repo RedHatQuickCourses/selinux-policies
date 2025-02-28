@@ -279,7 +279,7 @@ You could use the `seinfo`, `sesearch`, and `semanage` commands, which we alread
 +
 [source,subs="verbatim,quotes"]
 --
-$ *dnf -y install selinux-policy docs*
+$ *dnf -y install selinux-policy-docs*
 ...
 Complete!
 $ *man httpd_selinux*
