@@ -16,7 +16,7 @@ You need a RHEL machine to which you have either the root password or unrestrict
 * The `setools-console` package.
 * The `policycoreutils-python-utils` package.
 * The `httpd` package.
-* The `mysqld-server` package.
+* The `mysql-server` package.
 * The `git` client.
 
 These instructions were tested on RHEL 9.3 but should work with minimal change on older releases (since RHEL 7) and newer releases.
@@ -149,7 +149,7 @@ Notice that the event refers to the `httpd` executable and to the `index.html` f
 +
 [source,subs="verbatim,quotes"]
 --
-$ *restorecon -fv /var/www/html/\**
+$ *restorecon -Rv /var/www/html/*
 Relabeled /var/www/html/hello.php from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/www/html/index.html from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/www/html/quotes.php from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0

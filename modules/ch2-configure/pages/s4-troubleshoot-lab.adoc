@@ -279,7 +279,7 @@ You could use the `seinfo`, `sesearch`, and `semanage` commands, which we alread
 +
 [source,subs="verbatim,quotes"]
 --
-$ *dnf -y install selinux-policy docs*
+$ *dnf -y install selinux-policy-docs*
 ...
 Complete!
 $ *man httpd_selinux*
@@ -424,7 +424,7 @@ system_u:object_r:httpd_sys_content_t:s0 /var/www/html/
 +
 [source,subs="verbatim,quotes"]
 --
-$ *semanage fcontext -a -t httpd_sys_content_t "/var/website(/.*)?"*
+$ *semanage fcontext -a -t httpd_sys_content_t "/var/website(/.\*)?"*
 $ *restorecon -Rv /var/website*
 Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
