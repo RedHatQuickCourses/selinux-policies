@@ -219,7 +219,7 @@
 <p>The <code>httpd</code> package.</p>
 </li>
 <li>
-<p>The <code>mysqld-server</code> package.</p>
+<p>The <code>mysql-server</code> package.</p>
 </li>
 <li>
 <p>The <code>git</code> client.</p>
@@ -377,7 +377,7 @@ type=AVC msg=audit(1721682596.879:196): avc:  denied  { read } for  pid=3108 com
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>restorecon -fv /var/www/html/\</strong>*
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>restorecon -Rv /var/www/html/</strong>
 Relabeled /var/www/html/hello.php from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/www/html/index.html from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/www/html/quotes.php from unconfined_u:object_r:user_home_t:s0 to system_u:object_r:httpd_sys_content_t:s0</code></pre>

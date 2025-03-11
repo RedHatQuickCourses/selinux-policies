@@ -544,7 +544,7 @@ allow this access for now by executing:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>dnf -y install selinux-policy docs</strong>
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>dnf -y install selinux-policy-docs</strong>
 ...
 Complete!
 $ <strong>man httpd_selinux</strong>
@@ -709,7 +709,7 @@ system_u:object_r:httpd_sys_content_t:s0 /var/www/html/</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>semanage fcontext -a -t httpd_sys_content_t "/var/website(/.</strong>)?"*
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>semanage fcontext -a -t httpd_sys_content_t "/var/website(/.\</strong>)?"*
 $ <strong>restorecon -Rv /var/website</strong>
 Relabeled /var/website from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
 Relabeled /var/website/index.html from unconfined_u:object_r:var_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0</code></pre>
